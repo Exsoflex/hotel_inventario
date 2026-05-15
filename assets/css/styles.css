@@ -1,0 +1,127 @@
+/* ===== RESET SIMPLE ===== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===== BODY ===== */
+
+body {
+
+    font-family: "DM Sans", sans-serif;
+    background: linear-gradient(90deg, #fe8b61 0%, #93245c 50%, #9600b7 100%);
+    color: #333;
+}
+
+/* ===== CONTENEDOR ===== */
+
+.container {
+
+    max-width: 1200px;
+    margin: 30px auto;
+    background-color: white;
+    padding: 25px;
+    border-radius: 50px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+/* ===== TITULOS ===== */
+
+h1, h2 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+/* ===== TABLAS ===== */
+
+table {
+
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+table th,
+table td {
+
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+table th {
+
+    background-color: #f0f0f0;
+}
+
+/* ===== FORMULARIOS ===== */
+
+form {
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* ===== INPUTS ===== */
+
+input,
+select,
+button {
+
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+/* ===== BOTONES ===== */
+
+button {
+
+    cursor: pointer;
+    background-color: #333;
+    color: white;
+    border: none;
+    transition: 0.2s;
+}
+
+button:hover {
+
+    background-color: #555;
+}
+
+/* ===== LINKS ===== */
+
+a {
+
+    text-decoration: none;
+}
+
+a:hover {
+
+    text-decoration: underline;
+}
+
+/* /////////////////////
+/* ===== NAVBAR ===== */
+/* //////////////////*/
+
+.navbar{
+
+    width:100%;
+    background:#ffffff;
+    padding:40px;
+    box-sizing:border-box;
+    display:flex;
+    gap:80px;
+    box-shadow:0 0 40px rgba(0,0,0,0.4);
+}
+
+.navbar a{
+
+    color:#333;
+    text-decoration:none;
+}
