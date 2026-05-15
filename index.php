@@ -10,7 +10,7 @@ switch($modulo) {
         require_once __DIR__ . "/views/home.php";
         exit();
 
-    case 'habitaciones';
+    case 'habitaciones':
 
         require_once __DIR__ . "/controllers/habitacionesController.php";
         $controller = new HabitacionesController();
@@ -26,6 +26,12 @@ switch($modulo) {
 
         require_once __DIR__ . "/controllers/inventarioController.php";
         $controller = new InventarioController();
+        break;
+
+    case 'inventario_base':
+
+        require_once __DIR__ . "/controllers/inventario_baseController.php";
+        $controller = new InventariobaseController();
         break;
 
     default:

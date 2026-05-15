@@ -31,6 +31,10 @@
         Inventario
     </a>
 
+    <a href="index.php?modulo=inventario_base">
+        Inventario Base
+    </a>
+
 </nav>
 
 <div class="container">

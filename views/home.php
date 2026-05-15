@@ -28,6 +28,10 @@
     <a href="index.php?modulo=inventario">
         <button>Inventario</button>
     </a>
+<br><br>
+    <a href="index.php?modulo=inventario_base">
+        <button>Inventario Base</button>
+    </a>
 
 
 </div>
