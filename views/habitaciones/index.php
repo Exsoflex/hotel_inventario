@@ -15,7 +15,10 @@
 
     <h1>Lista de habitaciones</h1>
 
+    <input type="text" id="buscador" placeholder="Buscar...">
+
     <table border="1">
+    <thead>
 
         <tr>
             <th>ID</th>
@@ -26,12 +29,15 @@
             <th>Eliminar</th>
             <th>Editar</th>
         </tr>
+    </thead>
+
+    <tbody>
 
         <?php
         //var_dump($habitaciones); // Agrega esta línea para verificar el contenido de $habitaciones
         foreach($habitaciones as $h): ?>
 
-            <tr>
+            <tr id="habitacion-<?= $h['id'] ?>">
                 <td><?= $h['id'] ?></td>
                 <td><?= $h['piso'] ?></td>
                 <td><?= $h['numero'] ?></td>
@@ -41,11 +47,13 @@
                     <a href="index.php?modulo=habitaciones&accion=eliminar&id=<?= $h['id'] ?>"> 🗑 Eliminar</a>
                 </td>
                 <td>
-                    <a href="index.php?modulo=habitaciones&accion=editar&id=<?= $h['id'] ?>"> ✏ Editar</a>
+                    <a href="index.php?modulo=habitaciones&accion=editar&id=<?= $h['id'] ?>#habitacionFormulario"> ✏ Editar</a>
                 </td>    
             </tr>
 
         <?php endforeach; ?>
+
+    </tbody>
 
     </table>
 
@@ -58,7 +66,7 @@
 
     <form 
     id="habitacionFormulario" 
-    action="index.php?modulo=hanitaciones&accion=<?= isset($habitacionEditar) ? 'editar' : 'agregar' ?>" method="POST">
+    action="index.php?modulo=habitaciones&accion=<?= isset($habitacionEditar) ? 'editar' : 'agregar' ?>" method="POST">
 
         <input 
         type="hidden" 
@@ -141,6 +149,30 @@
     </form>
 
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
+
+
+
+<script>
+
+const buscador = document.getElementById('buscador');
+buscador.addEventListener('keyup', function() {
+
+    let texto = buscador.value.toLowerCase();
+    let filas = document.querySelectorAll("table tbody tr");
+
+    filas.forEach(function(fila){
+
+        let contenido = fila.textContent.toLowerCase();
+
+        if(contenido.includes(texto)){
+            fila.style.display = "";
+        } else {
+            fila.style.display = "none";
+        }
+    });
+});
+
+</script>
 
 </body>
 </html>

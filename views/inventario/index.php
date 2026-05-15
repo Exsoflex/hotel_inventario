@@ -15,9 +15,13 @@
 
     <h1>Lista de inventario</h1>
 
+    <input type="text" id="buscador" placeholder="Buscar...">
+
     <table border="1">
 
-        <tr>
+    <thead>
+
+         <tr>
             <th>ID</th>
             <th>Habitación</th>
             <th>Articulo</th>
@@ -27,12 +31,16 @@
             <th>Eliminar</th>
             <th>Editar</th>
         </tr>
+    
+    </thead>
+    
+    <tbody>
 
         <?php
         //var_dump($habitaciones); // Agrega esta línea para verificar el contenido de $habitaciones
         foreach($inventarios as $i): ?>
 
-            <tr>
+            <tr id="inventario-<?= $i['id'] ?>">
                 <td><?= $i['id'] ?></td>
                 <td><?= $i['numero'] ?></td>
                 <td><?= $i['nombre'] ?></td>
@@ -43,11 +51,13 @@
                     <a href="index.php?modulo=inventario&accion=eliminar&id=<?= $i['id'] ?>"> 🗑 Eliminar</a>
                 </td>
                 <td>
-                    <a href="index.php?modulo=inventario&accion=editar&id=<?= $i['id'] ?>"> ✏ Editar</a>
+                    <a href="index.php?modulo=inventario&accion=editar&id=<?= $i['id'] ?>#inventarioFormulario"> ✏ Editar</a>
                 </td>    
             </tr>
 
         <?php endforeach; ?>
+
+    </tbody>
 
     </table>
 
@@ -196,6 +206,29 @@
     </form>
 
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
+
+
+<script>
+
+const buscador = document.getElementById('buscador');
+buscador.addEventListener('keyup', function() {
+
+    let texto = buscador.value.toLowerCase();
+    let filas = document.querySelectorAll("table tbody tr");
+
+    filas.forEach(function(fila){
+
+        let contenido = fila.textContent.toLowerCase();
+
+        if(contenido.includes(texto)){
+            fila.style.display = "";
+        } else {
+            fila.style.display = "none";
+        }
+    });
+});
+
+</script>
 
 </body>
 </html>

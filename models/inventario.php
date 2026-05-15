@@ -77,6 +77,8 @@ class Inventario {
 
         $stmt->execute();
 
+        return $this->conn->lastInsertId();
+
         }
 
     public function eliminarInventario($id) {
@@ -106,7 +108,7 @@ class Inventario {
                 SET habitacion_id = :habitacion_id, 
                 articulo_id = :articulo_id, 
                 cantidad = :cantidad, 
-                estado = :estado 
+                estado = :estado, 
                 comentarios = :comentarios
                 WHERE id = :id";
         

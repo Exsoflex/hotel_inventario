@@ -23,9 +23,9 @@ class ArticulosController {
                 ) exit ("Llena todos los campos por favor");
 
             $modelarticulo = new Articulos();
-            $modelarticulo->agregarArticulo($nombre, $descripcion);
+            $idNuevo = $modelarticulo->agregarArticulo($nombre, $descripcion);
 
-            header("Location: index.php?modulo=articulos"); // Redirigir a la página principal después de agregar la habitación
+            header("Location: index.php?modulo=articulos#articulo-$idNuevo"); // Redirigir a la página principal después de agregar la habitación
             exit();
         }
     }
@@ -76,7 +76,7 @@ class ArticulosController {
                 $descripcion
             );
 
-            header("Location: index.php?modulo=articulos"); // Redirigir a la página principal después de editar la habitación
+            header("Location: index.php?modulo=articulos#articulo-$id"); // Redirigir a la página principal después de editar la habitación
             exit();
         }
     }

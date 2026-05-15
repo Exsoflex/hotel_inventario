@@ -28,7 +28,7 @@ class InventarioController {
 
             $inventario = new Inventario();
 
-            $inventario->agregarInventario(
+            $idNuevo =$inventario->agregarInventario(
                 $habitacion_id,
                 $articulo_id, 
                 $cantidad, 
@@ -36,7 +36,7 @@ class InventarioController {
                 $comentarios
             );
 
-            header("Location: index.php?modulo=inventario");
+            header("Location: index.php?modulo=inventario#inventario-$idNuevo");
             exit();
         }
 
@@ -96,7 +96,7 @@ class InventarioController {
                 $comentarios
             );
 
-            header("Location: index.php?modulo=inventario"); // Redirigir a la página principal después de editar el inventario
+            header("Location: index.php?modulo=inventario#inventario-$id"); // Redirigir a la página principal después de editar el inventario
             exit();
 
         }

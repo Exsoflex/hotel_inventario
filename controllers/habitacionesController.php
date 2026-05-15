@@ -26,11 +26,10 @@ class HabitacionesController {
                 empty($tipo)
                 ) exit ("Llena todos los campos por favor");
 
-
             $modelhabitacion = new Habitacion();
-            $modelhabitacion->agregarHabitacion($piso, $numero, $tipo, $descripcion);
+            $idNuevo = $modelhabitacion->agregarHabitacion($piso, $numero, $tipo, $descripcion);
 
-            header("Location: index.php?modulo=habitaciones"); // Redirigir a la página principal después de agregar la habitación
+            header("Location: index.php?modulo=habitaciones#habitacion-$idNuevo"); // Redirigir a la página principal después de agregar la habitación
             exit();
         }
     }
@@ -87,7 +86,7 @@ class HabitacionesController {
                 $descripcion
             );
 
-            header("Location: index.php?modulo=habitaciones"); // Redirigir a la página principal después de editar la habitación
+            header("Location: index.php?modulo=habitaciones#habitacion-$id"); // Redirigir a la página principal después de editar la habitación
             exit();
         }
     }

@@ -31,6 +31,8 @@ class Habitacion {
         $stmt->bindParam(":descripcion", $descripcion);
 
         $stmt->execute();
+
+        return $this->conn->lastInsertId();
     }
 
     public function eliminarHabitacion($id) {

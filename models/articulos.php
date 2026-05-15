@@ -29,6 +29,8 @@ class Articulos {
         $stmt->bindParam(":descripcion", $descripcion);
 
         $stmt->execute();
+
+        return $this->conn->lastInsertId(); // Devuelve el ID del artículo recién agregado
     }
 
     public function eliminarArticulo($id) {
