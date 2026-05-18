@@ -74,7 +74,7 @@ class InventariobaseController {
                 empty($id) ||
                 empty($tipo) ||
                 empty($articulo_id) ||
-                empty($cantidad)
+                $cantidad === ''
             ) {
                 exit ("Llena todos los campos por favor");
             }

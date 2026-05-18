@@ -39,7 +39,7 @@
             <br><br>
 
 
-            <table border="1">
+            <table>
 
                 <thead>
                     <tr>
@@ -60,27 +60,29 @@
 
                             <td><?= $h['tipo'] ?></td>
 
-                            <td>
-                                <?php if ($h['total_faltantes'] > 0): ?>
+                           <td>
 
-                                    <span style="color:red;">
-                                        <?= $h['articulos_faltantes'] ?>
-                                    </span>
+                            <?php if ($h['total_faltantes'] > 0): ?>
 
-                                <?php elseif (is_null($h['articulos_faltantes'])): ?>
+                                <span style="color:red;">
+                                    <?= $h['articulos_faltantes'] ?>
+                                </span>
 
-                                    <span style="color:gray;">
-                                        Sin inventario base definido
-                                    </span>
+                            <?php elseif ($h['total_base'] == 0): ?>
 
-                                <?php else: ?>
+                                <span style="color:gray;">
+                                    Sin inventario base definido
+                                </span>
 
-                                    <span style="color:green;">
-                                        Completo ✓
-                                    </span>
+                            <?php else: ?>
 
-                                <?php endif; ?>
-                            </td>
+                                <span style="color:green;">
+                                    Completo ✓
+                                </span>
+
+                            <?php endif; ?>
+
+                        </td>
 
                             <td>
                                 <a href="index.php?modulo=revision&buscar=<?= $h['numero'] ?>">
@@ -109,12 +111,30 @@
 
         <br>
 
-        <?php
-        $total         = count($habitaciones);
-        $completas     = count(array_filter($habitaciones, fn($h) => $h['total_faltantes'] == 0 && !is_null($h['articulos_faltantes'])));
-        $conFaltantes  = count(array_filter($habitaciones, fn($h) => $h['total_faltantes'] > 0));
-        $sinBase       = count(array_filter($habitaciones, fn($h) => is_null($h['articulos_faltantes'])));
-        ?>
+    <?php
+
+            $total = count($habitaciones);
+
+            $completas = count(array_filter(
+                $habitaciones,
+                fn($h) =>
+                    $h['total_base'] > 0 &&
+                    $h['total_faltantes'] == 0
+            ));
+
+            $conFaltantes = count(array_filter(
+                $habitaciones,
+                fn($h) =>
+                    $h['total_faltantes'] > 0
+            ));
+
+            $sinBase = count(array_filter(
+                $habitaciones,
+                fn($h) =>
+                    $h['total_base'] == 0
+            ));
+
+    ?>
 
         <p>🏨 Total de habitaciones: <strong><?= $total ?></strong></p>
         <br>

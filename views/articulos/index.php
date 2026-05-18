@@ -14,11 +14,21 @@
 
 <?php require_once __DIR__ . "/../layout/header.php"; ?>
 
+<!-- /////////////////////////////////////////////////////// -->
+
+<div class="page-header"> 
+    <h1>Lista de artículos</h1> 
+    <p>Administración de artículos del hotel</p> 
+</div>
+
+<!-- /////////////////////////////////////////////////////// -->
+
+<div class="container">
 
     <input type="text" id="buscador" placeholder="Buscar...">
 <br><br>
 
-    <table border="1">
+    <table>
 
     <thead>
         <tr>
@@ -92,7 +102,7 @@
         <button type="reset">Cancelar</button>
 
     </form>
-
+</div>
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
 
 

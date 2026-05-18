@@ -15,7 +15,7 @@ class Dashboard {
 
     public function obtenerResumen() {
 
-        $sql = "SELECT * FROM dashboard_habitaciones";
+        $sql = "SELECT * FROM vista_dashboard";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
 

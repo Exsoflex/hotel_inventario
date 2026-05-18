@@ -10,14 +10,11 @@
 
 body {
 
-    body {
-
     font-family: "DM Sans", sans-serif;
 
-    background: #f4f5f7;
+    background: linear-gradient(90deg, #fe8b61 0%, #93245c 50%, #9600b7 100%);
 
     color: #333;
-}
 }
 
 /* ===== CONTENEDOR ===== */
@@ -206,9 +203,10 @@ a:hover {
 .dashboard-header {
 
     background-color: white;
-    border-radius: 30px;
+    border-radius: 25px;
     padding: 35px;
-    color: rgb(0, 0, 0);
+    color: #333;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 .dashboard-header h1 {
