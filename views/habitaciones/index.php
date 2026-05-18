@@ -16,6 +16,7 @@
     <h1>Lista de habitaciones</h1>
 
     <input type="text" id="buscador" placeholder="Buscar...">
+<br><br>
 
     <table border="1">
     <thead>

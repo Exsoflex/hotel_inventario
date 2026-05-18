@@ -17,24 +17,29 @@
 
 <nav class="navbar">
 
-    <a href="index.php">Inicio</a>
+    <a href="index.php">
+        <button>Inicio</button>
+    </a>
 
     <a href="index.php?modulo=habitaciones">
-        Habitaciones
+        <button>Habitaciones</button>
     </a>
 
     <a href="index.php?modulo=articulos">
-        Articulos
+        <button>Articulos</button>
     </a>
 
     <a href="index.php?modulo=inventario">
-        Inventario
+        <button>Inventario</button>
     </a>
 
     <a href="index.php?modulo=inventario_base">
-        Inventario Base
+        <button>Inventario Base</button>
     </a>
 
+    <a href="index.php?modulo=revision">
+        <button>Revision</button>
+    </a>
 </nav>
 
 <div class="container">

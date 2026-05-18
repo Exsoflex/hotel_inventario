@@ -16,13 +16,14 @@
     <h1>Lista de inventario</h1>
 
     <input type="text" id="buscador" placeholder="Buscar...">
+<br><br>
 
     <table border="1">
 
     <thead>
 
          <tr>
-            <th>ID</th>
+            <th hidden>ID</th>
             <th>Habitación</th>
             <th>Articulo</th>
             <th>Cantidad</th>
@@ -41,7 +42,7 @@
         foreach($inventarios as $i): ?>
 
             <tr id="inventario-<?= $i['id'] ?>">
-                <td><?= $i['id'] ?></td>
+                <td hidden><?= $i['id'] ?></td>
                 <td><?= $i['numero'] ?></td>
                 <td><?= $i['nombre'] ?></td>
                 <td><?= $i['cantidad'] ?></td>
@@ -218,7 +219,8 @@ buscador.addEventListener('keyup', function() {
 
     filas.forEach(function(fila){
 
-        let contenido = fila.textContent.toLowerCase();
+        let celdas = fila.querySelectorAll("td:not([hidden])");
+        let contenido = Array.from(celdas).map(td => td.textContent).join(' ').toLowerCase();
 
         if(contenido.includes(texto)){
             fila.style.display = "";

@@ -10,7 +10,10 @@
 </head>
 
 <body>
-<div class="container">
+
+<?php require_once __DIR__ . "/layout/header.php"; ?>
+
+
     <h1>Sistema de Inventario Hotel</h1>
 
     <h2>Modulos</h2>
@@ -32,8 +35,13 @@
     <a href="index.php?modulo=inventario_base">
         <button>Inventario Base</button>
     </a>
+<br><br>
+    <a href="index.php?modulo=revicion">
+        <button>Revision</button>
+    </a>
 
 
-</div>
+<?php require_once __DIR__ . "/layout/footer.php"; ?>
+
 </body>
 </html>

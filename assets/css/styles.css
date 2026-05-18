@@ -71,8 +71,9 @@ input,
 select,
 button {
 
+
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 20px;
     border: 1px solid #ccc;
     font-size: 16px;
 }
@@ -82,27 +83,31 @@ button {
 button {
 
     cursor: pointer;
-    background-color: #333;
-    color: white;
+    background-color: white;
+    color: #333;
     border: none;
     transition: 0.2s;
 }
 
 button:hover {
 
-    background-color: #555;
+    background-color: #333;
+    color: #ffffff;
 }
 
 /* ===== LINKS ===== */
 
 a {
 
+    color: #333;
     text-decoration: none;
+    transition: text-shadow 0.2s ease-in-out;
 }
 
 a:hover {
 
-    text-decoration: underline;
+    color: #cd398a;
+    text-shadow: 0 0 2px #cd398a7d;
 }
 
 /* /////////////////////
@@ -116,7 +121,7 @@ a:hover {
     padding:40px;
     box-sizing:border-box;
     display:flex;
-    gap:80px;
+    gap:30px;
     box-shadow:0 0 40px rgba(0,0,0,0.4);
 }
 

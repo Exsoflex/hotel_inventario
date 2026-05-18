@@ -17,6 +17,7 @@
     <h1>Lista de Articulos</h1>
 
     <input type="text" id="buscador" placeholder="Buscar...">
+<br><br>
 
     <table border="1">
 

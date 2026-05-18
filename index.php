@@ -34,6 +34,12 @@ switch($modulo) {
         $controller = new InventariobaseController();
         break;
 
+    case 'revision':
+
+        require_once __DIR__ . "/controllers/revisionController.php";
+        $controller = new RevisionController();
+        break;
+
     default:
 
         require_once __DIR__ . "/controllers/habitacionesController.php";
