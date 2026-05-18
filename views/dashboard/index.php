@@ -9,123 +9,190 @@
     <title>Dashboard</title>
 </head>
 
-<body>
+<body class="dashboard-body">
 
 <?php require_once __DIR__ . "/../layout/header.php"; ?>
 
+<div class="dashboard-header">
     <h1>Dashboard</h1>
+    <p>Estado general del inventario del hotel</p>
+</div>
 
-    <input type="text" id="buscador" placeholder="Buscar...">
+<div class="dashboard-wrapper">
 
-    <br><br>
+    <!-- ===== PANEL IZQUIERDO: tabla de habitaciones ===== -->
+    <div class="dashboard-panel-izquierdo">
 
-    <?php
-    // Agrupar habitaciones por piso
-    $porPiso = [];
-    foreach ($habitaciones as $h) {
-        $porPiso[$h['piso']][] = $h;
-    }
-    ksort($porPiso); // Ordenar pisos de menor a mayor
-    ?>
+        <?php
+        $porPiso = [];
+        foreach ($habitaciones as $h) {
+            $porPiso[$h['piso']][] = $h;
+        }
+        ksort($porPiso);
+        ?>
 
-    <?php foreach ($porPiso as $piso => $habitacionesPiso): ?>
+        <?php foreach ($porPiso as $piso => $habitacionesPiso): ?>
 
-        <h2>Piso <?= $piso ?></h2>
+            <h2>Piso <?= $piso ?></h2>
 
-        <table border="1">
+            <input type="text" id="buscador" placeholder="Buscar...">
+            <br><br>
 
-            <thead>
-                <tr>
-                    <th>Habitación</th>
-                    <th>Tipo</th>
-                    <th>Artículos faltantes</th>
-                    <th>Detalles</th>
-                </tr>
-            </thead>
 
-            <tbody>
+            <table border="1">
 
-                <?php foreach ($habitacionesPiso as $h): ?>
-
-                    <tr id="habitacion-<?= $h['habitacion_id'] ?>">
-
-                        <td><?= $h['numero'] ?></td>
-
-                        <td><?= $h['tipo'] ?></td>
-
-                        <td>
-                            <?php if ($h['total_faltantes'] > 0): ?>
-
-                                <span style="color:red; font-weight:bold;">
-                                    <?= $h['articulos_faltantes'] ?>
-                                </span>
-
-                            <?php elseif (is_null($h['articulos_faltantes'])): ?>
-
-                                <span style="color:gray;">
-                                    Sin inventario base definido
-                                </span>
-
-                            <?php else: ?>
-
-                                <span style="color:green;">
-                                    Completo ✓
-                                </span>
-
-                            <?php endif; ?>
-                        </td>
-
-                        <td>
-                        <a href="index.php?modulo=revision&buscar=<?= $h['numero'] ?>">
-                         🔍 Ver detalles
-                        </a>
-                        </td>
-
+                <thead>
+                    <tr>
+                        <th>Habitación</th>
+                        <th>Tipo</th>
+                        <th>Artículos faltantes</th>
+                        <th>Detalles</th>
                     </tr>
-                <?php endforeach; ?>
-                
-            </tbody>
-        </table>
+                </thead>
+
+                <tbody>
+
+                    <?php foreach ($habitacionesPiso as $h): ?>
+
+                        <tr id="habitacion-<?= $h['habitacion_id'] ?>">
+
+                            <td><?= $h['numero'] ?></td>
+
+                            <td><?= $h['tipo'] ?></td>
+
+                            <td>
+                                <?php if ($h['total_faltantes'] > 0): ?>
+
+                                    <span style="color:red;">
+                                        <?= $h['articulos_faltantes'] ?>
+                                    </span>
+
+                                <?php elseif (is_null($h['articulos_faltantes'])): ?>
+
+                                    <span style="color:gray;">
+                                        Sin inventario base definido
+                                    </span>
+
+                                <?php else: ?>
+
+                                    <span style="color:green;">
+                                        Completo ✓
+                                    </span>
+
+                                <?php endif; ?>
+                            </td>
+
+                            <td>
+                                <a href="index.php?modulo=revision&buscar=<?= $h['numero'] ?>">
+                                    🔍 Ver detalles
+                                </a>
+                            </td>
+
+                        </tr>
+
+                    <?php endforeach; ?>
+
+                </tbody>
+
+            </table>
+
+            <br>
+
+        <?php endforeach; ?>
+
+    </div>
+
+    <!-- ===== PANEL DERECHO: estadísticas ===== -->
+    <div class="dashboard-panel-derecho">
+
+        <h2>Resumen</h2>
 
         <br>
 
-    <?php endforeach; ?>
+        <?php
+        $total         = count($habitaciones);
+        $completas     = count(array_filter($habitaciones, fn($h) => $h['total_faltantes'] == 0 && !is_null($h['articulos_faltantes'])));
+        $conFaltantes  = count(array_filter($habitaciones, fn($h) => $h['total_faltantes'] > 0));
+        $sinBase       = count(array_filter($habitaciones, fn($h) => is_null($h['articulos_faltantes'])));
+        ?>
+
+        <p>🏨 Total de habitaciones: <strong><?= $total ?></strong></p>
+        <br>
+        <p style="color:green;">✓ Completas: <strong><?= $completas ?></strong></p>
+        <br>
+        <p style="color:red;">✗ Con faltantes: <strong><?= $conFaltantes ?></strong></p>
+        <br>
+        <p style="color:gray;">⚠ Sin inventario base: <strong><?= $sinBase ?></strong></p>
+
+        <br><br>
+
+        <h2>Habitaciones críticas</h2>
+        <br>
+
+        <?php
+        // Habitaciones con más faltantes primero
+        $criticas = array_filter($habitaciones, fn($h) => $h['total_faltantes'] > 0);
+        usort($criticas, fn($a, $b) => $b['total_faltantes'] - $a['total_faltantes']);
+        $criticas = array_slice($criticas, 0, 5); // Top 5
+        ?>
+
+        <?php if (empty($criticas)): ?>
+
+            <p style="color:green;">Ninguna habitación con faltantes ✓</p>
+
+        <?php else: ?>
+
+            <?php foreach ($criticas as $c): ?>
+
+                <p>
+                    <strong>Hab <?= $c['numero'] ?></strong>
+                    — <?= $c['total_faltantes'] ?> faltante(s)
+                    <a href="index.php?modulo=revision&buscar=<?= $c['numero'] ?>">
+                        🔍
+                    </a>
+                </p>
+                <br>
+
+            <?php endforeach; ?>
+
+        <?php endif; ?>
+
+    </div>
+
+</div>
 
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
 
 <script>
 
 const buscador = document.getElementById('buscador');
-buscador.addEventListener('keyup', function() {
+
+function filtrar() {
 
     let texto = buscador.value.toLowerCase();
 
-    // Busca en todas las tablas del dashboard
-    let filas = document.querySelectorAll("table tbody tr");
-
-    filas.forEach(function(fila) {
+    document.querySelectorAll("table tbody tr").forEach(function(fila) {
 
         let celdas = fila.querySelectorAll("td:not([hidden])");
         let contenido = Array.from(celdas).map(td => td.textContent).join(' ').toLowerCase();
 
-        if (contenido.includes(texto)) {
-            fila.style.display = "";
-        } else {
-            fila.style.display = "none";
-        }
+        fila.style.display = contenido.includes(texto) ? "" : "none";
+
     });
 
-    // Ocultar titulo de piso si todas sus filas están ocultas
     document.querySelectorAll("h2").forEach(function(titulo) {
 
         let tabla = titulo.nextElementSibling;
-        let filasVisibles = tabla.querySelectorAll("tbody tr:not([style*='display: none'])");
+        if (!tabla || tabla.tagName !== 'TABLE') return;
 
-        titulo.style.display = filasVisibles.length > 0 ? "" : "none";
+        let visibles = tabla.querySelectorAll("tbody tr:not([style*='display: none'])");
+        titulo.style.display = visibles.length > 0 ? "" : "none";
 
     });
 
-});
+}
+
+buscador.addEventListener('keyup', filtrar);
 
 </script>
 

@@ -5,45 +5,68 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="assets/css/styles.css">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <title>Hotel Inventario</title>
 </head>
 
 <body>
 
-<nav class="navbar">
+<div class="layout">
 
-    <a href="index.php">
-        <button>Inicio</button>
-    </a>
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
 
-    <a href="index.php?modulo=habitaciones">
-        <button>Habitaciones</button>
-    </a>
+        <div class="sidebar-top">
 
-    <a href="index.php?modulo=articulos">
-        <button>Articulos</button>
-    </a>
+            <button id="toggleSidebar" class="menu-btn">
+                <i data-lucide="menu"></i>
+            </button>
 
-    <a href="index.php?modulo=inventario">
-        <button>Inventario</button>
-    </a>
+            <span class="logo-text">Hotel</span>
 
-    <a href="index.php?modulo=inventario_base">
-        <button>Inventario Base</button>
-    </a>
+        </div>
 
-    <a href="index.php?modulo=revision">
-        <button>Revision</button>
-    </a>
+        <nav class="sidebar-nav">
 
-    <a href="index.php?modulo=dashboard">
-        <button>Dashboard</button>
-    </a>
-</nav>
+            <a href="index.php?modulo=dashboard">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Dashboard</span>
+            </a>
 
-<div class="container">
+            <a href="index.php?modulo=habitaciones">
+                <i data-lucide="bed-double"></i>
+                <span>Habitaciones</span>
+            </a>
+
+            <a href="index.php?modulo=articulos">
+                <i data-lucide="package"></i>
+                <span>Artículos</span>
+            </a>
+
+            <a href="index.php?modulo=inventario">
+                <i data-lucide="boxes"></i>
+                <span>Inventario</span>
+            </a>
+
+            <a href="index.php?modulo=inventario_base">
+                <i data-lucide="clipboard-list"></i>
+                <span>Inventario Base</span>
+            </a>
+
+            <a href="index.php?modulo=revision">
+                <i data-lucide="search"></i>
+                <span>Revisión</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="main-content">
+
+        <div class="container">

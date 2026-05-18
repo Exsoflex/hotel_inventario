@@ -14,7 +14,6 @@
 
 <?php require_once __DIR__ . "/../layout/header.php"; ?>
 
-    <h1>Lista de Articulos</h1>
 
     <input type="text" id="buscador" placeholder="Buscar...">
 <br><br>

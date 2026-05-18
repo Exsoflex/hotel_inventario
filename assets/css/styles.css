@@ -10,21 +10,29 @@
 
 body {
 
+    body {
+
     font-family: "DM Sans", sans-serif;
-    background: linear-gradient(90deg, #fe8b61 0%, #93245c 50%, #9600b7 100%);
+
+    background: #f4f5f7;
+
     color: #333;
+}
 }
 
 /* ===== CONTENEDOR ===== */
 
 .container {
 
-    max-width: 1200px;
-    margin: 30px auto;
-    background-color: white;
-    padding: 25px;
-    border-radius: 50px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 100%;
+
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 35px;
+
+    box-shadow: 0 10px 35px rgba(0,0,0,0.12);
 }
 /* ===== TITULOS ===== */
 
@@ -46,14 +54,19 @@ table {
 table th,
 table td {
 
-    border: 1px solid #ddd;
-    padding: 12px;
+    padding: 14px;
     text-align: left;
+    border-bottom: 1px solid #eee;
 }
 
 table th {
 
     background-color: #f0f0f0;
+}
+
+table tr:hover {
+
+    background-color: #f8f8f8;
 }
 
 /* ===== FORMULARIOS ===== */
@@ -91,8 +104,16 @@ button {
 
 button:hover {
 
-    background-color: #333;
-    color: #ffffff;
+    box-shadow: 0 3px 5px #30303088;
+}
+
+.main-content {
+
+    flex: 1;
+
+    padding: 30px;
+
+    overflow-x: auto;
 }
 
 /* ===== LINKS ===== */
@@ -110,23 +131,235 @@ a:hover {
     text-shadow: 0 0 2px #cd398a7d;
 }
 
-/* /////////////////////
-/* ===== NAVBAR ===== */
-/* //////////////////*/
+/* ===== BUSCADOR ===== */
 
-.navbar{
+#buscador {
 
-    width:100%;
-    background:#ffffff;
-    padding:40px;
-    box-sizing:border-box;
-    display:flex;
-    gap:30px;
-    box-shadow:0 0 40px rgba(0,0,0,0.4);
+    width: 100%;
+    padding: 14px 18px;
+
+    border: none;
+
+    border-radius: 18px;
+
+    background-color: #f5f5f5;
+
+    font-size: 16px;
 }
 
-.navbar a{
 
-    color:#333;
-    text-decoration:none;
+
+/* ====================== */
+/* ===== SIDEBAR ======== */
+/* ====================== */
+
+.sidebar {
+
+    width: 270px;
+    background: white;
+    border-right: 1px solid #ececec;
+    min-height: 100vh;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    position: sticky;
+    top: 0;
+}
+
+.sidebar span {
+
+    transition: opacity 0.2s ease;
+}
+
+.sidebar.collapsed span {
+
+    opacity: 0;
+}
+
+.sidebar.collapsed {
+
+    width: 85px;
+}
+
+/* ///////////////////////*/
+/* ===== DASHBOARD ===== */
+/* /////////////////////*/
+
+.dashboard-body {
+    background: linear-gradient(90deg, #fe8b61 0%, #93245c 50%, #9600b7 100%);
+    min-height: 100vh;
+    min-width: 100%;
+}
+
+.dashboard-wrapper {
+
+    display: flex;
+    gap: 30px;
+
+    padding: 20px 35px 35px 35px;
+
+    width: 100%;
+    min-height: 100vh;
+
+    box-sizing: border-box;
+}
+
+.dashboard-header {
+
+    background-color: white;
+    border-radius: 30px;
+    padding: 35px;
+    color: rgb(0, 0, 0);
+}
+
+.dashboard-header h1 {
+
+    font-size: 52px;
+    margin-bottom: 10px;
+}
+
+.dashboard-header p {
+
+    font-size: 18px;
+    opacity: 0.9;
+    margin-bottom: 20px;
+}
+
+.dashboard-panel-izquierdo {
+    flex: 2;
+    background-color: white;
+    border-radius: 30px;
+    padding: 25px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    min-width: 0;
+    overflow-x: auto;
+}
+
+.dashboard-panel-derecho {
+    flex: 1;
+    background-color: white;
+    border-radius: 30px;
+    padding: 25px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    min-width: 0;
+}
+
+/* ////////////////////////////*/
+/* ===== LAYOUT GENERAL ===== */
+/* //////////////////////////*/
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar.collapsed {
+    width: 85px;
+}
+
+.sidebar-top {
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 25px;
+}
+
+.menu-btn {
+
+    border: none;
+    background: transparent;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-text {
+
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.sidebar-nav {
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 10px;
+}
+
+.sidebar-nav a {
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 15px 18px;
+
+    border-radius: 16px;
+
+    transition: 0.2s;
+
+    color: #333;
+}
+
+.sidebar-nav a:hover {
+
+    background: #f3f3f3;
+}
+
+.sidebar-nav i {
+
+    width: 22px;
+    height: 22px;
+
+    flex-shrink: 0;
+}
+
+.sidebar.collapsed span {
+
+    display: none;
+}
+
+.main-content {
+
+    flex: 1;
+
+    padding: 25px;
+
+    overflow-x: auto;
+}
+
+/* ========================= */
+/* ===== PAGE HEADER ======= */
+/* ========================= */
+
+.page-header {
+
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 30px;
+
+    margin-bottom: 25px;
+
+    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+}
+
+.page-header h1 {
+
+    font-size: 42px;
+
+    margin-bottom: 8px;
+}
+
+.page-header p {
+
+    color: #777;
+
+    font-size: 16px;
 }
