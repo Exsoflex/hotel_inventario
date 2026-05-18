@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +8,6 @@
     <link rel="stylesheet" href="assets/css/styles.css">
 
     <title>Revision</title>
-
 </head>
 
 <body>
@@ -19,13 +16,13 @@
 
 <h1>Revision de habitaciones</h1>
 
-<input type="text" id="buscador" placeholder="Buscar...">
+<input type="text" id="buscador" placeholder="Buscar..."
+value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
 <br><br>
 
 <table border="1">
 
     <thead>
-
         <tr>
 
             <th>Habitacion</th>
@@ -37,27 +34,19 @@
             <th>Estado</th>
 
         </tr>
-
     </thead>
 
     <tbody>
-
         <?php foreach($faltantes as $f): ?>
-
         <tr>
 
             <td><?= $f['numero'] ?></td>
-
             <td><?= $f['tipo'] ?></td>
-
             <td><?= $f['articulo'] ?></td>
-
             <td><?= $f['cantidad_base'] ?></td>
-
             <td><?= $f['cantidad_actual'] ?></td>
 
             <td>
-
                 <?php if($f['faltantes'] > 0): ?>
 
                     <span style="color:red; font-weight:bold;">
@@ -71,49 +60,49 @@
                     </span>
 
                 <?php endif; ?>
-
             </td>
 
             <td><?= $f['estado'] ?? 'faltante' ?></td>
-
         </tr>
 
         <?php endforeach; ?>
 
     </tbody>
-
 </table>
 
 <script>
 
 const buscador = document.getElementById('buscador');
 
-buscador.addEventListener('keyup', function() {
+function filtrar() {
 
     let texto = buscador.value.toLowerCase();
-
     let filas = document.querySelectorAll("table tbody tr");
 
-    filas.forEach(function(fila){
+    filas.forEach(function(fila) {
 
         let contenido = fila.textContent.toLowerCase();
 
-        if(contenido.includes(texto)){
-
+        if (contenido.includes(texto)) {
             fila.style.display = "";
-
         } else {
-
             fila.style.display = "none";
-
         }
 
     });
 
+}
+
+buscador.addEventListener('keyup', filtrar);
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    if (buscador.value.trim() !== '') {
+        filtrar();
+    }
+
 });
 
 </script>
-
 </body>
-
 </html>

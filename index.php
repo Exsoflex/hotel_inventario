@@ -40,10 +40,16 @@ switch($modulo) {
         $controller = new RevisionController();
         break;
 
+    case 'dashboard':
+
+        require_once __DIR__ . "/controllers/dashboardController.php";
+        $controller = new DashboardController();
+        break;
+
     default:
 
-        require_once __DIR__ . "/controllers/habitacionesController.php";
-        $controller = new HabitacionesController();
+        require_once __DIR__ . "/controllers/dashboardController.php";
+        $controller = new DashboardController();
         break;
 }
 

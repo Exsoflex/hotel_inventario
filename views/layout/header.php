@@ -40,6 +40,10 @@
     <a href="index.php?modulo=revision">
         <button>Revision</button>
     </a>
+
+    <a href="index.php?modulo=dashboard">
+        <button>Dashboard</button>
+    </a>
 </nav>
 
 <div class="container">
