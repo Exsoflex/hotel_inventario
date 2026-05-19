@@ -26,7 +26,10 @@
                 <i data-lucide="menu"></i>
             </button>
 
-            <span class="logo-text">Hotel</span>
+            <span class="logo-text">
+            <img src="assets/img/HLH_logo.png" alt="logo" class="logo-img">    
+            </span>
+
 
         </div>
 
@@ -69,4 +72,4 @@
     <!-- CONTENIDO -->
     <main class="main-content">
 
-        <div class="container">
+        <div class="container-base">

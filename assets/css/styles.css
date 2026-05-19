@@ -31,6 +31,28 @@ body {
 
     box-shadow: 0 10px 35px rgba(0,0,0,0.12);
 }
+
+.container-base {
+
+    width: 100%;
+
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 35px;
+
+    box-shadow: 0 10px 35px rgba(0,0,0,0.12);
+
+/*
+    /* Fondo blanco con 20% de opacidad */
+    background-color: rgba(255, 255, 255, 0.2); 
+    
+    /* Desenfoque de 10 píxeles a lo que esté detrás */
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px); /* Soporte para Safari */
+
+}
 /* ===== TITULOS ===== */
 
 h1, h2 {
@@ -279,6 +301,13 @@ a:hover {
 
     font-size: 24px;
     font-weight: 700;
+}
+
+.logo-img {
+
+    width: 140px;
+    height: 80px;
+    border-radius: 50%;
 }
 
 .sidebar-nav {
