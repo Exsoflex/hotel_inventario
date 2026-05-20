@@ -23,196 +23,81 @@
 <!-- /////////////////////////////////////////////////////// -->
 
 <div class="container">
+
+<div class="inventario-topbar">
     <input type="text" id="buscador" placeholder="Buscar...">
-<br><br>
-
-    <table>
-
-    <thead>
-
-         <tr>
-            <th hidden>ID</th>
-            <th>Habitación</th>
-            <th>Articulo</th>
-            <th>Cantidad</th>
-            <th>Estado</th>
-            <th>Comentarios</th>
-            <th>Eliminar</th>
-            <th>Editar</th>
-        </tr>
-    
-    </thead>
-    
-    <tbody>
-
-        <?php
-        //var_dump($habitaciones); // Agrega esta línea para verificar el contenido de $habitaciones
-        foreach($inventarios as $i): ?>
-
-            <tr id="inventario-<?= $i['id'] ?>">
-                <td hidden><?= $i['id'] ?></td>
-                <td><?= $i['numero'] ?></td>
-                <td><?= $i['nombre'] ?></td>
-                <td><?= $i['cantidad'] ?></td>
-                <td><?= $i['estado'] ?></td>
-                <td><?= $i['comentarios'] ?></td>
-                <td>
-                    <a href="index.php?modulo=inventario&accion=eliminar&id=<?= $i['id'] ?>"> 🗑 Eliminar</a>
-                </td>
-                <td>
-                    <a href="index.php?modulo=inventario&accion=editar&id=<?= $i['id'] ?>#inventarioFormulario"> ✏ Editar</a>
-                </td>    
-            </tr>
-
-        <?php endforeach; ?>
-
-    </tbody>
-
-    </table>
+    <button class="btn-agregar" onclick="abrirModal()">
+        + Agregar inventario
+    </button>
+</div>
 
 <br>
-<h2>Agregar nuevo inventario</h2>
-<br>
 
-    <br>
+<?php
 
-    <form 
-    id="inventarioFormulario" 
-    action="index.php?modulo=inventario&accion=<?= isset($inventarioEditar) ? 'editar' : 'agregar' ?>" method="POST">
+$inventarioPorHabitacion = [];
 
-        <input 
-        type="hidden" 
-        name="id" 
-        value="<?= $inventarioEditar['id'] ?? '' ?>"
-        >
+foreach($inventarios as $i){
 
-        <label>Habitacion</label>
-        <select name="habitacion_id">
+    $inventarioPorHabitacion[$i['numero']][] = $i;
+}
 
-        <option value="">Seleccione una habitacion</option>
+ksort($inventarioPorHabitacion);
 
-            <?php foreach($habitaciones as $h): ?>
+?>
 
-            <option 
-                value="<?= $h['id'] ?>"
-            
-            <?= 
-                isset($inventarioEditar) && 
-                $inventarioEditar['habitacion_id'] == $h['id'] 
-                ? 'selected' : ''
-            ?>
-            >
+<!-- /////////////////////////////////////////////////////// -->
 
-                Habitacion <?= $h['numero'] ?>
-            </option>
+<?php foreach($inventarioPorHabitacion as $numero => $items): ?>
 
+    <div class="habitacion-section">
+        <div class="habitacion-section-header">
+            <h2>Habitación <?= $numero ?></h2>
+        </div>
+
+        <div class="inventario-grid">
+            <?php foreach($items as $i): ?>
+                <div class="inventario-card">
+                    <div class="inventario-card-header">
+                        <div>
+                            <h3><?= $i['nombre'] ?></h3>
+                        </div>
+                        <div class="estado-badge estado-<?= $i['estado'] ?>">
+                            <?= ucfirst($i['estado']) ?>
+                        </div>
+                    </div>
+                    <div class="inventario-info">
+
+                        <p>
+                            <strong>Cantidad:</strong>
+                            <?= $i['cantidad'] ?>
+                        </p>
+
+                        <p>
+                            <strong>Comentarios:</strong>
+                            <?= $i['comentarios'] ?: 'Sin comentarios' ?>
+                        </p>
+
+                    </div>
+                    <div class="inventario-actions">
+                        <a href="index.php?modulo=inventario&accion=editar&id=<?= $i['id'] ?>">
+                            Editar
+                        </a>
+                        <a href="index.php?modulo=inventario&accion=eliminar&id=<?= $i['id'] ?>">
+                            Eliminar
+                        </a>
+
+                    </div>
+                </div>
             <?php endforeach; ?>
-        </select>
+        </div>
+    </div>
+<?php endforeach; ?>
 
-        <br>
 
-        <label>Articulo</label>
-        <select name="articulo_id">
+<!-- /////////////////////////////////////////////////////// -->
 
-        <option value="">Seleccione un articulo</option>
 
-            <?php foreach($articulos as $a): ?>
-
-            <option 
-                value="<?= $a['id'] ?>"
-                
-            <?= 
-                isset($inventarioEditar) &&
-                $inventarioEditar['articulo_id'] == $a['id']
-                ? 'selected' : ''
-            ?>    
-            >
-                <?= $a['nombre'] ?>
-            </option>
-            
-            <?php endforeach; ?>
-        </select>
-
-        <br>
-
-        <label>Cantidad</label>
-        <input 
-        type="number" 
-        name="cantidad" 
-        required
-        min="0"
-        value="<?= $inventarioEditar['cantidad'] ?? '' ?>"
-        >
-        
-        <br>
-
-        <select name="estado">
-            <option 
-                value="">Seleccione un estado</option>
-            <option 
-                value="bueno"
-                
-            <?=
-                isset($inventarioEditar)&&
-                $inventarioEditar['estado'] == 'bueno'
-
-                ? 'selected' : ''
-
-            ?>
-                
-                >Bueno</option>
-
-            <option 
-                value="dañado"
-                
-            <?=
-                isset($inventarioEditar)&&
-                $inventarioEditar['estado'] == 'dañado'
-
-                ? 'selected' : ''
-
-            ?>
-                >Dañado</option>
-
-            <option 
-                value="en_reparacion"
-                
-            <?=
-                isset($inventarioEditar)&&
-                $inventarioEditar['estado'] == 'en_reparacion'
-
-                ? 'selected' : ''
-
-            ?>
-                >En reparación</option>
-
-            <option 
-                value="perdido"
-                
-            <?=
-                isset($inventarioEditar)&&
-                $inventarioEditar['estado'] == 'perdido'
-
-                ? 'selected' : ''
-
-            ?>
-                >Perdido</option>
-            
-        </select>
-
-        <label>Comentarios</label>
-        <input 
-        type="text" 
-        name="comentarios" 
-        value="<?= $inventarioEditar['comentarios'] ?? '' ?>"
-        >
-
-        <br><br>
-
-        <button type="submit">Guardar</button>
-        <button type="reset">Cancelar</button>
-
-    </form>
 
 </div>
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
@@ -221,23 +106,61 @@
 <script>
 
 const buscador = document.getElementById('buscador');
-buscador.addEventListener('keyup', function() {
+buscador.addEventListener('keyup', function(){
 
     let texto = buscador.value.toLowerCase();
-    let filas = document.querySelectorAll("table tbody tr");
+    // Todas las secciones de habitación
+    let secciones = document.querySelectorAll('.habitacion-section');
 
-    filas.forEach(function(fila){
+    secciones.forEach(function(seccion){
 
-        let celdas = fila.querySelectorAll("td:not([hidden])");
-        let contenido = Array.from(celdas).map(td => td.textContent).join(' ').toLowerCase();
+        let tituloHabitacion = seccion
+            .querySelector('.habitacion-section-header h2')
+            .textContent
+            .toLowerCase();
 
-        if(contenido.includes(texto)){
-            fila.style.display = "";
-        } else {
-            fila.style.display = "none";
-        }
+        let cards = seccion.querySelectorAll('.inventario-card');
+        let algunaVisible = false;
+
+        cards.forEach(function(card){
+            let contenido = card.textContent.toLowerCase();
+            // Buscar tanto en habitación como en contenido
+            let coincide =
+                contenido.includes(texto) ||
+                tituloHabitacion.includes(texto);
+
+            card.style.display = coincide ? '' : 'none';
+            if(coincide){
+                algunaVisible = true;
+            }
+        });
+
+        // Mostrar u ocultar toda la sección
+        seccion.style.display = algunaVisible ? '' : 'none';
     });
 });
+
+function abrirModal(){
+
+    document
+    .getElementById('modalInventario')
+    .classList
+    .add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function cerrarModal(){
+
+    document
+    .getElementById('modalInventario')
+    .classList
+    .remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+<?php if(isset($inventarioEditar)): ?>
+abrirModal();
+<?php endif; ?>
 
 </script>
 

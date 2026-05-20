@@ -31,12 +31,15 @@
         ksort($porPiso);
         ?>
 
+        <div class="dashboard-buscador">
+            <input type="text" id="buscador" placeholder="Buscar habitación...">
+        </div>
+
+<br>
+
         <?php foreach ($porPiso as $piso => $habitacionesPiso): ?>
 
             <h2>Piso <?= $piso ?></h2>
-
-            <input type="text" id="buscador" placeholder="Buscar...">
-            <br><br>
 
 
             <table>

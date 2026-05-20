@@ -28,83 +28,118 @@ value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
 
 <br><br>
 
-<table>
+<?php
 
-    <thead>
-        <tr>
+$habitacionesAgrupadas = [];
 
-            <th>Habitacion</th>
-            <th>Tipo</th>
-            <th>Articulo</th>
-            <th>Debe tener</th>
-            <th>Tiene</th>
-            <th>Faltan</th>
-            <th>Estado</th>
+foreach ($faltantes as $f) {
 
-        </tr>
-    </thead>
+    $numeroHabitacion = $f['numero'];
 
-    <tbody>
-        <?php foreach($faltantes as $f): ?>
-        <tr>
+    if (!isset($habitacionesAgrupadas[$numeroHabitacion])) {
 
-            <td><?= $f['numero'] ?></td>
-            <td><?= $f['tipo'] ?></td>
-            <td><?= $f['articulo'] ?></td>
-            <td><?= $f['cantidad_base'] ?></td>
-            <td><?= $f['cantidad_actual'] ?></td>
+        $habitacionesAgrupadas[$numeroHabitacion] = [
 
-            <td>
-                <?php if($f['faltantes'] > 0): ?>
+            'numero' => $f['numero'],
+            'tipo' => $f['tipo'],
+            'items' => []
 
-                    <span style="color:red; font-weight:bold;">
-                        <?= $f['faltantes'] ?>
-                    </span>
+        ];
+    }
 
-                <?php else: ?>
+    $habitacionesAgrupadas[$numeroHabitacion]['items'][] = $f;
+}
+?>
 
-                    <span style="color:green;">
-                        Completo
-                    </span>
+<div class="revision-grid">
 
-                <?php endif; ?>
-            </td>
+<?php foreach($habitacionesAgrupadas as $hab): ?>
 
-            <td><?= $f['estado'] ?? 'faltante' ?></td>
-        </tr>
+    <?php
 
-        <?php endforeach; ?>
+    $faltantesHabitacion = array_filter(
+        $hab['items'],
+        fn($item) => $item['faltantes'] > 0
+    );
 
-    </tbody>
-</table>
+    $estaCompleta = count($faltantesHabitacion) == 0;
+    ?>
+
+    <div class="habitacion-card">
+
+        <!-- HEADER CARD -->
+        <div class="habitacion-card-header">
+            <div>
+                <h2>Habitación <?= $hab['numero'] ?></h2>
+                <p><?= $hab['tipo'] ?></p>
+            </div>
+
+            <div class="<?= $estaCompleta ? 'estado-ok' : 'estado-faltante' ?>">
+                <?= $estaCompleta ? 'Completa ✓' : 'Con faltantes' ?>
+            </div>
+
+        </div>
+
+        <!-- ITEMS -->
+
+        <div class="habitacion-items">
+            <?php foreach($hab['items'] as $item): ?>
+                <div class="item-row">
+                    <div class="item-info">
+                        <strong><?= $item['articulo'] ?></strong>
+                        <span>
+
+                            <?= $item['cantidad_actual'] ?>
+                            /
+                            <?= $item['cantidad_base'] ?>
+
+                        </span>
+                    </div>
+                    <div>
+
+                        <?php if($item['faltantes'] > 0): ?>
+                            <span class="badge-faltante">
+                                Faltan <?= $item['faltantes'] ?>
+
+                            </span>
+                        <?php else: ?>
+                            <span class="badge-ok">
+
+                                Completo
+
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+<?php endforeach; ?>
+
+</div>
+
+
 </div>
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
 
 <script>
-
 const buscador = document.getElementById('buscador');
-
 function filtrar() {
 
     let texto = buscador.value.toLowerCase();
-    let filas = document.querySelectorAll("table tbody tr");
+    let cards = document.querySelectorAll(".habitacion-card");
 
-    filas.forEach(function(fila) {
-
-        let contenido = fila.textContent.toLowerCase();
-
-        if (contenido.includes(texto)) {
-            fila.style.display = "";
+    cards.forEach(function(card){
+        let contenido = card.textContent.toLowerCase();
+        if(contenido.includes(texto)){
+            card.style.display = "";
         } else {
-            fila.style.display = "none";
+            card.style.display = "none";
         }
-
     });
-
 }
 
 buscador.addEventListener('keyup', filtrar);
-
 document.addEventListener('DOMContentLoaded', function() {
 
     if (buscador.value.trim() !== '') {

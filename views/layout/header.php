@@ -40,6 +40,18 @@
                 <span>Dashboard</span>
             </a>
 
+            <a href="index.php?modulo=revision">
+                <i data-lucide="search"></i>
+                <span>Revisión</span>
+            </a>
+
+            <a href="index.php?modulo=inventario">
+                <i data-lucide="boxes"></i>
+                <span>Inventario</span>
+            </a>
+
+<br><br>
+
             <a href="index.php?modulo=habitaciones">
                 <i data-lucide="bed-double"></i>
                 <span>Habitaciones</span>
@@ -50,19 +62,9 @@
                 <span>Artículos</span>
             </a>
 
-            <a href="index.php?modulo=inventario">
-                <i data-lucide="boxes"></i>
-                <span>Inventario</span>
-            </a>
-
             <a href="index.php?modulo=inventario_base">
                 <i data-lucide="clipboard-list"></i>
                 <span>Inventario Base</span>
-            </a>
-
-            <a href="index.php?modulo=revision">
-                <i data-lucide="search"></i>
-                <span>Revisión</span>
             </a>
 
         </nav>
