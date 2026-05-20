@@ -160,9 +160,21 @@
 
         <?php
         // Habitaciones con más faltantes primero
-        $criticas = array_filter($habitaciones, fn($h) => $h['total_faltantes'] > 0);
-        usort($criticas, fn($a, $b) => $b['total_faltantes'] - $a['total_faltantes']);
-        $criticas = array_slice($criticas, 0, 5); // Top 5
+        $criticas = array_filter(
+            $habitaciones,
+            fn($h) =>
+                $h['total_faltantes'] > 0 &&
+                $h['total_faltantes'] < 10
+        );
+
+        usort(
+            $criticas,
+            fn($a, $b) =>
+                $b['total_faltantes'] - $a['total_faltantes']
+        );
+
+        $criticas = array_slice($criticas, 0, 5);
+
         ?>
 
         <?php if (empty($criticas)): ?>

@@ -22,6 +22,28 @@
 
 <!-- /////////////////////////////////////////////////////// -->
 
+<?php if(isset($_GET['mensaje'])): ?>
+
+    <div class="alerta-exito">
+
+        <?php if($_GET['mensaje'] == 'agregado'): ?>
+            Inventario agregado correctamente ✓
+        <?php endif; ?>
+
+        <?php if($_GET['mensaje'] == 'editado'): ?>
+            Inventario editado correctamente ✓
+        <?php endif; ?>
+
+        <?php if($_GET['mensaje'] == 'eliminado'): ?>
+            Inventario eliminado correctamente ✓
+        <?php endif; ?>
+
+    </div>
+
+<?php endif; ?>
+
+<!-- /////////////////////////////////////////////////////// -->
+
 <div class="container">
 
 <div class="inventario-topbar">
@@ -83,12 +105,12 @@ ksort($inventarioPorHabitacion);
                         <a href="index.php?modulo=inventario&accion=editar&id=<?= $i['id'] ?>">
                             Editar
                         </a>
-                        <button 
-                            class="btn-eliminar"
-                            onclick="confirmarEliminacion(<?= $i['id'] ?>)"
-                            >
-                            Eliminar
-                        </button>
+                        <a 
+                            href="index.php?modulo=inventario&accion=eliminar&id=<?= $i['id'] ?>"
+                            onclick="return confirm('¿Seguro que deseas eliminar este registro?')"
+                        >
+                                Eliminar
+                        </a>
 
                     </div>
                 </div>

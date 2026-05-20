@@ -53,7 +53,10 @@
                 <td><?= $h['tipo'] ?></td>
                 <td><?= $h['descripcion'] ?></td>
                 <td>
-                    <a href="index.php?modulo=habitaciones&accion=eliminar&id=<?= $h['id'] ?>"> 🗑 Eliminar</a>
+                    <a href="index.php?modulo=habitaciones&accion=eliminar&id=<?= $h['id'] ?>"
+                    onlick="return confirm('¿Seguro que deseas eliminar este registro?')"
+                    > 🗑 Eliminar
+                    </a>
                 </td>
                 <td>
                     <a href="index.php?modulo=habitaciones&accion=editar&id=<?= $h['id'] ?>#habitacionFormulario"> ✏ Editar</a>

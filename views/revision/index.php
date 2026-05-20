@@ -17,7 +17,7 @@
 
 <div class="page-header">
 <h1>Revision de habitaciones</h1>
-<p>Administración de revision de habitaciones del hotel</p>
+<p>Verifica que articulos deben tener las habitaciones</p>
 </div>
 
 <!-- /////////////////////////////////////////////////////// -->

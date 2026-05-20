@@ -83,7 +83,6 @@ class Inventario {
 
     public function eliminarInventario($id) {
 
-
         $sql = "DELETE FROM inventario WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":id", $id);
