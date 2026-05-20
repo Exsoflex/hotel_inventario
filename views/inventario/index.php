@@ -106,10 +106,12 @@ ksort($inventarioPorHabitacion);
                             Editar
                         </a>
                         <a 
-                            href="index.php?modulo=inventario&accion=eliminar&id=<?= $i['id'] ?>"
-                            onclick="return confirm('¿Seguro que deseas eliminar este registro?')"
+                        href="#"
+                        class="btn-eliminar"
+                        data-url="index.php?modulo=inventario&accion=eliminar&id=<?= $i['id'] ?>"
+                        data-inventario="<?= $i['nombre'] ?>"
                         >
-                                Eliminar
+                        🗑 Eliminar
                         </a>
 
                     </div>
@@ -127,6 +129,46 @@ ksort($inventarioPorHabitacion);
 </div>
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
 
+<!-- /////////////////////////////////////////////////////// -->
+
+    <div class="modal-overlay" id="modalEliminar">
+
+    <div class="modal-confirmacion">
+
+        <div class="modal-icono">
+            ⚠
+        </div>
+
+        <h2>Eliminar articulo de inventario</h2>
+
+        <p id="mensajeEliminar">
+            ¿Seguro que deseas eliminar este articulo del inventario?
+        </p>
+
+        <div class="modal-botones">
+
+            <button 
+            class="btn-cancelar"
+            onclick="cerrarModalEliminar()"
+            >
+                Cancelar
+            </button>
+
+            <a 
+            href="#" 
+            id="btnConfirmarEliminar"
+            class="btn-confirmar"
+            >
+                Sí, eliminar
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- /////////////////////////////////////////////////////// -->
 
 <script>
 
@@ -200,6 +242,40 @@ function confirmarEliminacion(id){
         window.location.href =
             "index.php?modulo=inventario&accion=eliminar&id=" + id;
     }
+}
+
+</script>
+
+<!--//////////-- Modal Eliminar --//////////-->
+<script>
+
+const botonesEliminar = document.querySelectorAll('.btn-eliminar');
+const modalEliminar = document.getElementById('modalEliminar');
+const mensajeEliminar = document.getElementById('mensajeEliminar');
+const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
+
+botonesEliminar.forEach(boton => {
+
+    boton.addEventListener('click', function(e){
+
+        e.preventDefault();
+
+        const url = this.dataset.url;
+
+        const inventario = this.dataset.inventario;
+
+        mensajeEliminar.textContent =
+            `¿Seguro que deseas eliminar el artículo "${inventario}" del inventario?`;
+
+        btnConfirmarEliminar.href = url;
+
+        modalEliminar.classList.add('active');
+    });
+});
+
+function cerrarModalEliminar(){
+
+    modalEliminar.classList.remove('active');
 }
 
 </script>

@@ -14,7 +14,7 @@
 <?php require_once __DIR__ . "/../layout/header.php"; ?>
 
 <div class="dashboard-header">
-    <h1>Dashboard</h1>
+    <h1>Inicio</h1>
     <p>Estado general del inventario del hotel</p>
 </div>
 

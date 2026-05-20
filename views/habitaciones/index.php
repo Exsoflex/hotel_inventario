@@ -169,6 +169,8 @@
 </div>
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
 
+<!-- /////////////////////////////////////////////////////// -->
+
     <div class="modal-overlay" id="modalEliminar">
 
     <div class="modal-confirmacion">
@@ -206,6 +208,8 @@
 
 </div>
 
+<!-- /////////////////////////////////////////////////////// -->
+ 
 <script>
 
 const buscador = document.getElementById('buscador');

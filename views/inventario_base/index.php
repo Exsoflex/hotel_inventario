@@ -31,7 +31,7 @@
     <thead>
 
          <tr>
-            <th>ID</th>
+            <th hidden>ID</th>
             <th>Tipo de habitación</th>
             <th>Articulo</th>
             <th>Cantidad</th>
@@ -48,14 +48,19 @@
         foreach($inventarios_base as $i): ?>
 
             <tr id="inventario_base-<?= $i['id'] ?>">
-                <td><?= $i['id'] ?></td>
+                <td hidden><?= $i['id'] ?></td>
                 <td><?= $i['tipo_habitacion'] ?></td>
                 <td><?= $i['nombre'] ?></td>
                 <td><?= $i['cantidad'] ?></td>
                 <td>
-                    <a href="index.php?modulo=inventario_base&accion=eliminar&id=<?= $i['id'] ?>"
-                    onclick="return confirm('¿Seguro que deseas eliminar este articulo del inventario base?')">
-                         🗑 Eliminar</a>
+                    <a 
+                    href="#"
+                    class="btn-eliminar"
+                    data-url="index.php?modulo=inventario_base&accion=eliminar&id=<?= $i['id'] ?>"
+                    data-inventario_base="<?= $i['nombre'] ?>"
+                    >
+                    🗑 Eliminar
+                    </a>
                 </td>
                 <td>
                     <a href="index.php?modulo=inventario_base&accion=editar&id=<?= $i['id'] ?>#inventario_baseFormulario"> ✏ Editar</a>
@@ -174,6 +179,48 @@
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
 
 
+<!-- /////////////////////////////////////////////////////// -->
+
+    <div class="modal-overlay" id="modalEliminar">
+
+    <div class="modal-confirmacion">
+
+        <div class="modal-icono">
+            ⚠
+        </div>
+
+        <h2>Eliminar articulo de inventario base</h2>
+
+        <p id="mensajeEliminar">
+            ¿Seguro que deseas eliminar este articulo?
+        </p>
+
+        <div class="modal-botones">
+
+            <button 
+            class="btn-cancelar"
+            onclick="cerrarModalEliminar()"
+            >
+                Cancelar
+            </button>
+
+            <a 
+            href="#" 
+            id="btnConfirmarEliminar"
+            class="btn-confirmar"
+            >
+                Sí, eliminar
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- /////////////////////////////////////////////////////// -->
+
+
 <script>
 
 const buscador = document.getElementById('buscador');
@@ -193,6 +240,40 @@ buscador.addEventListener('keyup', function() {
         }
     });
 });
+
+</script>
+
+<!-- Modal Eliminar -->
+<script>
+
+const botonesEliminar = document.querySelectorAll('.btn-eliminar');
+const modalEliminar = document.getElementById('modalEliminar');
+const mensajeEliminar = document.getElementById('mensajeEliminar');
+const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
+
+botonesEliminar.forEach(boton => {
+
+    boton.addEventListener('click', function(e){
+
+        e.preventDefault();
+
+        const url = this.dataset.url;
+
+        const inventario_base = this.dataset.inventario_base;
+
+        mensajeEliminar.textContent =
+            `¿Seguro que deseas eliminar el artículo "${inventario_base}" del inventario base?`;
+
+        btnConfirmarEliminar.href = url;
+
+        modalEliminar.classList.add('active');
+    });
+});
+
+function cerrarModalEliminar(){
+
+    modalEliminar.classList.remove('active');
+}
 
 </script>
 

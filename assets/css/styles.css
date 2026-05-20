@@ -963,8 +963,7 @@ a:hover::after {
 }
 
 .btn-confirmar::after,
-.btn-cancelar::after,
-.btn-eliminar::after {
+.btn-cancelar::after{
 
     display: none;
 }

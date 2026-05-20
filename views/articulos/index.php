@@ -51,9 +51,14 @@
                 <td><?= $a['nombre'] ?></td>
                 <td><?= $a['descripcion'] ?></td>
                 <td>
-                    <a href="index.php?modulo=articulos&accion=eliminar&id=<?= $a['id'] ?>"
-                    onclick="return confirm('¿Seguro que deseas eliminar este articulo?')"
-                    > 🗑 Eliminar</a>
+                    <a 
+                    href="#"
+                    class="btn-eliminar"
+                    data-url="index.php?modulo=articulos&accion=eliminar&id=<?= $a['id'] ?>"
+                    data-articulo="<?= $a['nombre'] ?>"
+                    >
+                    🗑 Eliminar
+                    </a>
                 </td>
                 <td>
                     <a href="index.php?modulo=articulos&accion=editar&id=<?= $a['id'] ?>#articuloFormulario"> ✏ Editar</a>
@@ -107,6 +112,46 @@
 </div>
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
 
+<!-- /////////////////////////////////////////////////////// -->
+
+    <div class="modal-overlay" id="modalEliminar">
+
+    <div class="modal-confirmacion">
+
+        <div class="modal-icono">
+            ⚠
+        </div>
+
+        <h2>Eliminar articulo</h2>
+
+        <p id="mensajeEliminar">
+            ¿Seguro que deseas eliminar este articulo?
+        </p>
+
+        <div class="modal-botones">
+
+            <button 
+            class="btn-cancelar"
+            onclick="cerrarModalEliminar()"
+            >
+                Cancelar
+            </button>
+
+            <a 
+            href="#" 
+            id="btnConfirmarEliminar"
+            class="btn-confirmar"
+            >
+                Sí, eliminar
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- /////////////////////////////////////////////////////// -->
 
 <script>
 
@@ -127,6 +172,41 @@ buscador.addEventListener('keyup', function() {
         }
     });
 });
+
+</script>
+
+
+<!-- Modal Eliminar -->
+<script>
+
+const botonesEliminar = document.querySelectorAll('.btn-eliminar');
+const modalEliminar = document.getElementById('modalEliminar');
+const mensajeEliminar = document.getElementById('mensajeEliminar');
+const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
+
+botonesEliminar.forEach(boton => {
+
+    boton.addEventListener('click', function(e){
+
+        e.preventDefault();
+
+        const url = this.dataset.url;
+
+        const articulo = this.dataset.articulo;
+
+        mensajeEliminar.textContent =
+            `¿Seguro que deseas eliminar el artículo "${articulo}"?`;
+
+        btnConfirmarEliminar.href = url;
+
+        modalEliminar.classList.add('active');
+    });
+});
+
+function cerrarModalEliminar(){
+
+    modalEliminar.classList.remove('active');
+}
 
 </script>
 

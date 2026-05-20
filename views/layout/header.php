@@ -40,7 +40,7 @@
 
             <a href="index.php?modulo=dashboard">
                 <i data-lucide="layout-dashboard"></i>
-                <span>Dashboard</span>
+                <span>Inicio</span>
             </a>
 
             <a href="index.php?modulo=revision">
