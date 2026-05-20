@@ -30,7 +30,7 @@
     <thead>
 
         <tr>
-            <th>ID</th>
+            <th hidden>ID</th>
             <th>Piso</th>
             <th>Numero</th>
             <th>Tipo</th>
@@ -47,15 +47,21 @@
         foreach($habitaciones as $h): ?>
 
             <tr id="habitacion-<?= $h['id'] ?>">
-                <td><?= $h['id'] ?></td>
+                <td hidden><?= $h['id'] ?></td>
                 <td><?= $h['piso'] ?></td>
                 <td><?= $h['numero'] ?></td>
                 <td><?= $h['tipo'] ?></td>
                 <td><?= $h['descripcion'] ?></td>
+
+
                 <td>
-                    <a href="index.php?modulo=habitaciones&accion=eliminar&id=<?= $h['id'] ?>"
-                    onlick="return confirm('¿Seguro que deseas eliminar este registro?')"
-                    > 🗑 Eliminar
+                    <a 
+                    href="#"
+                    class="btn-eliminar"
+                    data-url="index.php?modulo=habitaciones&accion=eliminar&id=<?= $h['id'] ?>"
+                    data-habitacion="<?= $h['numero'] ?>"
+                    >
+                    🗑 Eliminar
                     </a>
                 </td>
                 <td>
@@ -163,7 +169,42 @@
 </div>
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
 
+    <div class="modal-overlay" id="modalEliminar">
 
+    <div class="modal-confirmacion">
+
+        <div class="modal-icono">
+            ⚠
+        </div>
+
+        <h2>Eliminar habitación</h2>
+
+        <p id="mensajeEliminar">
+            ¿Seguro que deseas eliminar esta habitación?
+        </p>
+
+        <div class="modal-botones">
+
+            <button 
+            class="btn-cancelar"
+            onclick="cerrarModalEliminar()"
+            >
+                Cancelar
+            </button>
+
+            <a 
+            href="#" 
+            id="btnConfirmarEliminar"
+            class="btn-confirmar"
+            >
+                Sí, eliminar
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
 
 <script>
 
@@ -186,6 +227,39 @@ buscador.addEventListener('keyup', function() {
 });
 
 </script>
+
+<!-- Modal Eliminar -->
+<script>
+
+const botonesEliminar = document.querySelectorAll('.btn-eliminar');
+const modalEliminar = document.getElementById('modalEliminar');
+const mensajeEliminar = document.getElementById('mensajeEliminar');
+const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
+
+botonesEliminar.forEach(boton => {
+
+    boton.addEventListener('click', function(e){
+
+        e.preventDefault();
+
+        const url = this.dataset.url;
+
+        const habitacion = this.dataset.habitacion;
+
+        mensajeEliminar.textContent =
+            `¿Seguro que deseas eliminar la habitación ${habitacion}?`;
+
+        btnConfirmarEliminar.href = url;
+
+        modalEliminar.classList.add('active');
+    });
+});
+
+function cerrarModalEliminar(){
+    modalEliminar.classList.remove('active');
+}
+</script>
+
 
 </body>
 </html>

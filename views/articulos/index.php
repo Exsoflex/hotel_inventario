@@ -32,7 +32,7 @@
 
     <thead>
         <tr>
-            <th>ID</th>
+            <th hidden>ID</th>
             <th>Nombre</th>
             <th>Descripción</th>
             <th>Eliminar</th>
@@ -47,11 +47,13 @@
         foreach($articulos as $a): ?>
 
             <tr id="articulo-<?= $a['id'] ?>">
-                <td><?= $a['id'] ?></td>
+                <td hidden><?= $a['id'] ?></td>
                 <td><?= $a['nombre'] ?></td>
                 <td><?= $a['descripcion'] ?></td>
                 <td>
-                    <a href="index.php?modulo=articulos&accion=eliminar&id=<?= $a['id'] ?>"> 🗑 Eliminar</a>
+                    <a href="index.php?modulo=articulos&accion=eliminar&id=<?= $a['id'] ?>"
+                    onclick="return confirm('¿Seguro que deseas eliminar este articulo?')"
+                    > 🗑 Eliminar</a>
                 </td>
                 <td>
                     <a href="index.php?modulo=articulos&accion=editar&id=<?= $a['id'] ?>#articuloFormulario"> ✏ Editar</a>

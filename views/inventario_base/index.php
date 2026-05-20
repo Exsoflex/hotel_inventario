@@ -53,7 +53,9 @@
                 <td><?= $i['nombre'] ?></td>
                 <td><?= $i['cantidad'] ?></td>
                 <td>
-                    <a href="index.php?modulo=inventario_base&accion=eliminar&id=<?= $i['id'] ?>"> 🗑 Eliminar</a>
+                    <a href="index.php?modulo=inventario_base&accion=eliminar&id=<?= $i['id'] ?>"
+                    onclick="return confirm('¿Seguro que deseas eliminar este articulo del inventario base?')">
+                         🗑 Eliminar</a>
                 </td>
                 <td>
                     <a href="index.php?modulo=inventario_base&accion=editar&id=<?= $i['id'] ?>#inventario_baseFormulario"> ✏ Editar</a>
