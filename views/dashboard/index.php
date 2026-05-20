@@ -32,17 +32,23 @@
         ?>
 
         <div class="dashboard-buscador">
-            <input type="text" id="buscador" placeholder="Buscar habitación...">
+            <input 
+            type="text" 
+            id="buscador" 
+            placeholder="Buscar habitación..."
+            autocomplete="off"
+            >
         </div>
 
 <br>
 
-        <?php foreach ($porPiso as $piso => $habitacionesPiso): ?>
+    <?php foreach ($porPiso as $piso => $habitacionesPiso): ?>
 
-            <h2>Piso <?= $piso ?></h2>
+    <div class="bloque-piso">
 
+        <h2>Piso <?= $piso ?></h2>
 
-            <table>
+        <table>
 
                 <thead>
                     <tr>
@@ -102,7 +108,7 @@
             </table>
 
             <br>
-
+        </div>
         <?php endforeach; ?>
 
     </div>
@@ -194,28 +200,35 @@ function filtrar() {
 
     let texto = buscador.value.toLowerCase();
 
-    document.querySelectorAll("table tbody tr").forEach(function(fila) {
+    // recorrer cada piso
+    document.querySelectorAll(".bloque-piso").forEach(function(bloque) {
 
-        let celdas = fila.querySelectorAll("td:not([hidden])");
-        let contenido = Array.from(celdas).map(td => td.textContent).join(' ').toLowerCase();
+        let filas = bloque.querySelectorAll("tbody tr");
 
-        fila.style.display = contenido.includes(texto) ? "" : "none";
+        let hayVisibles = false;
 
-    });
+        filas.forEach(function(fila) {
 
-    document.querySelectorAll("h2").forEach(function(titulo) {
+            let contenido = fila.textContent.toLowerCase();
 
-        let tabla = titulo.nextElementSibling;
-        if (!tabla || tabla.tagName !== 'TABLE') return;
+            let coincide = contenido.includes(texto);
 
-        let visibles = tabla.querySelectorAll("tbody tr:not([style*='display: none'])");
-        titulo.style.display = visibles.length > 0 ? "" : "none";
+            fila.style.display = coincide ? "" : "none";
+
+            if (coincide) {
+                hayVisibles = true;
+            }
+
+        });
+
+        // ocultar TODO el piso si no hay resultados
+        bloque.style.display = hayVisibles ? "" : "none";
 
     });
 
 }
 
-buscador.addEventListener('keyup', filtrar);
+buscador.addEventListener('input', filtrar);
 
 </script>
 

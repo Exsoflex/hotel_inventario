@@ -134,8 +134,12 @@ const toggleBtn = document.getElementById("toggleSidebar");
 
 toggleBtn.addEventListener("click", () => {
     sidebar.classList.toggle("collapsed");
-});
 
+    document
+        .querySelector(".layout")
+        .classList.toggle("sidebar-collapsed");
+
+});
 </script>
 
 </body>

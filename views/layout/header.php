@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="assets/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@100..1000&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" href="assets/img/HLH_logo.png" type="image/x-icon">
 
     <title>Hotel Inventario</title>
 </head>
@@ -27,7 +28,9 @@
             </button>
 
             <span class="logo-text">
-            <img src="assets/img/HLH_logo.png" alt="logo" class="logo-img">    
+            <a href="index.php?modulo=dashboard">
+            <img src="assets/img/HLH_logo.png" alt="logo" class="logo-img">
+            </a>    
             </span>
 
 

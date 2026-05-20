@@ -132,9 +132,15 @@ button:hover {
 
     flex: 1;
 
-    padding: 30px;
+    padding: 25px;
 
     overflow-x: auto;
+
+    margin-left: 240px;
+
+    width: calc(100% - 240px);
+
+    transition: all 0.3s ease;
 }
 
 /* ===== LINKS ===== */
@@ -194,14 +200,20 @@ a:hover::after {
 
 .sidebar {
 
-    width: 270px;
-    background: white;
-    border-right: 1px solid #ececec;
-    min-height: 100vh;
-    transition: width 0.3s ease;
-    overflow: hidden;
-    position: sticky;
+    width: 240px;
+    position:fixed;
+    
     top: 0;
+    left: 0;
+
+    background: white;
+   /* border-right: 1px solid #ececec;*/
+    min-height: 100vh;
+
+    z-index: 1000;
+
+    transition: width 0.2s ease;
+    overflow: hidden;
 }
 
 .sidebar span {
@@ -232,12 +244,12 @@ a:hover::after {
 .dashboard-wrapper {
 
     display: flex;
-    gap: 30px;
 
-    padding: 20px 35px 35px 35px;
+    gap: 20px;
+
+    padding: 20px 0px 15px 0px;
 
     width: 100%;
-    min-height: 100vh;
 
     box-sizing: border-box;
 }
@@ -261,11 +273,11 @@ a:hover::after {
 
     font-size: 18px;
     opacity: 0.9;
-    margin-bottom: 20px;
+    margin: 20px 25px 0 5px;
 }
 
 .dashboard-panel-izquierdo {
-    flex: 2;
+    flex: 2.5;
     background-color: white;
     border-radius: 30px;
     padding: 25px;
@@ -378,6 +390,13 @@ a:hover::after {
     padding: 25px;
 
     overflow-x: auto;
+}
+
+.layout.sidebar-collapsed .main-content {
+
+    margin-left: 85px;
+
+    width: calc(100% - 85px);
 }
 
 /* ========================= */

@@ -36,7 +36,7 @@ class InventarioController {
                 $comentarios
             );
 
-            header("Location: index.php?modulo=inventario#inventario-$idNuevo");
+            header("Location: index.php?modulo=inventario&mensaje=agregado#inventario-$idNuevo");
             exit();
         }
 
@@ -47,7 +47,9 @@ class InventarioController {
         $id = $_GET['id'];
         $inventario = new Inventario();
         $inventario->eliminarInventario($id);
-        header("Location: index.php?modulo=inventario");
+
+        header("Location: index.php?modulo=inventario&mensaje=eliminado");
+        exit();
 
     }
 
@@ -96,7 +98,7 @@ class InventarioController {
                 $comentarios
             );
 
-            header("Location: index.php?modulo=inventario#inventario-$id"); // Redirigir a la página principal después de editar el inventario
+            header("Location: index.php?modulo=inventario&mensaje=editado#inventario-$id");
             exit();
 
         }

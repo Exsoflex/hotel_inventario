@@ -83,9 +83,12 @@ ksort($inventarioPorHabitacion);
                         <a href="index.php?modulo=inventario&accion=editar&id=<?= $i['id'] ?>">
                             Editar
                         </a>
-                        <a href="index.php?modulo=inventario&accion=eliminar&id=<?= $i['id'] ?>">
+                        <button 
+                            class="btn-eliminar"
+                            onclick="confirmarEliminacion(<?= $i['id'] ?>)"
+                            >
                             Eliminar
-                        </a>
+                        </button>
 
                     </div>
                 </div>
@@ -161,6 +164,21 @@ function cerrarModal(){
 <?php if(isset($inventarioEditar)): ?>
 abrirModal();
 <?php endif; ?>
+
+/*////////---- Confirmar eliminación ----/////////*/
+
+function confirmarEliminacion(id){
+
+    let confirmar = confirm(
+        "¿Seguro que deseas eliminar este registro?"
+    );
+
+    if(confirmar){
+
+        window.location.href =
+            "index.php?modulo=inventario&accion=eliminar&id=" + id;
+    }
+}
 
 </script>
 
