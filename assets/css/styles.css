@@ -110,24 +110,120 @@ button {
     font-size: 16px;
 }
 
+/* =============================== */
+/* ===== INPUTS Y SELECTS ======= */
+/* ============================= */
+
+input,
+select,
+textarea {
+
+    width: 100%;
+
+    padding: 14px 18px;
+
+    border-radius: 18px;
+
+    border: 1px solid #e5e7eb;
+
+    background: #f8fafc;
+
+    color: #333;
+
+    font-size: 15px;
+
+    transition: all 0.2s ease;
+
+    outline: none;
+}
+
+/* ===== EFECTO FOCUS ===== */
+
+input:focus,
+select:focus,
+textarea:focus {
+
+    border-color: #93245c;
+
+    background: white;
+
+    box-shadow: 0 0 0 4px rgba(147, 36, 92, 0.12);
+}
+
+/* =============================== */
+/* ===== SELECT PERSONALIZADO === */
+/* ============================= */
+
+select {
+
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    cursor: pointer;
+
+    padding-right: 50px;
+
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+
+    background-repeat: no-repeat;
+
+    background-position: right 18px center;
+
+    background-size: 16px;
+}
+
+/* ===== HOVER ===== */
+
+select:hover,
+input:hover {
+
+    border-color: #d1d5db;
+
+    background: white;
+}
+
+/* ===== OPCIONES ===== */
+
+option {
+
+    background: white;
+
+    color: #333;
+
+    padding: 12px;
+}
+
 /* ===== BOTONES ===== */
 
 button {
 
     cursor: pointer;
-    background-color: white;
-    color: #333;
+
+    background: #333;
+
+    color: white;
+
     border: none;
-    transition: all 0.2s ease-in-out;
-    /*box-shadow: 0 5px 15px rgba(0,0,0,0.08);*/
+
+    padding: 14px 20px;
+
+    border-radius: 18px;
+
+    font-weight: 700;
+
+    transition: all 0.2s ease;
 }
 
-button:hover {
+button:hover { 
 
-    transform: translateY(-4px);
-    box-shadow: 0 9px 20px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+
+    background: #1f2937;
+
+    box-shadow: 0 12px 25px rgba(0,0,0,0.12);
 }
-
 .main-content {
 
     flex: 1;
@@ -141,6 +237,15 @@ button:hover {
     width: calc(100% - 240px);
 
     transition: all 0.3s ease;
+}
+
+form label {
+
+    font-weight: 600;
+
+    color: #444;
+
+    margin-bottom: -8px;
 }
 
 /* ===== LINKS ===== */
@@ -319,14 +424,28 @@ a:hover::after {
 
 .menu-btn {
 
-    border: none;
-    background: transparent;
 
-    cursor: pointer;
-
+    margin-top: 35px;
+    padding: 8px;
+    width: 42px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    background-color: white;
+    color: #333;
+    border: none;
+    border-radius: 50%;
+    transition: all 0.2s ease-in-out;
+}
+
+.menu-btn:hover {
+
+    background-color: white; 
+    transform: translateY(-4px); 
+    box-shadow: 0 9px 20px rgba(0,0,0,0.12);
+
 }
 
 .logo-text {
@@ -337,8 +456,9 @@ a:hover::after {
 
 .logo-img {
 
+    padding-top: 10px;
     width: 140px;
-    height: 80px;
+    height: 90px;
     border-radius: 50%;
 }
 
@@ -383,14 +503,14 @@ a:hover::after {
     display: none;
 }
 
-.main-content {
+/*.main-content {
 
     flex: 1;
 
     padding: 25px;
 
     overflow-x: auto;
-}
+}*/
 
 .layout.sidebar-collapsed .main-content {
 
@@ -757,15 +877,46 @@ a:hover::after {
     background: #fff8e8;
 
     color: #c58a00;
+
 }
 
-/* ===== PERDIDO ===== */
+/* ====== PERDIDO ============= */
 
 .estado-perdido {
 
     background: #f3f4f6;
 
     color: #4b5563;
+}
+
+/* ====== VER INVENTARIO ====== */
+
+.btn-ver-inventario{
+
+    display: inline-block;
+
+    margin-top: 10px;
+
+    padding: 10px 16px;
+
+    background: #111827;
+
+    color: white;
+
+    border-radius: 14px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.btn-ver-inventario:hover{
+
+    transform: translateY(-2px);
+
+    background: #1f2937;
 }
 
 /* =============================== */
@@ -938,6 +1089,8 @@ a:hover::after {
     border-radius: 18px;
 
     font-weight: 700;
+
+    transition: 0.2s;
 }
 
 .btn-confirmar {
@@ -960,6 +1113,15 @@ a:hover::after {
     background: #b91c1c;
 
     transform: translateY(-2px);
+}
+
+.btn-cancelar:hover {
+
+    background: #dfe2e6;
+
+    transform: translateY(-2px);
+
+    box-shadow: none;
 }
 
 .btn-confirmar::after,

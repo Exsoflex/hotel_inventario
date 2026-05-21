@@ -47,7 +47,8 @@
 <div class="container">
 
 <div class="inventario-topbar">
-    <input type="text" id="buscador" placeholder="Buscar...">
+    <input type="text" id="buscador" placeholder="Buscar..."
+    value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
     <button class="btn-agregar" onclick="abrirModal()">
         + Agregar inventario
     </button>
@@ -173,10 +174,11 @@ ksort($inventarioPorHabitacion);
 <script>
 
 const buscador = document.getElementById('buscador');
-buscador.addEventListener('keyup', function(){
+
+function filtrarInventario(){
 
     let texto = buscador.value.toLowerCase();
-    // Todas las secciones de habitación
+
     let secciones = document.querySelectorAll('.habitacion-section');
 
     secciones.forEach(function(seccion){
@@ -187,25 +189,45 @@ buscador.addEventListener('keyup', function(){
             .toLowerCase();
 
         let cards = seccion.querySelectorAll('.inventario-card');
+
         let algunaVisible = false;
 
         cards.forEach(function(card){
+
             let contenido = card.textContent.toLowerCase();
-            // Buscar tanto en habitación como en contenido
+
             let coincide =
                 contenido.includes(texto) ||
                 tituloHabitacion.includes(texto);
 
             card.style.display = coincide ? '' : 'none';
+
             if(coincide){
                 algunaVisible = true;
             }
+
         });
 
-        // Mostrar u ocultar toda la sección
         seccion.style.display = algunaVisible ? '' : 'none';
+
     });
+}
+
+buscador.addEventListener('keyup', filtrarInventario);
+
+document.addEventListener('DOMContentLoaded', function(){
+
+    if(buscador.value.trim() !== ''){
+        filtrarInventario();
+    }
+
 });
+
+</script>
+
+<!--//////////-- Modal Inventario --//////////-->
+
+<script>
 
 function abrirModal(){
 

@@ -23,8 +23,28 @@
 <!-- /////////////////////////////////////////////////////// -->
 
 <div class="container">
-    <input type="text" id="buscador" placeholder="Buscar...">
-<br><br>
+
+    <div class="inventario-topbar">
+
+        <input 
+        type="text" 
+        id="buscador" 
+        placeholder="Buscar habitaciones..."
+        >
+
+        <button 
+        class="btn-agregar"
+        onclick="abrirModal()"
+        >
+            + Agregar habitación
+        </button>
+
+    </div>
+
+<!-- /////////////////////////////////////////////////////// -->
+
+
+    <br>
 
     <table>
     <thead>

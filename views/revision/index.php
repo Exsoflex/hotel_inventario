@@ -67,11 +67,12 @@ foreach ($faltantes as $f) {
 
     <div class="habitacion-card">
 
-        <!-- HEADER CARD -->
+        <!--///////////////////////////// HEADER CARD ////////////////////////////-->
         <div class="habitacion-card-header">
             <div>
                 <h2>Habitación <?= $hab['numero'] ?></h2>
                 <p><?= $hab['tipo'] ?></p>
+                <a href="index.php?modulo=inventario&buscar=<?= $hab['numero'] ?>" class="btn-ver-inventario">Ver inventario</a>
             </div>
 
             <div class="<?= $estaCompleta ? 'estado-ok' : 'estado-faltante' ?>">
@@ -80,7 +81,7 @@ foreach ($faltantes as $f) {
 
         </div>
 
-        <!-- ITEMS -->
+        <!--///////////////////////////// ITEMS ///////////////////////////////-->
 
         <div class="habitacion-items">
             <?php foreach($hab['items'] as $item): ?>
@@ -121,6 +122,8 @@ foreach ($faltantes as $f) {
 
 </div>
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
+
+<!-- /////////////////////////////////////////////////////// -->
 
 <script>
 const buscador = document.getElementById('buscador');
