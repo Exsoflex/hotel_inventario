@@ -23,8 +23,27 @@
 <!-- /////////////////////////////////////////////////////// -->
 
 <div class="container">
-<input type="text" id="buscador" placeholder="Buscar...">
-<br><br>
+
+    <div class="inventario-topbar">
+
+        <input 
+        type="text" 
+        id="buscador" 
+        placeholder="Buscar inventario base..."
+        >
+
+        <button 
+        class="btn-agregar"
+        onclick="abrirModal()"
+        >
+            + Agregar inventario base
+        </button>
+
+    </div>
+
+    <br>
+
+<!-- /////////////////////////////////////////////////////// -->
 
     <table>
 
@@ -72,111 +91,133 @@
     </tbody>
 
     </table>
-
-<br>
-<h2>Agregar nuevo inventario base</h2>
-<br>
-
-    <br>
-
-    <form 
-    id="inventario_baseFormulario" 
-    action="index.php?modulo=inventario_base&accion=<?= isset($inventario_baseEditar) ? 'editar' : 'agregar' ?>" method="POST">
-
-        <input 
-        type="hidden" 
-        name="id" 
-        value="<?= $inventario_baseEditar['id'] ?? '' ?>"
-        >
-
-        <label>Tipo de habitacion</label>
-
-        <select name="tipo">
-            <option 
-                value="">Seleccione un tipo</option>
-            <option 
-                value="sencilla"
-                
-            <?=
-                isset($inventario_baseEditar)&&
-                $inventario_baseEditar['tipo_habitacion'] == 'sencilla'
-
-                ? 'selected' : ''
-
-            ?>
-                
-                >Sencilla</option>
-
-            <option 
-                value="doble"
-                
-            <?=
-                isset($inventario_baseEditar)&&
-                $inventario_baseEditar['tipo_habitacion'] == 'doble'
-
-                ? 'selected' : ''
-
-            ?>
-                >Doble</option>
-
-            <option 
-                value="superior"
-                
-            <?=
-                isset($inventario_baseEditar)&&
-                $inventario_baseEditar['tipo_habitacion'] == 'superior'
-
-                ? 'selected' : ''
-
-            ?>
-                >Superior</option>
-            
-        </select>
-
-        <br>
-
-        <label>Articulo</label>
-        <select name="articulo_id">
-
-        <option value="">Seleccione un articulo</option>
-
-            <?php foreach($articulos as $a): ?>
-
-            <option 
-                value="<?= $a['id'] ?>"
-                
-            <?= 
-                isset($inventario_baseEditar) &&
-                $inventario_baseEditar['articulo_id'] == $a['id']
-                ? 'selected' : ''
-            ?>    
-            >
-                <?= $a['nombre'] ?>
-            </option>
-            
-            <?php endforeach; ?>
-        </select>
-
-        <br>
-
-        <label>Cantidad</label>
-        <input 
-        type="number" 
-        name="cantidad" 
-        required
-        min="0"
-        value="<?= $inventario_baseEditar['cantidad'] ?? '' ?>"
-        >
-
-        <br><br>
-
-        <button type="submit">Guardar</button>
-        <button type="reset">Cancelar</button>
-
-    </form>
-
 </div>
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
+
+<!-- Modal Inventario Base -->
+
+<div 
+class="modal-overlay <?= isset($inventario_baseEditar) ? 'active' : '' ?>" 
+id="modalInventarioBase"
+>
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <h2>
+                <?= isset($inventario_baseEditar) 
+                    ? 'Editar inventario base' 
+                    : 'Agregar inventario base' ?>
+            </h2>
+
+            <button onclick="cerrarModal()">
+                ✕
+            </button>
+
+        </div>
+
+        <form 
+        id="inventario_baseFormulario" 
+        action="index.php?modulo=inventario_base&accion=<?= isset($inventario_baseEditar) ? 'editar' : 'agregar' ?>" 
+        method="POST"
+        >
+
+            <input 
+            type="hidden" 
+            name="id" 
+            value="<?= $inventario_baseEditar['id'] ?? '' ?>"
+            >
+
+            <label>Tipo de habitación</label>
+
+            <select name="tipo" required>
+
+                <option value="">Seleccione un tipo</option>
+
+                <option 
+                    value="sencilla"
+                    <?= isset($inventario_baseEditar) &&
+                    $inventario_baseEditar['tipo_habitacion'] == 'sencilla'
+                    ? 'selected' : '' ?>
+                >
+                    Sencilla
+                </option>
+
+                <option 
+                    value="doble"
+                    <?= isset($inventario_baseEditar) &&
+                    $inventario_baseEditar['tipo_habitacion'] == 'doble'
+                    ? 'selected' : '' ?>
+                >
+                    Doble
+                </option>
+
+                <option 
+                    value="superior"
+                    <?= isset($inventario_baseEditar) &&
+                    $inventario_baseEditar['tipo_habitacion'] == 'superior'
+                    ? 'selected' : '' ?>
+                >
+                    Superior
+                </option>
+
+            </select>
+
+            <label>Artículo</label>
+
+            <select name="articulo_id" required>
+
+                <option value="">Seleccione un artículo</option>
+
+                <?php foreach($articulos as $a): ?>
+
+                    <option 
+                        value="<?= $a['id'] ?>"
+                        <?= isset($inventario_baseEditar) &&
+                        $inventario_baseEditar['articulo_id'] == $a['id']
+                        ? 'selected' : '' ?>
+                    >
+                        <?= $a['nombre'] ?>
+                    </option>
+
+                <?php endforeach; ?>
+
+            </select>
+
+            <label>Cantidad</label>
+
+            <input 
+            type="number" 
+            name="cantidad" 
+            required
+            min="0"
+            value="<?= $inventario_baseEditar['cantidad'] ?? '' ?>"
+            >
+
+            <div class="modal-buttons">
+
+                <button type="submit">
+                    <?= isset($inventario_baseEditar) 
+                        ? 'Guardar cambios' 
+                        : 'Agregar inventario base' ?>
+                </button>
+
+                <button 
+                type="button" 
+                class="btn-cancelar"
+                onclick="cerrarModal()"
+                >
+                    Cancelar
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
 
 
 <!-- /////////////////////////////////////////////////////// -->
@@ -240,6 +281,36 @@ buscador.addEventListener('keyup', function() {
         }
     });
 });
+
+</script>
+
+<!-- Modal Inventario Base -->
+
+<script>
+
+function abrirModal(){
+
+    document
+    .getElementById('modalInventarioBase')
+    .classList
+    .add('active');
+
+    document.body.style.overflow = 'hidden';
+}
+
+function cerrarModal(){
+
+    document
+    .getElementById('modalInventarioBase')
+    .classList
+    .remove('active');
+
+    document.body.style.overflow = 'auto';
+}
+
+<?php if(isset($inventario_baseEditar)): ?>
+abrirModal();
+<?php endif; ?>
 
 </script>
 

@@ -25,8 +25,26 @@
 
 <div class="container">
 
-    <input type="text" id="buscador" placeholder="Buscar...">
-<br><br>
+    <div class="inventario-topbar">
+
+        <input 
+        type="text" 
+        id="buscador" 
+        placeholder="Buscar articulos..."
+        >
+
+        <button 
+        class="btn-agregar"
+        onclick="abrirModal()"
+        >
+            + Agregar articulo
+        </button>
+
+    </div>
+
+    <br>
+
+<!-- /////////////////////////////////////////////////////// -->
 
     <table>
 
@@ -57,12 +75,14 @@
                     data-url="index.php?modulo=articulos&accion=eliminar&id=<?= $a['id'] ?>"
                     data-articulo="<?= $a['nombre'] ?>"
                     >
-                    🗑 Eliminar
+                    Eliminar
                     </a>
                 </td>
                 <td>
-                    <a href="index.php?modulo=articulos&accion=editar&id=<?= $a['id'] ?>#articuloFormulario"> ✏ Editar</a>
-                </td>      
+                    <a href="index.php?modulo=articulos&accion=editar&id=<?= $a['id'] ?>">                
+                    Editar
+                    </a>
+                    </td>      
             </tr>
 
         <?php endforeach; ?>
@@ -70,47 +90,86 @@
     </tbody>
     </table>
 
-<br>
-<h2>Agregar nuevo articulo</h2>
-<br>
-
-    <br>
-
-
-    <form id="articuloFormulario" action="index.php?modulo=articulos&accion=<?= isset($articuloEditar) ? 'editar' : 'agregar' ?>" method="POST">
-
-        <label>Nombre de articulo</label>
-
-        <input
-            type="hidden"
-            name="id"
-            value="<?= $articuloEditar['id'] ?? '' ?>"
-        >
-
-        <input 
-            type="text" 
-            name="nombre" 
-            required
-            value="<?= $articuloEditar['nombre'] ?? '' ?>"
-        >
-        
-        <br><br>
-
-        <label>Descripcion</label>
-        <input 
-            type="text" 
-            name="descripcion" 
-            value="<?= $articuloEditar['descripcion'] ?? '' ?>"
-        >
-
-        <br><br>
-
-        <button type="submit">Guardar</button>
-        <button type="reset">Cancelar</button>
-
-    </form>
 </div>
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
+
+<!--//////////-- Modal Articulo --//////////-->
+
+<div class="modal-overlay" id="modalArticulo">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>
+                    <?= isset($articuloEditar) 
+                        ? 'Editar artículo' 
+                        : 'Agregar artículo' ?>
+                </h2>
+
+                <p>
+                    Completa la información del artículo
+                </p>
+            </div>
+
+            <button onclick="cerrarModal()">
+                ✕
+            </button>
+
+        </div>
+
+        <form 
+        id="articuloFormulario" 
+        action="index.php?modulo=articulos&accion=<?= isset($articuloEditar) ? 'editar' : 'agregar' ?>" 
+        method="POST">
+
+            <input
+                type="hidden"
+                name="id"
+                value="<?= $articuloEditar['id'] ?? '' ?>"
+            >
+
+            <label>Nombre del artículo</label>
+
+            <input 
+                type="text" 
+                name="nombre" 
+                required
+                value="<?= $articuloEditar['nombre'] ?? '' ?>"
+            >
+
+            <label>Descripción</label>
+
+            <input 
+                type="text" 
+                name="descripcion" 
+                value="<?= $articuloEditar['descripcion'] ?? '' ?>"
+            >
+
+            <div class="modal-buttons">
+
+                <button type="submit" class="btn-agregar">
+                    <?= isset($articuloEditar) 
+                        ? 'Guardar cambios' 
+                        : 'Agregar artículo' ?>
+                </button>
+
+                <button 
+                type="button"
+                class="btn-cancelar"
+                onclick="cerrarModal()"
+                >
+                    Cancelar
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
 
 <!-- /////////////////////////////////////////////////////// -->
 
@@ -172,6 +231,38 @@ buscador.addEventListener('keyup', function() {
         }
     });
 });
+
+</script>
+
+<!--//////////-- Modal Articulo --//////////-->
+
+<script>
+
+function abrirModal(){
+
+    document
+    .getElementById('modalArticulo')
+    .classList
+    .add('active');
+
+    document.body.style.overflow = 'hidden';
+}
+
+function cerrarModal(){
+
+    document
+    .getElementById('modalArticulo')
+    .classList
+    .remove('active');
+
+    document.body.style.overflow = 'auto';
+}
+
+<?php if(isset($articuloEditar)): ?>
+
+abrirModal();
+
+<?php endif; ?>
 
 </script>
 

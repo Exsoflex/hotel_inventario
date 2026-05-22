@@ -80,12 +80,14 @@
                     class="btn-eliminar"
                     data-url="index.php?modulo=habitaciones&accion=eliminar&id=<?= $h['id'] ?>"
                     data-habitacion="<?= $h['numero'] ?>"
-                    >
-                    🗑 Eliminar
+                    class="table-action">
+                    Eliminar
                     </a>
                 </td>
                 <td>
-                    <a href="index.php?modulo=habitaciones&accion=editar&id=<?= $h['id'] ?>#habitacionFormulario"> ✏ Editar</a>
+                    <a href="index.php?modulo=habitaciones&accion=editar&id=<?= $h['id'] ?>" class="table-action">                
+                    Editar
+                    </a>
                 </td>    
             </tr>
 
@@ -95,100 +97,124 @@
 
     </table>
 
-<br>
-<h2>Agregar nueva habitación</h2>
-<br>
+</div>
 
-    <br>
+<!-- /////////////////////////////////////////////////////// -->
+<?php require_once __DIR__ . "/../layout/footer.php"; ?>
 
 
-    <form 
-    id="habitacionFormulario" 
-    action="index.php?modulo=habitaciones&accion=<?= isset($habitacionEditar) ? 'editar' : 'agregar' ?>" method="POST">
+<!--//////////-- Modal Habitacion --//////////-->
 
-        <input 
-        type="hidden" 
-        name="id" 
-        value="<?= $habitacionEditar['id'] ?? '' ?>"
-        >
+<div class="modal-overlay" id="modalHabitacion">
 
-        <label>Piso de la habitacion</label>
-        <input 
-            type="number" 
-            name="piso" 
-            required 
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <h2>
+                <?= isset($habitacionEditar) 
+                    ? 'Editar habitación' 
+                    : 'Agregar habitación' ?>
+            </h2>
+
+            <button onclick="cerrarModal()">
+                ✕
+            </button>
+
+        </div>
+
+        <form 
+        id="habitacionFormulario"
+        action="index.php?modulo=habitaciones&accion=<?= isset($habitacionEditar) ? 'editar' : 'agregar' ?>" 
+        method="POST">
+
+            <input 
+            type="hidden" 
+            name="id"
+            value="<?= $habitacionEditar['id'] ?? '' ?>"
+            >
+
+            <label>Piso de la habitación</label>
+
+            <input 
+            type="number"
+            name="piso"
+            required
             min="1"
             max="4"
             value="<?= $habitacionEditar['piso'] ?? '' ?>"
-        >
-        
-        <label>Numero de habitacion</label>
-        <input 
-            type="number" 
-            name="numero" 
-            required 
+            >
+
+            <label>Número de habitación</label>
+
+            <input 
+            type="number"
+            name="numero"
+            required
             min="100"
             value="<?= $habitacionEditar['numero'] ?? '' ?>"
-        >
+            >
 
-        <label>Tipo de habitacion</label>
-        <select name="tipo">
-            <option 
-                value="">Seleccione un tipo</option>
-            <option 
+            <label>Tipo de habitación</label>
+
+            <select name="tipo" required>
+
+                <option value="">
+                    Seleccione un tipo
+                </option>
+
+                <option 
                 value="sencilla"
-                
-            <?=
-                isset($habitacionEditar)&&
-                $habitacionEditar['tipo'] == 'sencilla'
+                <?= isset($habitacionEditar) && $habitacionEditar['tipo'] == 'sencilla' ? 'selected' : '' ?>
+                >
+                    Sencilla
+                </option>
 
-                ? 'selected' : ''
-
-            ?>
-                
-                >Sencilla</option>
-
-            <option 
+                <option 
                 value="doble"
-                
-            <?=
-                isset($habitacionEditar)&&
-                $habitacionEditar['tipo'] == 'doble'
+                <?= isset($habitacionEditar) && $habitacionEditar['tipo'] == 'doble' ? 'selected' : '' ?>
+                >
+                    Doble
+                </option>
 
-                ? 'selected' : ''
-
-            ?>
-                >Doble</option>
-
-            <option 
+                <option 
                 value="superior"
-                
-            <?=
-                isset($habitacionEditar)&&
-                $habitacionEditar['tipo'] == 'superior'
+                <?= isset($habitacionEditar) && $habitacionEditar['tipo'] == 'superior' ? 'selected' : '' ?>
+                >
+                    Superior
+                </option>
 
-                ? 'selected' : ''
+            </select>
 
-            ?>
-                >Superior</option>
-            
-        </select>
+            <label>Descripción</label>
 
-        <label>Descripcion</label>
-        <input 
-            type="text" 
-            name="descripcion" 
+            <input 
+            type="text"
+            name="descripcion"
             value="<?= $habitacionEditar['descripcion'] ?? '' ?>"
-        >
+            >
 
-        <button type="submit">Guardar</button>
-        <button type="reset">Cancelar</button>
+            <div class="modal-buttons">
 
-    </form>
+                <button type="submit" class="btn-agregar">
+                    Guardar
+                </button>
+
+                <button 
+                type="button"
+                class="btn-cancelar"
+                onclick="cerrarModal()"
+                >
+                    Cancelar
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
 
 </div>
-<?php require_once __DIR__ . "/../layout/footer.php"; ?>
-
 <!-- /////////////////////////////////////////////////////// -->
 
     <div class="modal-overlay" id="modalEliminar">
@@ -252,7 +278,7 @@ buscador.addEventListener('keyup', function() {
 
 </script>
 
-<!-- Modal Eliminar -->
+<!--////////////////////////////// Modal Eliminar //////////////////////////////////-->
 <script>
 
 const botonesEliminar = document.querySelectorAll('.btn-eliminar');
@@ -284,6 +310,33 @@ function cerrarModalEliminar(){
 }
 </script>
 
+<script>
+
+function abrirModal(){
+
+    document
+    .getElementById('modalHabitacion')
+    .classList
+    .add('active');
+
+    document.body.style.overflow = 'hidden';
+}
+
+function cerrarModal(){
+
+    document
+    .getElementById('modalHabitacion')
+    .classList
+    .remove('active');
+
+    document.body.style.overflow = 'auto';
+}
+
+<?php if(isset($habitacionEditar)): ?>
+abrirModal();
+<?php endif; ?>
+
+</script>
 
 </body>
 </html>

@@ -1,4 +1,5 @@
-        </div>
+<!-- ////////////// MODAL INVENTARIO //////////////////////////////// -->       
+       </div>
 
         <div class="modal-overlay" id="modalInventario">
 
@@ -124,6 +125,8 @@
     </main>
 
 </div>
+
+<!-- //////////////////// COLAPsarSIDEBAR //////////////////////////////// -->    
 
 <script>
 
