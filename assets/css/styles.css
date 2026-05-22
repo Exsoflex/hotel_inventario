@@ -1,4 +1,8 @@
 /* ===== RESET SIMPLE ===== */
+.user-avatar {
+
+    cursor: pointer;
+}
 
 * {
     margin: 0;
@@ -7,6 +11,12 @@
 }
 
 /* ===== BODY ===== */
+
+body.loading-sidebar .sidebar,
+body.loading-sidebar .main-content {
+
+    transition: none !important;
+}
 
 body {
 
@@ -44,7 +54,6 @@ body {
 
     box-shadow: 0 10px 35px rgba(0,0,0,0.12);
 
-/*
     /* Fondo blanco con 20% de opacidad */
     background-color: rgba(255, 255, 255, 0.3); 
     
@@ -52,6 +61,7 @@ body {
     backdrop-filter: blur(20px); 
     -webkit-backdrop-filter: blur(20px); /* Soporte para Safari */
 
+    border: 1px solid rgba(255, 255, 255, 0.30);
 }
 /* ===== TITULOS ===== */
 
@@ -411,7 +421,9 @@ a:hover::after {
     z-index: 1000;
 
     transition: width 0.2s ease;
-    overflow: hidden;
+    
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .sidebar span {
@@ -419,14 +431,218 @@ a:hover::after {
     transition: opacity 0.2s ease;
 }
 
-.sidebar.collapsed span {
+.sidebar.collapsed .user-info,
+.sidebar.collapsed .logo-text {
 
     opacity: 0;
+
+    width: 0;
+
+    overflow: hidden;
+
+    pointer-events: none;
 }
 
-.sidebar.collapsed {
+.sidebar.collapsed .user-menu-btn {
 
-    width: 85px;
+    justify-content: center;
+
+    padding: 10px;
+
+    gap: 0;
+}
+
+.sidebar.collapsed .user-menu-btn i {
+
+    display: none;
+}
+
+.sidebar.collapsed .user-dropdown {
+
+    left: 95px;
+
+    right: auto;
+
+    width: 220px;
+
+    top: auto;
+    bottom: 15px;
+}
+
+.sidebar-preload .sidebar {
+
+    width: 85px !important;
+}
+
+.sidebar-preload .main-content {
+
+    margin-left: 85px !important;
+
+    width: calc(100% - 85px) !important;
+}
+
+.sidebar-preload .sidebar span,
+.sidebar-preload .logo-text,
+.sidebar-preload .user-info {
+
+    display: none !important;
+}
+
+.sidebar,
+.main-content {
+
+    will-change: width, margin-left;
+}
+/* =============================== */
+/* ===== USUARIO SIDEBAR ========= */
+/* =============================== */
+
+.sidebar-user {
+
+    margin-top: auto;
+
+    padding: 15px;
+
+    position: relative;
+}
+
+.user-menu-btn {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    padding: 10px;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.user-menu-btn:hover {
+
+    background: #f1f5f9;
+
+    transform: translateY(-2px);
+}
+
+.user-avatar {
+
+    width: 46px;
+
+    height: 46px;
+
+    border-radius: 50%;
+
+    background: linear-gradient(135deg, #93245c, #9600b7);
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-weight: 700;
+
+    font-size: 18px;
+
+    flex-shrink: 0;
+}
+
+.user-info {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    flex: 1;
+
+    text-align: left;
+}
+
+.user-info strong {
+
+    font-size: 14px;
+
+    color: #222;
+}
+
+.user-info span {
+
+    font-size: 12px;
+
+    color: #777;
+
+    text-transform: capitalize;
+}
+
+/* ===== DROPDOWN ===== */
+
+.user-dropdown {
+
+    position: absolute;
+
+    bottom: 90px;
+
+    left: 15px;
+
+    right: 15px;
+
+    background: white;
+
+    border-radius: 20px;
+
+    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+
+    padding: 15px;
+
+    display: none;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.user-dropdown.active {
+
+    display: flex;
+}
+
+.user-dropdown a {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 12px 14px;
+
+    border-radius: 14px;
+
+    transition: 0.2s ease;
+}
+
+.user-dropdown a:hover {
+
+    background: #f3f4f6;
+}
+
+.user-dropdown a::after {
+
+    display: none;
 }
 
 /* ///////////////////////*/
@@ -509,10 +725,14 @@ a:hover::after {
 .sidebar-top {
 
     display: flex;
+
     align-items: center;
+
     gap: 15px;
 
     padding: 25px;
+
+    min-height: 120px;
 }
 
 .menu-btn {
@@ -547,6 +767,26 @@ a:hover::after {
     font-weight: 700;
 }
 
+.logo-text {
+
+    transition: 0.2s ease;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+.sidebar.collapsed .logo-text {
+
+    opacity: 0;
+
+    width: 0;
+
+    overflow: hidden;
+}
+
 .logo-img {
 
     padding-top: 10px;
@@ -576,6 +816,8 @@ a:hover::after {
     transition: 0.2s;
 
     color: #333;
+
+    padding-left: 24px;
 }
 
 .sidebar-nav a:hover {
@@ -1238,4 +1480,202 @@ a:hover::after {
 
         transform: scale(1);
     }
+}
+
+/* =================================== */
+/* ========== LOGIN ================= */
+/* ================================= */
+
+.login-body {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 40px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #fe8b61 0%,
+        #93245c 50%,
+        #9600b7 100%
+    );
+}
+
+.login-wrapper {
+
+    width: 100%;
+
+    max-width: 1200px;
+
+    display: grid;
+
+    grid-template-columns: 1fr 450px;
+
+    gap: 40px;
+
+    align-items: center;
+}
+
+/* ===== PANEL IZQUIERDO ===== */
+
+.login-info {
+
+    color: white;
+
+    padding: 30px;
+}
+
+.login-info h1 {
+
+    font-size: 68px;
+
+    margin-bottom: 20px;
+
+    line-height: 1;
+}
+
+.login-info > p {
+
+    font-size: 20px;
+
+    opacity: 0.9;
+
+    margin-bottom: 35px;
+
+    max-width: 500px;
+}
+
+.login-info-box {
+
+    background: rgba(255,255,255,0.12);
+
+    border: 1px solid rgba(255,255,255,0.18);
+
+    backdrop-filter: blur(18px);
+
+    -webkit-backdrop-filter: blur(18px);
+
+    padding: 30px;
+
+    border-radius: 30px;
+}
+
+.login-info-box p {
+
+    font-size: 18px;
+
+    margin-bottom: 18px;
+}
+
+/* ===== PANEL DERECHO ===== */
+
+.login-container {
+
+    display: flex;
+
+    justify-content: center;
+}
+
+.login-card {
+
+    width: 100%;
+
+    background: rgba(255,255,255,0.92);
+
+    backdrop-filter: blur(20px);
+
+    -webkit-backdrop-filter: blur(20px);
+
+    border-radius: 35px;
+
+    padding: 45px;
+
+    box-shadow:
+    0 20px 45px rgba(0,0,0,0.18);
+}
+
+.login-card h2 {
+
+    font-size: 42px;
+
+    margin-bottom: 10px;
+}
+
+.login-subtitle {
+
+    color: #666;
+
+    margin-bottom: 30px;
+}
+
+.btn-login {
+
+    margin-top: 10px;
+
+    width: 100%;
+
+    background:
+    linear-gradient(
+        135deg,
+        #93245c,
+        #9600b7
+    );
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 700;
+}
+
+.btn-login:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+    0 12px 25px rgba(147,36,92,0.25);
+}
+
+/* ===== ALERTA ===== */
+
+.alerta-error {
+
+    background: #ffd6ed;
+
+    color: #d11f1f;
+
+    padding: 14px 18px;
+
+    border-radius: 18px;
+
+    margin-bottom: 20px;
+
+    font-weight: 600;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 900px) {
+
+    .login-wrapper {
+
+        grid-template-columns: 1fr;
+    }
+
+    .login-info {
+
+        text-align: center;
+    }
+
+    .login-info h1 {
+
+        font-size: 48px;
+    }
+
 }

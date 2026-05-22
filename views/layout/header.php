@@ -9,12 +9,23 @@
     <link rel="stylesheet" href="assets/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@100..1000&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+    if(localStorage.getItem("sidebarCollapsed") === "true"){
+        document.documentElement.classList.add("sidebar-preload");
+    }
+    </script>
     <link rel="icon" href="assets/img/HLH_logo.png" type="image/x-icon">
 
     <title>Hotel Inventario</title>
 </head>
 
 <body>
+
+<!-- ///////////////////////////////////////-->
+
+
+<!-- ///////////////////////////////////////-->
+
 
 <div class="layout">
 
@@ -71,6 +82,56 @@
             </a>
 
         </nav>
+
+    <br><br><br>
+
+    <?php if(isset($_SESSION['usuario'])): ?>
+
+    <div class="sidebar-user">
+
+        <button class="user-menu-btn" id="userMenuBtn">
+
+            <div class="user-avatar">
+                <?= strtoupper(substr($_SESSION['usuario']['nombre'], 0, 1)) ?>
+            </div>
+
+            <div class="user-info">
+
+                <strong>
+                    <?= $_SESSION['usuario']['nombre'] ?>
+                </strong>
+
+                <span>
+                    <?= $_SESSION['usuario']['rol'] ?>
+                </span>
+
+            </div>
+
+            <i data-lucide="chevron-up"></i>
+
+        </button>
+
+        <div class="user-dropdown" id="userDropdown">
+
+            <a href="#">
+                <i data-lucide="user"></i>
+                Perfil
+            </a>
+
+            <a href="#">
+                <i data-lucide="settings"></i>
+                Configuración
+            </a>
+
+            <a href="index.php?modulo=auth&accion=logout">
+                <i data-lucide="log-out"></i>
+
+                Cerrar sesión
+
+            </a>
+        </div>
+    </div>
+    <?php endif; ?>
 
     </aside>
 

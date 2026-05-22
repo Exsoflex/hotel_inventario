@@ -1,14 +1,21 @@
 <?php
+session_start();
 
 $modulo = $_GET['modulo'] ?? 'home';
 $action = $_GET['accion'] ?? 'index';
-
 switch($modulo) {
 
-    case 'home':
+    case 'auth':
 
-        require_once __DIR__ . "/views/home.php";
-        exit();
+        require_once __DIR__ . "/controllers/authController.php";
+        $controller = new AuthController();
+        break;
+
+    case 'dashboard':
+
+        require_once __DIR__ . "/controllers/dashboardController.php";
+        $controller = new DashboardController();
+        break;
 
     case 'habitaciones':
 
@@ -40,20 +47,22 @@ switch($modulo) {
         $controller = new RevisionController();
         break;
 
-    case 'dashboard':
-
-        require_once __DIR__ . "/controllers/dashboardController.php";
-        $controller = new DashboardController();
-        break;
-
     default:
 
-        require_once __DIR__ . "/controllers/dashboardController.php";
-        $controller = new DashboardController();
+        require_once __DIR__ . "/controllers/authController.php";
+        $controller = new AuthController();
         break;
 }
 
 switch($action) {
+
+    case 'login':
+        $controller->login();
+        break;
+
+    case 'logout':
+        $controller->logout();
+        break;
 
     case 'agregar':
         $controller->agregar();
