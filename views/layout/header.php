@@ -84,6 +84,18 @@
             </a>
             <?php endif; ?>
 
+            <?php if(
+            in_array(
+                $_SESSION['usuario']['rol'],
+                ['admin']
+            )
+            ): ?>
+            <a href="index.php?modulo=usuarios">
+                <i data-lucide="users"></i>
+                <span>Usuarios</span>
+            </a>
+            <?php endif; ?>
+            
         </nav>
 
     <?php if(
@@ -96,7 +108,7 @@
     <br><br><br><br><br>
 
     <?php endif; ?>
-    <br><br><br>
+    <br><br>
 
     <?php if(isset($_SESSION['usuario'])): ?>
 

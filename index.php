@@ -112,6 +112,12 @@ switch($modulo) {
         $controller = new RevisionController();
         break;
 
+    case 'usuarios':
+
+        require_once __DIR__ . "/controllers/usuariosController.php";
+        $controller = new UsuariosController();
+        break;
+
     default:
 
         require_once __DIR__ . "/controllers/authController.php";
@@ -144,6 +150,14 @@ switch($action) {
     default:
         $controller->index();
         break;
+
+    case 'activar':
+    $controller->activar();
+    break;
+
+    case 'desactivar':
+    $controller->desactivar();
+    break;
 }
 
 ?>
