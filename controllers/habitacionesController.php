@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../models/habitacion.php";
+require_once __DIR__ . '/../config/auth.php';
 
 class HabitacionesController {
 
@@ -12,6 +13,10 @@ class HabitacionesController {
     }
 
     public function agregar() {
+
+        verificarRol(
+        ['admin', 'supervisor']
+        );
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Verificar si la solicitud es de tipo POST
 
@@ -36,6 +41,10 @@ class HabitacionesController {
 
     public function eliminar() {
 
+        verificarRol(
+        ['admin', 'supervisor']
+        );
+
         $id = $_GET['id'];
         $modelhabitacion = new Habitacion();
         $modelhabitacion->eliminarHabitacion($id);
@@ -44,6 +53,10 @@ class HabitacionesController {
     }
 
     public function editar() {
+
+        verificarRol(
+        ['admin', 'supervisor']
+        );
 
         $modelhabitacion = new Habitacion();
 

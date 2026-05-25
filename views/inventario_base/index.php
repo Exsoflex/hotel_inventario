@@ -32,12 +32,19 @@
         placeholder="Buscar inventario base..."
         >
 
+        <?php if(
+        in_array(
+            $_SESSION['usuario']['rol'],
+            ['admin', 'supervisor']
+        )
+        ): ?>
         <button 
         class="btn-agregar"
         onclick="abrirModal()"
         >
             + Agregar inventario base
         </button>
+        <?php endif; ?>
 
     </div>
 
@@ -54,8 +61,15 @@
             <th>Tipo de habitación</th>
             <th>Articulo</th>
             <th>Cantidad</th>
+            <?php if(
+            in_array(
+                $_SESSION['usuario']['rol'],
+                ['admin', 'supervisor']
+            )
+            ): ?>
             <th>Eliminar</th>
             <th>Editar</th>
+            <?php endif; ?>
         </tr>
     
     </thead>
@@ -71,6 +85,12 @@
                 <td><?= $i['tipo_habitacion'] ?></td>
                 <td><?= $i['nombre'] ?></td>
                 <td><?= $i['cantidad'] ?></td>
+                <?php if(
+                in_array(
+                    $_SESSION['usuario']['rol'],
+                    ['admin', 'supervisor']
+                )
+                ): ?>
                 <td>
                     <a 
                     href="#"
@@ -78,12 +98,14 @@
                     data-url="index.php?modulo=inventario_base&accion=eliminar&id=<?= $i['id'] ?>"
                     data-inventario_base="<?= $i['nombre'] ?>"
                     >
-                    🗑 Eliminar
+                    Eliminar
                     </a>
                 </td>
                 <td>
-                    <a href="index.php?modulo=inventario_base&accion=editar&id=<?= $i['id'] ?>#inventario_baseFormulario"> ✏ Editar</a>
-                </td>    
+                    <a href="index.php?modulo=inventario_base&accion=editar&id=<?= $i['id'] ?>#inventario_baseFormulario"> 
+                    Editar</a>
+                </td>
+                <?php endif; ?>    
             </tr>
 
         <?php endforeach; ?>

@@ -49,9 +49,17 @@
 <div class="inventario-topbar">
     <input type="text" id="buscador" placeholder="Buscar..."
     value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
+
+    <?php if(
+    in_array(
+        $_SESSION['usuario']['rol'],
+        ['admin', 'supervisor']
+    )
+    ): ?>
     <button class="btn-agregar" onclick="abrirModal()">
         + Agregar inventario
     </button>
+    <?php endif; ?>
 </div>
 
 <br>
@@ -102,10 +110,18 @@ ksort($inventarioPorHabitacion);
                         </p>
 
                     </div>
-                    <div class="inventario-actions">
+
+                    <?php if(
+                        in_array(
+                            $_SESSION['usuario']['rol'],
+                            ['admin', 'supervisor']
+                        )
+                    ): ?>
+                    <div class="inventario-actions">    
+                             
                         <a href="index.php?modulo=inventario&accion=editar&id=<?= $i['id'] ?>">
                             Editar
-                        </a>
+                        </a>   
                         <a 
                         href="#"
                         class="btn-eliminar"
@@ -114,8 +130,8 @@ ksort($inventarioPorHabitacion);
                         >
                         🗑 Eliminar
                         </a>
-
                     </div>
+                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
         </div>

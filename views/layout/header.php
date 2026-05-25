@@ -67,6 +67,12 @@
                 <span>Habitaciones</span>
             </a>
 
+            <?php if(
+            in_array(
+                $_SESSION['usuario']['rol'],
+                ['admin', 'supervisor']
+            )
+            ): ?>
             <a href="index.php?modulo=articulos">
                 <i data-lucide="package"></i>
                 <span>Artículos</span>
@@ -76,9 +82,20 @@
                 <i data-lucide="clipboard-list"></i>
                 <span>Inventario Base</span>
             </a>
+            <?php endif; ?>
 
         </nav>
 
+    <?php if(
+        in_array(
+            $_SESSION['usuario']['rol'],
+            ['operador']
+        )
+        ): ?>
+
+    <br><br><br><br><br>
+
+    <?php endif; ?>
     <br><br><br>
 
     <?php if(isset($_SESSION['usuario'])): ?>

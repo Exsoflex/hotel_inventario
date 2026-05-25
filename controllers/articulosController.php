@@ -1,10 +1,15 @@
 <?php
 
 require_once __DIR__ . "/../models/articulos.php";
+require_once __DIR__ . '/../config/auth.php';
 
 class ArticulosController {
 
     public function index() {
+        
+        verificarRol(
+        ['admin', 'supervisor']
+        );
 
         $articulo = new Articulos();
         $articulos = $articulo->obtenerTodo();
@@ -12,6 +17,10 @@ class ArticulosController {
     }
 
     public function agregar() {
+
+        verificarRol(
+        ['admin', 'supervisor']
+        );
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Verificar si la solicitud es de tipo POST
 
@@ -32,6 +41,10 @@ class ArticulosController {
 
     public function eliminar() {
 
+        verificarRol(
+        ['admin', 'supervisor']
+        );
+
         $id = $_GET['id'];
         $modelarticulo = new Articulos();
         $modelarticulo->eliminarArticulo($id);
@@ -40,6 +53,10 @@ class ArticulosController {
 
 
     public function editar() {
+
+        verificarRol(
+        ['admin', 'supervisor']
+        );
 
         $modelarticulo = new Articulos();
 

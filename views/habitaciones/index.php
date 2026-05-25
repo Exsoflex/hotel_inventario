@@ -32,12 +32,19 @@
         placeholder="Buscar habitaciones..."
         >
 
+        <?php if(
+        in_array(
+            $_SESSION['usuario']['rol'],
+            ['admin', 'supervisor']
+        )
+        ): ?>
         <button 
         class="btn-agregar"
         onclick="abrirModal()"
         >
             + Agregar habitación
         </button>
+        <?php endif; ?>
 
     </div>
 
@@ -55,8 +62,16 @@
             <th>Numero</th>
             <th>Tipo</th>
             <th>Descripción</th>
+
+            <?php if(
+            in_array(
+                $_SESSION['usuario']['rol'],
+                ['admin', 'supervisor']
+            )
+            ): ?>
             <th>Eliminar</th>
             <th>Editar</th>
+            <?php endif; ?>
         </tr>
     </thead>
 
@@ -73,7 +88,12 @@
                 <td><?= $h['tipo'] ?></td>
                 <td><?= $h['descripcion'] ?></td>
 
-
+                <?php if(
+                in_array(
+                    $_SESSION['usuario']['rol'],
+                    ['admin', 'supervisor']
+                )
+                ): ?>
                 <td>
                     <a 
                     href="#"
@@ -88,7 +108,8 @@
                     <a href="index.php?modulo=habitaciones&accion=editar&id=<?= $h['id'] ?>" class="table-action">                
                     Editar
                     </a>
-                </td>    
+                </td>  
+                <?php endif; ?>  
             </tr>
 
         <?php endforeach; ?>

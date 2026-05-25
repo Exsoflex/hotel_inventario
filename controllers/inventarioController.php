@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../models/inventario.php";
+require_once __DIR__ . '/../config/auth.php';
 
 class InventarioController {
 
@@ -16,7 +17,13 @@ class InventarioController {
 
     }
 
+    
+
     public function agregar () {
+
+        verificarRol(
+        ['admin', 'supervisor']
+        );
 
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -44,6 +51,10 @@ class InventarioController {
 
     public function eliminar() {
 
+        verificarRol(
+        ['admin', 'supervisor']
+        );
+
         $id = $_GET['id'];
         $inventario = new Inventario();
         $inventario->eliminarInventario($id);
@@ -55,6 +66,10 @@ class InventarioController {
 
     public function editar() {
 
+        verificarRol(
+        ['admin', 'supervisor']
+        );
+        
     $modelInventario = new Inventario();
 
         // === MOSTRAR FORMULARIO === ///

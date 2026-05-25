@@ -8,10 +8,16 @@ class AuthController {
     // MOSTRAR LOGIN
     // =========================
 
-    public function index() {
+    public function index(){
 
-        require_once __DIR__ . "/../views/login.php";
+    if(isset($_SESSION['usuario'])){
+
+        header("Location: index.php?modulo=dashboard");
+        exit();
     }
+
+    require_once __DIR__ . '/../views/login.php';
+}
 
     // =========================
     // INICIAR SESION
@@ -52,7 +58,7 @@ class AuthController {
             // CREAR SESION
             // =========================
 
-            session_start();
+            //session_start();
 
             $_SESSION['usuario'] = [
 
@@ -76,7 +82,7 @@ class AuthController {
 
     public function logout() {
 
-        session_start();
+        //session_start();
 
         session_destroy();
 

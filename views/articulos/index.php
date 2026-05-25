@@ -32,14 +32,19 @@
         id="buscador" 
         placeholder="Buscar articulos..."
         >
-
+        <?php if(
+        in_array(
+            $_SESSION['usuario']['rol'],
+            ['admin', 'supervisor']
+        )
+        ): ?>
         <button 
         class="btn-agregar"
         onclick="abrirModal()"
         >
             + Agregar articulo
         </button>
-
+        <?php endif; ?>
     </div>
 
     <br>
@@ -53,8 +58,15 @@
             <th hidden>ID</th>
             <th>Nombre</th>
             <th>Descripción</th>
+            <?php if(
+            in_array(
+                $_SESSION['usuario']['rol'],
+                ['admin', 'supervisor']
+            )
+            ): ?>
             <th>Eliminar</th>
             <th>Editar</th>
+            <?php endif; ?>
         </tr>
     </thead>
 
@@ -68,6 +80,12 @@
                 <td hidden><?= $a['id'] ?></td>
                 <td><?= $a['nombre'] ?></td>
                 <td><?= $a['descripcion'] ?></td>
+                <?php if(
+                in_array(
+                    $_SESSION['usuario']['rol'],
+                    ['admin', 'supervisor']
+                )
+                ): ?>
                 <td>
                     <a 
                     href="#"
@@ -82,7 +100,8 @@
                     <a href="index.php?modulo=articulos&accion=editar&id=<?= $a['id'] ?>">                
                     Editar
                     </a>
-                    </td>      
+                </td>  
+                <?php endif; ?>    
             </tr>
 
         <?php endforeach; ?>

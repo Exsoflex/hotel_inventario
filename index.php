@@ -1,6 +1,71 @@
 <?php
 session_start();
 
+$modulo = $_GET['modulo'] ?? 'auth';
+
+/* módulos públicos */
+$modulosPublicos = ['auth'];
+
+/* protección de login */
+if (
+    !isset($_SESSION['usuario']) &&
+    !in_array($modulo, $modulosPublicos)
+) {
+
+    header("Location: index.php?modulo=auth");
+    exit();
+}
+
+/* ========================= */
+/* PERMISOS POR ROL */
+/* ========================= */
+
+$permisos = [
+
+    'admin' => [
+        'dashboard',
+        'revision',
+        'inventario',
+        'habitaciones',
+        'articulos',
+        'inventario_base',
+        'usuarios'
+    ],
+
+    'supervisor' => [
+        'dashboard',
+        'revision',
+        'inventario',
+        'habitaciones',
+        'articulos',
+        'inventario_base'
+    ],
+
+    'operador' => [
+        'dashboard',
+        'revision',
+        'inventario',
+        'habitaciones'
+    ]
+];
+
+/* validar permisos */
+
+if(isset($_SESSION['usuario'])){
+
+    $rol = $_SESSION['usuario']['rol'];
+
+    if(
+        isset($permisos[$rol]) &&
+        !in_array($modulo, $permisos[$rol]) &&
+        !in_array($modulo, $modulosPublicos)
+    ){
+
+        header("Location: index.php?modulo=dashboard");
+        exit();
+    }
+}
+
 $modulo = $_GET['modulo'] ?? 'home';
 $action = $_GET['accion'] ?? 'index';
 switch($modulo) {
