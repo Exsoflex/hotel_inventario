@@ -61,12 +61,12 @@
                 action="/hotel_inventario/index.php?modulo=auth&accion=login" 
                 method="POST">
 
-                <label>Usuario</label>
+                <label>Usuario o correo</label>
 
                 <input
                     type="text"
-                    name="usuario"
-                    placeholder="Ingresa tu usuario"
+                    name="login"
+                    placeholder="Ingresa tu usuario o correo"
                     required
                 >
 

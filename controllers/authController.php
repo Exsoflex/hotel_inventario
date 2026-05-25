@@ -21,19 +21,18 @@ class AuthController {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $usuario = trim($_POST['usuario']);
-            $password = trim($_POST['password']);
+            $login = trim($_POST['login']);
+            $password = $_POST['password'];
 
-            // Validar campos vacíos
-            if (empty($usuario) || empty($password)) {
+            if(empty($login) || empty($password)){
 
                 header("Location: index.php?modulo=auth&error=campos");
                 exit();
             }
-
+            
             $usuarioModel = new Usuario();
 
-            $usuarioDB = $usuarioModel->obtenerPorUsuario($usuario);
+            $usuarioDB = $usuarioModel->obtenerPorLogin($login);
 
             // Verificar usuario
             if (!$usuarioDB) {

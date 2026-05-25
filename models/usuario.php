@@ -16,20 +16,23 @@ class Usuario {
      // BUSCAR USUARIO POR USERNAME ||
     // =============================||
 
-    public function obtenerPorUsuario($usuario) {
+    public function obtenerPorLogin($login) {
 
-        $sql = "SELECT * FROM usuarios 
-                WHERE usuario = :usuario
-                AND activo = 1
-                LIMIT 1";
+    $sql = "SELECT * FROM usuarios
+            WHERE (
+                nombre = :login
+                OR correo = :login
+            )
+            AND activo = 1
+            LIMIT 1";
 
-        $stmt = $this->conn->prepare($sql);
+    $stmt = $this->conn->prepare($sql);
 
-        $stmt->bindParam(":usuario", $usuario);
+    $stmt->bindParam(":login", $login);
 
-        $stmt->execute();
+    $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
 }
