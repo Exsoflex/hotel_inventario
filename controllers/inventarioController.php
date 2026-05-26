@@ -17,8 +17,6 @@ class InventarioController {
 
     }
 
-    
-
     public function agregar () {
 
         verificarRol(
@@ -32,6 +30,16 @@ class InventarioController {
             $cantidad = $_POST['cantidad'];
             $estado = $_POST['estado'];
             $comentarios = $_POST['comentarios'];
+
+            if (
+                empty($habitacion_id) || 
+                empty($articulo_id) || 
+                empty($cantidad) || 
+                empty($estado) || 
+                empty($comentarios))
+            {
+                 exit ("Llena todos los campos por favor");
+            }
 
             $inventario = new Inventario();
 

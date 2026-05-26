@@ -70,9 +70,15 @@ class Usuarios {
         $stmt->bindParam(":password", $passwordHash);
         $stmt->bindParam(":rol", $rol);
 
-        $stmt->execute();
-
-        return $this->conn->lastInsertId();
+        try {
+            $stmt->execute();
+            return ['exito' => true, 'id' => $this->conn->lastInsertId()];
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) { // Violación de unique
+                return ['exito' => false, 'error' => 'duplicado'];
+            }
+            return ['exito' => false, 'error' => 'general'];
+        }
     }
 
     public function editarUsuario(
@@ -99,7 +105,15 @@ class Usuarios {
         $stmt->bindParam(":rol", $rol);
         $stmt->bindParam(":activo", $activo);
 
-        $stmt->execute();
+        try {
+            $stmt->execute();
+            return ['exito' => true, 'id' => $this->conn->lastInsertId()];
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) { // Violación de unique
+                return ['exito' => false, 'error' => 'duplicado'];
+            }
+            return ['exito' => false, 'error' => 'general'];
+        }
     }
 
     public function eliminarUsuario($id){

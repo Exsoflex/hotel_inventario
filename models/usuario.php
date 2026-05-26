@@ -13,7 +13,7 @@ class Usuario {
     }
 
       // ===========================||
-     // BUSCAR USUARIO POR USERNAME ||
+     // BUSCAR USUARIO POR USERNAME ||==============||()-----o<>
     // =============================||
 
     public function obtenerPorLogin($login) {
@@ -29,7 +29,6 @@ class Usuario {
     $stmt = $this->conn->prepare($sql);
 
     $stmt->bindParam(":login", $login);
-
     $stmt->execute();
 
     return $stmt->fetch(PDO::FETCH_ASSOC);

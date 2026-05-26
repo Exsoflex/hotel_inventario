@@ -35,7 +35,7 @@
         <?php if(
         in_array(
             $_SESSION['usuario']['rol'],
-            ['admin', 'supervisor']
+            ['admin']
         )
         ): ?>
         <button 
@@ -61,7 +61,6 @@
     <th>Rol</th>
     <th>Estado</th>
     <th>Último acceso</th>
-    <th>Editar</th>
     <th>Acciones</th>
 </tr>
 </thead>
@@ -107,9 +106,10 @@
     <a href="index.php?modulo=usuarios&accion=editar&id=<?= $u['id'] ?>">
         Editar
     </a>
-    </td>
-    <td>
+
             <?php if($u['id'] != $_SESSION['usuario']['id']): ?>
+
+                |
 
         <?php if($u['activo']): ?>
 
@@ -169,6 +169,12 @@
         id="usuarioFormulario" 
         action="index.php?modulo=usuarios&accion=<?= isset($usuarioEditar) ? 'editar' : 'agregar' ?>" 
         method="POST">
+
+        <?php if (isset($errorFormulario)): ?>
+        <div class="alerta-error">
+            ⚠ <?= htmlspecialchars($errorFormulario) ?>
+        </div>
+        <?php endif; ?>
 
             <input
                 type="hidden"
@@ -321,15 +327,23 @@ function abrirModal(){
 
 function cerrarModal(){
 
-    document
-    .getElementById('modalUsuario')
-    .classList
-    .remove('active');
+    <?php if(isset($usuarioEditar)): ?>
 
-    document.body.style.overflow = 'auto';
+        window.location.href = 'index.php?modulo=usuarios';
+
+    <?php else: ?>
+
+        document
+        .getElementById('modalUsuario')
+        .classList
+        .remove('active');
+
+        document.body.style.overflow = 'auto';
+
+    <?php endif; ?>
 }
 
-<?php if(isset($usuarioEditar)): ?>
+<?php if(isset($usuarioEditar) || isset($errorFormulario)): ?>
 
 abrirModal();
 

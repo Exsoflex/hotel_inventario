@@ -18,24 +18,38 @@ class ArticulosController {
 
     public function agregar() {
 
-        verificarRol(
-        ['admin', 'supervisor']
-        );
+        verificarRol(['admin', 'supervisor']);
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Verificar si la solicitud es de tipo POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $nombre = trim($_POST['nombre']);
             $descripcion = trim($_POST['descripcion']);
 
-              if (
-                empty($nombre)
-                ) exit ("Llena todos los campos por favor");
+            if (empty($nombre)) {
+                $errorFormulario = 'Llena todos los campos por favor';
+                $modelarticulo = new Articulos();
+                $articulos = $modelarticulo->obtenerTodo();
+                require_once __DIR__ . "/../views/articulos/index.php";
+                return;
+            }
 
             $modelarticulo = new Articulos();
-            $idNuevo = $modelarticulo->agregarArticulo($nombre, $descripcion);
+            $resultado = $modelarticulo->agregarArticulo($nombre, $descripcion);
 
-            header("Location: index.php?modulo=articulos#articulo-$idNuevo"); // Redirigir a la página principal después de agregar la habitación
-            exit();
+            if ($resultado['exito']) {
+                $idNuevo = $resultado['id'];
+                header("Location: index.php?modulo=articulos#articulo-$idNuevo");
+                exit();
+            } else {
+                // Pasar error a la view
+                $errorFormulario = $resultado['error'] === 'duplicado'
+                    ? "Ya existe un artículo con ese nombre."
+                    : "Ocurrió un error al guardar. Intenta de nuevo.";
+
+                $modelarticulo2 = new Articulos();
+                $articulos = $modelarticulo2->obtenerTodo();
+                require_once __DIR__ . "/../views/articulos/index.php";
+            }
         }
     }
 
@@ -54,47 +68,45 @@ class ArticulosController {
 
     public function editar() {
 
-        verificarRol(
-        ['admin', 'supervisor']
-        );
+        verificarRol(['admin', 'supervisor']);
 
         $modelarticulo = new Articulos();
 
-        // === MOSTRAR FORMULARIO === ///
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-
             $id = $_GET['id'];
             $articuloEditar = $modelarticulo->obtenerPorId($id);
             $articulos = $modelarticulo->obtenerTodo();
             require_once __DIR__ . "/../views/articulos/index.php";
-
         }
 
-        // === GUARDAR CAMBIOS === ///
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Verificar si la solicitud es de tipo POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $id = $_POST['id'];
-
             $nombre = trim($_POST['nombre']);
             $descripcion = trim($_POST['descripcion']);
 
-              if (
-                empty($id) ||
-                empty($nombre)
-              ) {
-                exit ("Llena todos los campos por favor");
-                }
+            if (empty($id) || empty($nombre)) {
+                $errorFormulario = 'Llena todos los campos por favor';
+                $articuloEditar = $modelarticulo->obtenerPorId($id);
+                $articulos = $modelarticulo->obtenerTodo();
+                require_once __DIR__ . "/../views/articulos/index.php";
+                return;
+            }
 
-            $modelarticulo = new Articulos();
+            $resultado = $modelarticulo->editarArticulo($id, $nombre, $descripcion);
 
-            $modelarticulo->editarArticulo(
-                $id, 
-                $nombre,
-                $descripcion
-            );
+            if ($resultado['exito']) {
+                header("Location: index.php?modulo=articulos#articulo-$id");
+                exit();
+            } else {
+                $errorFormulario = $resultado['error'] === 'duplicado'
+                    ? "Ya existe un artículo con ese nombre."
+                    : "Ocurrió un error al guardar. Intenta de nuevo.";
 
-            header("Location: index.php?modulo=articulos#articulo-$id"); // Redirigir a la página principal después de editar la habitación
-            exit();
+                $articuloEditar = $modelarticulo->obtenerPorId($id);
+                $articulos = $modelarticulo->obtenerTodo();
+                require_once __DIR__ . "/../views/articulos/index.php";
+            }
         }
     }
 }

@@ -28,9 +28,15 @@ class Articulos {
         $stmt->bindParam(":nombre", $nombre);
         $stmt->bindParam(":descripcion", $descripcion);
 
-        $stmt->execute();
-
-        return $this->conn->lastInsertId(); // Devuelve el ID del artículo recién agregado
+        try {
+            $stmt->execute();
+            return ['exito' => true, 'id' => $this->conn->lastInsertId()];
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) { // Violación de unique
+                return ['exito' => false, 'error' => 'duplicado'];
+            }
+            return ['exito' => false, 'error' => 'general'];
+        }
     }
 
     public function eliminarArticulo($id) {
@@ -60,10 +66,17 @@ class Articulos {
 
         $stmt->bindParam(":id", $id);
         $stmt->bindParam(":nombre", $nombre);
-        $stmt->bindParam(":descripcion", $descripcion);  
-        
-        $stmt->execute();
+        $stmt->bindParam(":descripcion", $descripcion);
 
+        try {
+            $stmt->execute();
+            return ['exito' => true];
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) {
+                return ['exito' => false, 'error' => 'duplicado'];
+            }
+            return ['exito' => false, 'error' => 'general'];
+        }
     }
 
 

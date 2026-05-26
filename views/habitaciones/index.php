@@ -149,6 +149,12 @@
         action="index.php?modulo=habitaciones&accion=<?= isset($habitacionEditar) ? 'editar' : 'agregar' ?>" 
         method="POST">
 
+        <?php if (isset($errorFormulario)): ?>
+        <div class="alerta-error">
+            ⚠ <?= htmlspecialchars($errorFormulario) ?>
+        </div>
+        <?php endif; ?>
+
             <input 
             type="hidden" 
             name="id"
@@ -345,15 +351,23 @@ function abrirModal(){
 
 function cerrarModal(){
 
-    document
-    .getElementById('modalHabitacion')
-    .classList
-    .remove('active');
+    <?php if(isset($habitacionEditar)): ?>
 
-    document.body.style.overflow = 'auto';
+        window.location.href = 'index.php?modulo=habitaciones';
+
+    <?php else: ?>
+
+        document
+        .getElementById('modalHabitacion')
+        .classList
+        .remove('active');
+
+        document.body.style.overflow = 'auto';
+
+    <?php endif; ?>
 }
 
-<?php if(isset($habitacionEditar)): ?>
+<?php if(isset($habitacionEditar) || isset($errorFormulario)): ?>
 abrirModal();
 <?php endif; ?>
 

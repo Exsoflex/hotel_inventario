@@ -143,6 +143,12 @@
         action="index.php?modulo=articulos&accion=<?= isset($articuloEditar) ? 'editar' : 'agregar' ?>" 
         method="POST">
 
+        <?php if (isset($errorFormulario)): ?>
+        <div class="alerta-error">
+            ⚠ <?= htmlspecialchars($errorFormulario) ?>
+        </div>
+        <?php endif; ?>
+
             <input
                 type="hidden"
                 name="id"
@@ -269,15 +275,23 @@ function abrirModal(){
 
 function cerrarModal(){
 
-    document
-    .getElementById('modalArticulo')
-    .classList
-    .remove('active');
+    <?php if(isset($articuloEditar)): ?>
 
-    document.body.style.overflow = 'auto';
+        window.location.href = 'index.php?modulo=articulos';
+
+    <?php else: ?>
+
+        document
+        .getElementById('modalArticulo')
+        .classList
+        .remove('active');
+
+        document.body.style.overflow = 'auto';
+
+    <?php endif; ?>
 }
 
-<?php if(isset($articuloEditar)): ?>
+<?php if(isset($articuloEditar) || isset($errorFormulario)): ?>
 
 abrirModal();
 

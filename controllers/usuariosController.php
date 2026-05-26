@@ -1,5 +1,4 @@
 <?php
-
 require_once __DIR__ . "/../models/usuarios.php";
 require_once __DIR__ . "/../config/auth.php";
 
@@ -28,20 +27,41 @@ class UsuariosController {
             $password = $_POST['password'];
             $rol = $_POST['rol'];
 
-            $usuario = new Usuarios();
+            if (
+                empty($nombre) ||
+                empty($correo) || 
+                empty($password) || 
+                empty($rol)
+                ) {
+                $errorFormulario = 'Llena todos los campos por favor';
+                $modelusuario = new Usuarios();
+                $usuarios = $modelusuario->obtenerTodo();
+                require_once __DIR__ . "/../views/usuarios/index.php";
+                return;
+                }  
 
-            $idNuevo = $usuario->agregarUsuario(
+            $usuario = new Usuarios();
+            $resultado = $idNuevo = $usuario->agregarUsuario(
                 $nombre,
                 $correo,
                 $password,
                 $rol
             );
 
-            header(
-                "Location: index.php?modulo=usuarios#usuario-$idNuevo"
-            );
+            if ($resultado['exito']) {
+                $idNuevo = $resultado['id'];
+                header("Location: index.php?modulo=usuarios#usuario-$idNuevo");
+                exit();
+            } else {
+                // Pasar error a la view
+                $errorFormulario = $resultado['error'] === 'duplicado'
+                    ? "Ya existe un usuario con ese nombre o correo."
+                    : "Ocurrió un error al guardar. Intenta de nuevo.";
 
-            exit();
+                $modelusuario = new Usuarios();
+                $usuarios = $modelusuario->obtenerTodo();
+                require_once __DIR__ . "/../views/usuarios/index.php";
+            }
         }
     }
 
@@ -89,7 +109,20 @@ class UsuariosController {
             $rol = $_POST['rol'];
             $activo = $_POST['activo'];
 
-            $usuario->editarUsuario(
+            if (
+                empty($nombre) ||
+                empty($correo) || 
+                empty($password) || 
+                empty($rol)
+                ) {
+                $errorFormulario = 'Llena todos los campos por favor';
+                $modelusuario = new Usuarios();
+                $usuarios = $modelusuario->obtenerTodo();
+                require_once __DIR__ . "/../views/usuarios/index.php";
+                return;
+            } 
+
+            $resultado = $usuario->editarUsuario(
                 $id,
                 $nombre,
                 $correo,
@@ -97,11 +130,18 @@ class UsuariosController {
                 $activo
             );
 
-            header(
-                "Location: index.php?modulo=usuarios#usuario-$id"
-            );
+            if ($resultado['exito']) {
+                header("Location: index.php?modulo=usuarios#usuario-$id");
+                exit();
+            } else {
+                $errorFormulario = $resultado['error'] === 'duplicado'
+                    ? "Ya existe un usuario con ese nombre o correo."
+                    : "Ocurrió un error al guardar. Intenta de nuevo.";
 
-            exit();
+                $usuarioEditar = $modelusuario->obtenerPorId($id);
+                $usuarios = $modelusuario->obtenerTodo();
+                require_once __DIR__ . "/../views/usuarios/index.php";
+            }
         }
     }
 
@@ -132,16 +172,11 @@ class UsuariosController {
             exit('No puedes desactivar tu propia cuenta');
         }
 
-        if(
-            $id == $_SESSION['usuario']['id']
-            && $_SESSION['usuario']['rol'] != 'admin'
-        ){
-            exit('No puedes quitarte el rol de administrador');
-        }
         $usuario = new Usuarios();
         $usuario->cambiarEstado($id, 0);
         
 
         header("Location: index.php?modulo=usuarios");
+        exit();
     }
 }

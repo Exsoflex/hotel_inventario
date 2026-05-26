@@ -30,9 +30,15 @@ class Habitacion {
         $stmt->bindParam(":tipo", $tipo);
         $stmt->bindParam(":descripcion", $descripcion);
 
-        $stmt->execute();
-
-        return $this->conn->lastInsertId();
+        try {
+            $stmt->execute();
+            return ['exito' => true, 'id' => $this->conn->lastInsertId()];
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) { // Violación de unique
+                return ['exito' => false, 'error' => 'duplicado'];
+            }
+            return ['exito' => false, 'error' => 'general'];
+        }
     }
 
     public function eliminarHabitacion($id) {
@@ -64,8 +70,16 @@ class Habitacion {
         $stmt->bindParam(":numero", $numero);
         $stmt->bindParam(":tipo", $tipo);
         $stmt->bindParam(":descripcion", $descripcion);  
-        
-        $stmt->execute();
+
+        try {
+            $stmt->execute();
+            return ['exito' => true];
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) {
+                return ['exito' => false, 'error' => 'duplicado'];
+            }
+            return ['exito' => false, 'error' => 'general'];
+        }
 
     }
 

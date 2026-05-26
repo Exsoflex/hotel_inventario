@@ -29,13 +29,35 @@ class HabitacionesController {
                 empty($piso) ||
                 empty($numero) || 
                 empty($tipo)
-                ) exit ("Llena todos los campos por favor");
+                ) {
+                $errorFormulario = 'Llena todos los campos por favor';
+                $modelhabitacion = new Habitacion();
+                $habitaciones = $modelhabitacion->obtenerTodo();
+                require_once __DIR__ . "/../views/habitaciones/index.php";
+                return;
+                }       
 
             $modelhabitacion = new Habitacion();
-            $idNuevo = $modelhabitacion->agregarHabitacion($piso, $numero, $tipo, $descripcion);
+            $resultado = $modelhabitacion->agregarHabitacion(
+                $piso, 
+                $numero, 
+                $tipo, 
+                $descripcion);
 
-            header("Location: index.php?modulo=habitaciones#habitacion-$idNuevo"); // Redirigir a la página principal después de agregar la habitación
-            exit();
+            if ($resultado['exito']) {
+                $idNuevo = $resultado['id'];
+                header("Location: index.php?modulo=habitaciones#habitacion-$idNuevo");
+                exit();
+            } else {
+                // Pasar error a la view
+                $errorFormulario = $resultado['error'] === 'duplicado'
+                    ? "Ya existe una habitación con ese numero."
+                    : "Ocurrió un error al guardar. Intenta de nuevo.";
+
+                $modelhabitacion = new Habitacion();
+                $habitaciones = $modelhabitacion->obtenerTodo();
+                require_once __DIR__ . "/../views/habitaciones/index.php";
+            }
         }
     }
 
@@ -85,13 +107,17 @@ class HabitacionesController {
                 empty($piso) ||
                 empty($numero) || 
                 empty($tipo)
-              ) {
-                exit ("Llena todos los campos por favor");
-                }
+              )  {
+                $errorFormulario = 'Llena todos los campos por favor';
+                $habitacionEditar = $modelhabitacion->obtenerPorId($id);
+                $habitaciones = $modelhabitacion->obtenerTodo();
+                require_once __DIR__ . "/../views/habitaciones/index.php";
+                return;
+            }
 
             $modelhabitacion = new Habitacion();
 
-            $modelhabitacion->editarHabitacion(
+            $resultado = $modelhabitacion->editarHabitacion(
                 $id, 
                 $piso, 
                 $numero, 
@@ -99,8 +125,18 @@ class HabitacionesController {
                 $descripcion
             );
 
-            header("Location: index.php?modulo=habitaciones#habitacion-$id"); // Redirigir a la página principal después de editar la habitación
-            exit();
+            if ($resultado['exito']) {
+                header("Location: index.php?modulo=articulos#articulo-$id");
+                exit();
+            } else {
+                $errorFormulario = $resultado['error'] === 'duplicado'
+                    ? "Ya existe un artículo con ese nombre."
+                    : "Ocurrió un error al guardar. Intenta de nuevo.";
+
+                $articuloEditar = $modelarticulo->obtenerPorId($id);
+                $articulos = $modelarticulo->obtenerTodo();
+                require_once __DIR__ . "/../views/articulos/index.php";
+            }
         }
     }
 }
