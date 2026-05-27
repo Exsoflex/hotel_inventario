@@ -123,4 +123,26 @@ class Inventario {
         $stmt->execute();
     }
 
+    public function obtenerNumeroHabitacion($id) {
+
+        $sql = "SELECT numero FROM habitaciones WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $resultado ? $resultado['numero'] : "habitación #$id";
+    }
+
+    public function obtenerNombreArticulo($id) {
+
+        $sql = "SELECT nombre FROM articulos WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $resultado ? $resultado['nombre'] : "artículo #$id";
+    }
+
 }

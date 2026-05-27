@@ -35,7 +35,7 @@ class InventarioController {
             if (
                 empty($habitacion_id) || 
                 empty($articulo_id) || 
-                empty($cantidad) || 
+                $cantidad === '' || 
                 empty($estado))
             {
                  exit ("Llena todos los campos por favor");
@@ -51,8 +51,8 @@ class InventarioController {
                 $comentarios
             );
 
-            $habitaciones = $inventario->obtenerHabitaciones();
-            $articulos = $inventario->obtenerArticulos();
+            $habitaciones = $inventario->obtenerNumeroHabitacion($habitacion_id);
+            $articulos = $inventario->obtenerNombreArticulo($articulo_id);
 
             // Registrar movimiento
                 $mov = new Movimientos();
@@ -77,7 +77,25 @@ class InventarioController {
 
         $id = $_GET['id'];
         $inventario = new Inventario();
+        $inventarioEliminar = $inventario->obtenerPorId($id);
+        $habitacion_id = $inventarioEliminar['habitacion_id'];
+        $articulo_id = $inventarioEliminar['articulo_id'];
+        $idNuevo = $inventarioEliminar['id'];
+
+        $inventario = new Inventario();
         $inventario->eliminarInventario($id);
+
+        $habitaciones = $inventario->obtenerNumeroHabitacion($habitacion_id);
+        $articulos = $inventario->obtenerNombreArticulo($articulo_id);
+
+            // Registrar movimiento
+                $mov = new Movimientos();
+                $mov->registrar(
+                    'inventario',
+                    'eliminar',
+                    "Eliminó el artículo \"$articulos\" de la habitación \"$habitaciones\"",
+                    $idNuevo
+                );
 
         header("Location: index.php?modulo=inventario&mensaje=eliminado");
         exit();
@@ -118,7 +136,7 @@ class InventarioController {
             if (
                 empty($habitacion_id) ||
                 empty($articulo_id) ||
-                empty($cantidad) ||
+                $cantidad === '' ||
                 empty($estado)
             ) {
                 exit ("Llena todos los campos por favor");
@@ -132,6 +150,18 @@ class InventarioController {
                 $estado,
                 $comentarios
             );
+
+            $habitaciones = $modelInventario->obtenerNumeroHabitacion($habitacion_id);
+            $articulos = $modelInventario->obtenerNombreArticulo($articulo_id);
+
+            // Registrar movimiento
+                $mov = new Movimientos();
+                $mov->registrar(
+                    'inventario',
+                    'editar',
+                    "Editó el inventario a la habitación \"$habitaciones\" con el artículos \"$articulos\" (cantidad: $cantidad)",
+                    $id
+                );
 
             header("Location: index.php?modulo=inventario&mensaje=editado#inventario-$id");
             exit();

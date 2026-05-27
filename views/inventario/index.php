@@ -231,17 +231,45 @@ ksort($inventarioPorHabitacion);
 
             <label>Estado</label>
 
-            <select 
-            name="estado"
-            value="<?= $inventarioEditar['estado'] ?? '' ?>">
+        <select name="estado">
+        <option value="">Seleccione un estado</option>
 
-                <option value="">Seleccione un estado</option>
-                <option value="bueno">Bueno</option>
-                <option value="dañado">Dañado</option>
-                <option value="en_reparacion">En reparación</option>
-                <option value="perdido">Perdido</option>
+            <option value="bueno"
+            <?= isset($inventarioEditar)
+                && $inventarioEditar['estado'] === 'bueno'
+                ? 'selected'
+                : ''
+            ?>>
+                Bueno
+            </option>
 
-            </select>
+            <option value="dañado"
+            <?= isset($inventarioEditar)
+                && $inventarioEditar['estado'] === 'dañado'
+                ? 'selected'
+                : ''
+            ?>>
+                Dañado
+            </option>
+
+            <option value="en_reparacion"
+            <?= isset($inventarioEditar)
+                && $inventarioEditar['estado'] === 'en_reparacion'
+                ? 'selected'
+                : ''
+            ?>>
+                En reparación
+            </option>
+
+            <option value="perdido"
+            <?= isset($inventarioEditar)
+                && $inventarioEditar['estado'] === 'perdido'
+                ? 'selected'
+                : ''
+            ?>>
+                Perdido
+            </option>
+        </select>
 
             <label>Comentarios</label>
 
