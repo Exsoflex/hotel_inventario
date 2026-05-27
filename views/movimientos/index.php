@@ -85,6 +85,40 @@
 
     </table>
 
+<!-- /////////////////////////////////////////////////////// -->
+    <div class="paginacion">
+
+<?php if($pagina > 1): ?>
+
+    <a href="index.php?modulo=movimientos&pagina=<?= $pagina - 1 ?>">
+        ← Anterior
+    </a>
+
+<?php endif; ?>
+
+<?php for($i = 1; $i <= $totalPaginas; $i++): ?>
+
+    <a
+    href="index.php?modulo=movimientos&pagina=<?= $i ?>"
+    class="<?= $i == $pagina ? 'pagina-activa' : '' ?>"
+    >
+        <?= $i ?>
+    </a>
+
+<?php endfor; ?>
+
+<?php if($pagina < $totalPaginas): ?>
+<p></p>
+    <a href="index.php?modulo=movimientos&pagina=<?= $pagina + 1 ?>">
+       Siguiente →
+    </a>
+
+<?php endif; ?>
+
+</div>
+
+<!-- /////////////////////////////////////////////////////// -->
+
 </div>
 
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>

@@ -42,9 +42,9 @@ class Movimientos {
     // OBTENER TODOS
     // ===========================
 
-    public function obtenerTodo($limite = 200) {
+    public function obtenerTodo($limite, $offset) {
 
-        $sql = "SELECT 
+        $sql = "SELECT
                     m.id,
                     u.nombre AS usuario,
                     u.rol,
@@ -53,12 +53,12 @@ class Movimientos {
                     m.descripcion,
                     m.fecha
                 FROM movimientos m
-                JOIN usuarios u ON m.usuario_id = u.id
+                JOIN usuarios u
+                    ON m.usuario_id = u.id
                 ORDER BY m.fecha DESC
-                LIMIT :limite";
+                LIMIT $limite OFFSET $offset";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(":limite", $limite, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -90,4 +90,16 @@ class Movimientos {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function contarTodos() {
+
+        $sql = "SELECT COUNT(*) as total
+                FROM movimientos";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $resultado['total'];
+    }
 }
