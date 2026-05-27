@@ -1,7 +1,9 @@
 <?php
 
 require_once __DIR__ . "/../models/habitacion.php";
+require_once __DIR__ . "/../models/movimientos.php";
 require_once __DIR__ . '/../config/auth.php';
+
 
 class HabitacionesController {
 
@@ -46,6 +48,16 @@ class HabitacionesController {
 
             if ($resultado['exito']) {
                 $idNuevo = $resultado['id'];
+
+                // Registrar movimiento
+                $mov = new Movimientos();
+                $mov->registrar(
+                    'habitaciones',
+                    'crear',
+                    "Creó la habitación \"$numero\"",
+                    $idNuevo
+                );
+
                 header("Location: index.php?modulo=habitaciones#habitacion-$idNuevo");
                 exit();
             } else {
@@ -69,7 +81,20 @@ class HabitacionesController {
 
         $id = $_GET['id'];
         $modelhabitacion = new Habitacion();
+
+        // Obtener nombre antes de eliminar para el log
+        $numero = $modelhabitacion->obtenerPorId($id);
         $modelhabitacion->eliminarHabitacion($id);
+
+                // Registrar movimiento
+        $mov = new Movimientos();
+        $mov->registrar(
+            'habitaciones',
+            'eliminar',
+            "Eliminó la habitación \"{$numero['numero']}\"",
+            $id
+        );
+
         header("Location: index.php?modulo=habitaciones"); // Redirigir a la página principal después de eliminar la habitación
 
     }
@@ -126,6 +151,16 @@ class HabitacionesController {
             );
 
             if ($resultado['exito']) {
+
+                // Registrar movimiento
+                $mov = new Movimientos();
+                $mov->registrar(
+                    'habitaciones',
+                    'editar',
+                    "Editó la habitación \"$numero\"",
+                    $id
+                );
+            
                 header("Location: index.php?modulo=articulos#articulo-$id");
                 exit();
             } else {

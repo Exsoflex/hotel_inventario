@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../models/usuario.php";
+require_once __DIR__ . '/../models/movimientos.php';
 
 class AuthController {
 
@@ -19,9 +20,9 @@ class AuthController {
     require_once __DIR__ . '/../views/login.php';
 }
 
-    // =========================
-    // INICIAR SESION
-    // =========================
+      // =========================||                        ||=========================//
+     // INICIAR SESION           //===========()===========//--------( -o- )--------- //
+    // =========================||                        ||=========================//
 
     public function login() {
 
@@ -54,8 +55,16 @@ class AuthController {
                 exit();
             }
 
-            // =========================
-            // CREAR SESION
+            // Actualizar último acceso
+            $usuarioModel->actualizarUltimoLogin(
+                $usuarioDB['id']
+            );
+
+            require_once __DIR__ . "/../models/movimientos.php";
+
+
+              // =========================
+             // CREAR SESION
             // =========================
 
             //session_start();
@@ -68,6 +77,15 @@ class AuthController {
                 'rol' => $usuarioDB['rol']
 
             ];
+
+             // Después de crear la sesión, antes del redirect:
+            $mov = new Movimientos();
+            $mov->registrar(
+                'auth',
+                'login',
+                "Inició sesión",
+                $usuarioDB['id']
+            );
 
             // Redireccionar al dashboard
             header("Location: index.php?modulo=dashboard");
@@ -82,7 +100,13 @@ class AuthController {
 
     public function logout() {
 
-        //session_start();
+        // Antes de session_destroy():
+        $mov = new Movimientos();
+        $mov->registrar(
+            'auth',
+            'logout',
+            "Cerró sesión"
+        );
 
         session_destroy();
 

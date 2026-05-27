@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../models/inventario.php";
+require_once __DIR__ . "/../models/movimientos.php";
 require_once __DIR__ . '/../config/auth.php';
 
 class InventarioController {
@@ -35,8 +36,7 @@ class InventarioController {
                 empty($habitacion_id) || 
                 empty($articulo_id) || 
                 empty($cantidad) || 
-                empty($estado) || 
-                empty($comentarios))
+                empty($estado))
             {
                  exit ("Llena todos los campos por favor");
             }
@@ -50,6 +50,18 @@ class InventarioController {
                 $estado,
                 $comentarios
             );
+
+            $habitaciones = $inventario->obtenerHabitaciones();
+            $articulos = $inventario->obtenerArticulos();
+
+            // Registrar movimiento
+                $mov = new Movimientos();
+                $mov->registrar(
+                    'inventario',
+                    'crear',
+                    "Creó un nuevo inventario a la habitación \"$habitaciones\" con el artículos \"$articulos\" (cantidad: $cantidad)",
+                    $idNuevo
+                );
 
             header("Location: index.php?modulo=inventario&mensaje=agregado#inventario-$idNuevo");
             exit();

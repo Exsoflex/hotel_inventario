@@ -12,8 +12,8 @@ class Usuario {
         $this->conn = $database->conectar();
     }
 
-      // ===========================||
-     // BUSCAR USUARIO POR USERNAME ||==============||()-----o<>
+      // ===========================||                     
+     // BUSCAR USUARIO POR USERNAME ||==============||()---o<>
     // =============================||
 
     public function obtenerPorLogin($login) {
@@ -32,6 +32,19 @@ class Usuario {
     $stmt->execute();
 
     return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function actualizarUltimoLogin($id) {
+
+        $sql = "UPDATE usuarios
+                SET ultimo_login = NOW()
+                WHERE id = :id";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->bindParam(":id", $id);
+
+        $stmt->execute();
     }
 
 }

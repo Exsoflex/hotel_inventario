@@ -141,4 +141,17 @@ class Usuarios {
 
         $stmt->execute();
     }
+
+  
+
+    public function obtenerNombreUsuario($id) {
+
+        $sql = "SELECT nombre FROM usuarios WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $resultado ? $resultado['nombre'] : "usuario #$id";
+    }
 }

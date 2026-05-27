@@ -29,7 +29,8 @@ $permisos = [
         'habitaciones',
         'articulos',
         'inventario_base',
-        'usuarios'
+        'usuarios',
+        'movimientos'
     ],
 
     'supervisor' => [
@@ -116,6 +117,12 @@ switch($modulo) {
 
         require_once __DIR__ . "/controllers/usuariosController.php";
         $controller = new UsuariosController();
+        break;
+
+    case 'movimientos':
+
+        require_once __DIR__ . "/controllers/movimientosController.php";
+        $controller = new MovimientosController();
         break;
 
     default:

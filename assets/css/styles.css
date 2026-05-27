@@ -1679,3 +1679,56 @@ a:hover::after {
     }
 
 }
+
+/* ======================================== */
+/* ===== BADGES ACCIONES MOVIMIENTOS ===== */
+/* ====================================== */
+
+.badge-accion {
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.badge-crear {
+    background: #e9f9ef;
+    color: #1d8f4d;
+}
+
+.badge-editar {
+    background: #fff8e8;
+    color: #c58a00;
+}
+
+.badge-eliminar {
+    background: #fff0f0;
+    color: #d11f1f;
+}
+
+.badge-login {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.badge-logout {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+/* ===== BADGES ROL ===== */
+
+.estado-admin {
+    background: #fdf4ff;
+    color: #9600b7;
+}
+
+.estado-supervisor {
+    background: #fff0f6;
+    color: #93245c;
+}
+
+.estado-empleado {
+    background: #f3f4f6;
+    color: #4b5563;
+}

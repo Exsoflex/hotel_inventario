@@ -94,6 +94,11 @@
                 <i data-lucide="users"></i>
                 <span>Usuarios</span>
             </a>
+
+            <a href="index.php?modulo=movimientos">
+                <i data-lucide="list"></i>
+                <span>Movimientos</span>
+            </a>
             <?php endif; ?>
             
         </nav>
@@ -106,9 +111,8 @@
         ): ?>
 
     <br><br><br><br><br>
-
+<!-- //////////////////////////////////////////////////////////////////////////////// -->
     <?php endif; ?>
-    <br><br>
 
     <?php if(isset($_SESSION['usuario'])): ?>
 

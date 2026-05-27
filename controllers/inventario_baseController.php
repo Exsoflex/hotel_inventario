@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../models/inventario_base.php";
+require_once __DIR__ . "/../models/movimientos.php";
 require_once __DIR__ . '/../config/auth.php';
 
 class InventariobaseController {
@@ -20,54 +21,72 @@ class InventariobaseController {
 
     }
 
-    public function agregar () {
+    public function agregar() {
 
-        verificarRol(
-        ['admin', 'supervisor']
-        );
+        verificarRol(['admin', 'supervisor']);
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $tipo = $_POST['tipo'];
+            $tipo        = $_POST['tipo'];
             $articulo_id = $_POST['articulo_id'];
-            $cantidad = $_POST['cantidad'];
+            $cantidad    = $_POST['cantidad'];
 
             $inventario_base = new Inventario_base();
 
-            $idNuevo =$inventario_base->agregarInventario_base(
+            $idNuevo = $inventario_base->agregarInventario_base(
                 $tipo,
-                $articulo_id, 
+                $articulo_id,
                 $cantidad
+            );
+
+            // Obtener nombre del artículo para el log
+            $nombreArticulo = $inventario_base->obtenerNombreArticulo($articulo_id);
+
+            $mov = new Movimientos();
+            $mov->registrar(
+                'inventario_base',
+                'crear',
+                "Agregó \"$nombreArticulo\" (cantidad: $cantidad) al inventario base de habitación $tipo",
+                $idNuevo
             );
 
             header("Location: index.php?modulo=inventario_base#inventario_base-$idNuevo");
             exit();
         }
-
     }
 
     public function eliminar() {
 
-        verificarRol(
-        ['admin', 'supervisor']
-        );
+        verificarRol(['admin', 'supervisor']);
 
         $id = $_GET['id'];
-        $inventario_base = new Inventario_base();
-        $inventario_base->eliminarInventario_base($id);
-        header("Location: index.php?modulo=inventario_base");
 
+        $inventario_base = new Inventario_base();
+
+        // Obtener datos ANTES de eliminar
+        $registro = $inventario_base->obtenerPorId($id);
+        $nombreArticulo = $inventario_base->obtenerNombreArticulo($registro['articulo_id']);
+
+        $inventario_base->eliminarInventario_base($id);
+
+        $mov = new Movimientos();
+        $mov->registrar(
+            'inventario_base',
+            'eliminar',
+            "Eliminó \"$nombreArticulo\" del inventario base de habitación {$registro['tipo_habitacion']}",
+            $id
+        );
+
+        header("Location: index.php?modulo=inventario_base");
+        exit();
     }
 
     public function editar() {
 
-        verificarRol(
-        ['admin', 'supervisor']
-        );
+        verificarRol(['admin', 'supervisor']);
 
-    $modelInventario_base = new Inventario_base();
+        $modelInventario_base = new Inventario_base();
 
-        // === MOSTRAR FORMULARIO === ///
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
             $id = $_GET['id'];
@@ -75,39 +94,40 @@ class InventariobaseController {
             $inventarios_base = $modelInventario_base->obtenerTodo();
             $articulos = $modelInventario_base->obtenerArticulos();
             require_once __DIR__ . "/../views/inventario_base/index.php";
-
         }
 
-        // === GUARDAR CAMBIOS === ///
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Verificar si la solicitud es de tipo POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $id = $_POST['id'];
-
-            $tipo = trim($_POST['tipo']);
+            $id          = $_POST['id'];
+            $tipo        = trim($_POST['tipo']);
             $articulo_id = trim($_POST['articulo_id']);
-            $cantidad = trim($_POST['cantidad']);
+            $cantidad    = trim($_POST['cantidad']);
 
-            if (
-                empty($id) ||
-                empty($tipo) ||
-                empty($articulo_id) ||
-                $cantidad === ''
-            ) {
-                exit ("Llena todos los campos por favor");
+            if (empty($id) || empty($tipo) || empty($articulo_id) || $cantidad === '') {
+                $errorFormulario = 'Llena todos los campos por favor';
+                $inventario_baseEditar = $modelInventario_base->obtenerPorId($id);
+                $inventarios_base = $modelInventario_base->obtenerTodo();
+                $articulos = $modelInventario_base->obtenerArticulos();
+                require_once __DIR__ . "/../views/inventario_base/index.php";
+                return;
             }
 
-            $modelInventario_base->editarInventario_base( 
-                $id,
-                $tipo,
-                $articulo_id, 
-                $cantidad
+            $modelInventario_base->editarInventario_base($id, $tipo, $articulo_id, $cantidad);
+
+            // Obtener nombre del artículo para el log
+            $nombreArticulo = $modelInventario_base->obtenerNombreArticulo($articulo_id);
+
+            $mov = new Movimientos();
+            $mov->registrar(
+                'inventario_base',
+                'editar',
+                "Editó \"$nombreArticulo\" en inventario base de habitación $tipo: cantidad $cantidad",
+                $id
             );
 
-            header("Location: index.php?modulo=inventario_base#inventario_base-$id"); // Redirigir a la página principal después de editar el inventario
+            header("Location: index.php?modulo=inventario_base#inventario_base-$id");
             exit();
-
         }
     }
-
 
 }

@@ -1,15 +1,14 @@
 <?php
 
 require_once __DIR__ . "/../models/articulos.php";
+require_once __DIR__ . "/../models/movimientos.php";
 require_once __DIR__ . '/../config/auth.php';
 
 class ArticulosController {
 
     public function index() {
-        
-        verificarRol(
-        ['admin', 'supervisor']
-        );
+
+        verificarRol(['admin', 'supervisor']);
 
         $articulo = new Articulos();
         $articulos = $articulo->obtenerTodo();
@@ -22,7 +21,7 @@ class ArticulosController {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $nombre = trim($_POST['nombre']);
+            $nombre     = trim($_POST['nombre']);
             $descripcion = trim($_POST['descripcion']);
 
             if (empty($nombre)) {
@@ -37,11 +36,23 @@ class ArticulosController {
             $resultado = $modelarticulo->agregarArticulo($nombre, $descripcion);
 
             if ($resultado['exito']) {
+
                 $idNuevo = $resultado['id'];
+
+                // Registrar movimiento
+                $mov = new Movimientos();
+                $mov->registrar(
+                    'articulos',
+                    'crear',
+                    "Creó el artículo \"$nombre\"",
+                    $idNuevo
+                );
+
                 header("Location: index.php?modulo=articulos#articulo-$idNuevo");
                 exit();
+
             } else {
-                // Pasar error a la view
+
                 $errorFormulario = $resultado['error'] === 'duplicado'
                     ? "Ya existe un artículo con ese nombre."
                     : "Ocurrió un error al guardar. Intenta de nuevo.";
@@ -55,16 +66,28 @@ class ArticulosController {
 
     public function eliminar() {
 
-        verificarRol(
-        ['admin', 'supervisor']
-        );
+        verificarRol(['admin', 'supervisor']);
 
         $id = $_GET['id'];
         $modelarticulo = new Articulos();
-        $modelarticulo->eliminarArticulo($id);
-        header("Location: index.php?modulo=articulos");
-    }
 
+        // Obtener nombre antes de eliminar para el log
+        $articulo = $modelarticulo->obtenerPorId($id);
+
+        $modelarticulo->eliminarArticulo($id);
+
+        // Registrar movimiento
+        $mov = new Movimientos();
+        $mov->registrar(
+            'articulos',
+            'eliminar',
+            "Eliminó el artículo \"{$articulo['nombre']}\"",
+            $id
+        );
+
+        header("Location: index.php?modulo=articulos");
+        exit();
+    }
 
     public function editar() {
 
@@ -73,6 +96,7 @@ class ArticulosController {
         $modelarticulo = new Articulos();
 
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+
             $id = $_GET['id'];
             $articuloEditar = $modelarticulo->obtenerPorId($id);
             $articulos = $modelarticulo->obtenerTodo();
@@ -81,8 +105,8 @@ class ArticulosController {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $id = $_POST['id'];
-            $nombre = trim($_POST['nombre']);
+            $id          = $_POST['id'];
+            $nombre      = trim($_POST['nombre']);
             $descripcion = trim($_POST['descripcion']);
 
             if (empty($id) || empty($nombre)) {
@@ -96,9 +120,21 @@ class ArticulosController {
             $resultado = $modelarticulo->editarArticulo($id, $nombre, $descripcion);
 
             if ($resultado['exito']) {
+
+                // Registrar movimiento
+                $mov = new Movimientos();
+                $mov->registrar(
+                    'articulos',
+                    'editar',
+                    "Editó el artículo \"$nombre\"",
+                    $id
+                );
+
                 header("Location: index.php?modulo=articulos#articulo-$id");
                 exit();
+
             } else {
+
                 $errorFormulario = $resultado['error'] === 'duplicado'
                     ? "Ya existe un artículo con ese nombre."
                     : "Ocurrió un error al guardar. Intenta de nuevo.";

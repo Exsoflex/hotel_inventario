@@ -102,4 +102,15 @@ class Inventario_base {
         $stmt->execute();
     }
 
+    public function obtenerNombreArticulo($articulo_id) {
+
+    $sql = "SELECT nombre FROM articulos WHERE id = :id";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(":id", $articulo_id);
+    $stmt->execute();
+
+    $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $resultado ? $resultado['nombre'] : "artículo #$articulo_id";
+}
+
 }

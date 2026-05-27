@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . "/../models/usuarios.php";
+require_once __DIR__ . "/../models/movimientos.php";
 require_once __DIR__ . "/../config/auth.php";
 
 class UsuariosController {
@@ -50,6 +51,15 @@ class UsuariosController {
 
             if ($resultado['exito']) {
                 $idNuevo = $resultado['id'];
+
+                // Registrar movimiento
+                $mov = new Movimientos();
+                $mov->registrar(
+                    'usuarios',
+                    'crear',
+                    "Creó el usuario \"$nombre\"",
+                    $idNuevo
+                );
                 header("Location: index.php?modulo=usuarios#usuario-$idNuevo");
                 exit();
             } else {
@@ -74,6 +84,17 @@ class UsuariosController {
         $usuario = new Usuarios();
 
         $usuario->eliminarUsuario($id);
+
+        $usuarios = $usuario->obtenerNombreUsuario($id);
+
+        // Registrar movimiento
+        $mov = new Movimientos();
+        $mov->registrar(
+            'usuarios',
+            'eliminar',
+            "Eliminó el usuario \"$usuarios\"",
+            $id
+        );
 
         header("Location: index.php?modulo=usuarios");
 
@@ -112,7 +133,6 @@ class UsuariosController {
             if (
                 empty($nombre) ||
                 empty($correo) || 
-                empty($password) || 
                 empty($rol)
                 ) {
                 $errorFormulario = 'Llena todos los campos por favor';
@@ -131,6 +151,15 @@ class UsuariosController {
             );
 
             if ($resultado['exito']) {
+
+                // Registrar movimiento
+                $mov = new Movimientos();
+                $mov->registrar(
+                    'usuarios',
+                    'editar',
+                    "Editó el usuario \"$nombre\" con el rol de \"$rol\" y estado \"($activo == 1 ? 'Activo' : 'Inactivo')\"",
+                    $id
+                );
                 header("Location: index.php?modulo=usuarios#usuario-$id");
                 exit();
             } else {
@@ -154,6 +183,16 @@ class UsuariosController {
         $usuario = new Usuarios();
 
         $usuario->cambiarEstado($id, 1);
+
+        $nombre = $usuario->obtenerNombreUsuario($id);
+
+        $mov = new Movimientos();
+                $mov->registrar(
+                    'usuarios',
+                    'editar',
+                    "Se activo el usuario \"$nombre\"",
+                    $id
+                );
         
 
         header("Location: index.php?modulo=usuarios");
@@ -174,6 +213,16 @@ class UsuariosController {
 
         $usuario = new Usuarios();
         $usuario->cambiarEstado($id, 0);
+
+        $nombre = $usuario->obtenerNombreUsuario($id);
+        
+        $mov = new Movimientos();
+                $mov->registrar(
+                    'usuarios',
+                    'editar',
+                    "Se desactivo el usuario \"$nombre\"",
+                    $id
+                );
         
 
         header("Location: index.php?modulo=usuarios");
