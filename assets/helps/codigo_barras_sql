@@ -1,0 +1,50 @@
+-- Estas consultas se utilizaron para ingresar los codigos de barras en la tabla inventario a todas sus habitaciones correspondientes basandose en el id del articulo y el numero de habitacion, junto con otros datos predispuestos de la nomeclatura del codigo de barras.
+
+-- Escritorio (articulo_id = 30)
+UPDATE inventario i
+JOIN habitaciones h ON h.id = i.habitacion_id
+SET i.codigo_barras = CONCAT('HH-H', h.numero, '-M-001')
+WHERE i.articulo_id = 30
+AND (i.codigo_barras IS NULL OR i.codigo_barras = '');
+
+-- Silla (articulo_id = 4)
+UPDATE inventario i
+JOIN habitaciones h ON h.id = i.habitacion_id
+SET i.codigo_barras = CONCAT('HH-H', h.numero, '-M-002')
+WHERE i.articulo_id = 4
+AND (i.codigo_barras IS NULL OR i.codigo_barras = '');
+
+-- Lampara de Escritorio (articulo_id = 9)
+UPDATE inventario i
+JOIN habitaciones h ON h.id = i.habitacion_id
+SET i.codigo_barras = CONCAT('HH-H', h.numero, '-D-001')
+WHERE i.articulo_id = 9
+AND (i.codigo_barras IS NULL OR i.codigo_barras = '');
+
+-- Television (articulo_id = 29)
+UPDATE inventario i
+JOIN habitaciones h ON h.id = i.habitacion_id
+SET i.codigo_barras = CONCAT('HH-H', h.numero, '-EL-001')
+WHERE i.articulo_id = 29
+AND (i.codigo_barras IS NULL OR i.codigo_barras = '');
+
+-- Telefono (articulo_id = 8)
+UPDATE inventario i
+JOIN habitaciones h ON h.id = i.habitacion_id
+SET i.codigo_barras = CONCAT('HH-H', h.numero, '-EL-002')
+WHERE i.articulo_id = 8
+AND (i.codigo_barras IS NULL OR i.codigo_barras = '');
+
+-- Caja fuerte (articulo_id = 13)
+UPDATE inventario i
+JOIN habitaciones h ON h.id = i.habitacion_id
+SET i.codigo_barras = CONCAT('HH-H', h.numero, '-EL-003')
+WHERE i.articulo_id = 13
+AND (i.codigo_barras IS NULL OR i.codigo_barras = '');
+
+-- Aire acondicionado (articulo_id = 23)
+UPDATE inventario i
+JOIN habitaciones h ON h.id = i.habitacion_id
+SET i.codigo_barras = CONCAT('HH-H', h.numero, '-CL-001')
+WHERE i.articulo_id = 23
+AND (i.codigo_barras IS NULL OR i.codigo_barras = '');
