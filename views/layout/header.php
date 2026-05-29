@@ -96,7 +96,7 @@
             </a>
 
             <a href="index.php?modulo=movimientos">
-                <i data-lucide="list"></i>
+                <i data-lucide="logs"></i>
                 <span>Movimientos</span>
             </a>
             <?php endif; ?>

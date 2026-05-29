@@ -148,6 +148,12 @@ id="modalInventarioBase"
         method="POST"
         >
 
+        <?php if (isset($errorFormulario)): ?>
+            <div class="alerta-error">
+                ⚠ <?= htmlspecialchars($errorFormulario) ?>
+            </div>
+        <?php endif; ?>
+
             <input 
             type="hidden" 
             name="id" 
@@ -325,16 +331,33 @@ function abrirModal(){
 
 function cerrarModal(){
 
-    document
-    .getElementById('modalInventarioBase')
-    .classList
-    .remove('active');
+    <?php if(
+        isset($inventario_baseEditar)
+        || isset($errorFormulario)
+    ): ?>
 
-    document.body.style.overflow = 'auto';
+        window.location.href =
+            'index.php?modulo=inventario_base';
+
+    <?php else: ?>
+
+        document
+        .getElementById('modalInventarioBase')
+        .classList
+        .remove('active');
+
+        document.body.style.overflow = 'auto';
+
+    <?php endif; ?>
 }
 
-<?php if(isset($inventario_baseEditar)): ?>
+<?php if(
+    isset($inventario_baseEditar)
+    || isset($errorFormulario)
+): ?>
+
 abrirModal();
+
 <?php endif; ?>
 
 </script>

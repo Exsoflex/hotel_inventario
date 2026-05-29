@@ -18,9 +18,11 @@ class Inventario {
             inventario.id,
             habitaciones.numero,
             articulos.nombre,
+            articulos.usa_codigo_barras,
             inventario.cantidad,
             inventario.estado,
-            inventario.comentarios
+            inventario.comentarios,
+            inventario.codigo_barras
         FROM inventario
         
         JOIN habitaciones 
@@ -54,18 +56,34 @@ class Inventario {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function obtenerArticuloPorId($id) {
+
+        $sql = "SELECT * FROM articulos WHERE id = :id";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function agregarInventario(
         $habitacion_id, 
         $articulo_id,
         $cantidad,
         $estado, 
-        $comentarios
+        $comentarios,
+        $codigo
         ) {
 
+        if($codigo === ''){
+            $codigo = null;
+        }
+
         $sql = "INSERT INTO inventario 
-                    (habitacion_id, articulo_id, cantidad, estado, comentarios) 
+                    (habitacion_id, articulo_id, cantidad, estado, comentarios, codigo_barras) 
                 VALUES 
-                    (:habitacion_id, :articulo_id, :cantidad, :estado, :comentarios)";
+                    (:habitacion_id, :articulo_id, :cantidad, :estado, :comentarios, :codigo_barras)";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -74,11 +92,32 @@ class Inventario {
         $stmt->bindParam(":cantidad", $cantidad);
         $stmt->bindParam(":estado", $estado);
         $stmt->bindParam(":comentarios", $comentarios);
+        $stmt->bindParam(":codigo_barras", $codigo);
 
-        $stmt->execute();
+        try {
 
-        return $this->conn->lastInsertId();
+            $stmt->execute();
 
+            return [
+                'exito' => true,
+                'id' => $this->conn->lastInsertId()
+            ];
+
+        } catch(PDOException $e){
+
+            if($e->getCode() == 23000){
+
+                return [
+                    'exito' => false,
+                    'error' => 'duplicado'
+                ];
+            }
+
+            return [
+                'exito' => false,
+                'error' => 'general'
+            ];
+        }
         }
 
     public function eliminarInventario($id) {
@@ -92,7 +131,13 @@ class Inventario {
 
     public function obtenerPorId($id) {
 
-        $sql = "SELECT * FROM inventario WHERE id = :id";
+        $sql = "SELECT
+                    inventario.*,
+                    articulos.usa_codigo_barras
+                FROM inventario
+                JOIN articulos
+                    ON inventario.articulo_id = articulos.id
+                WHERE inventario.id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":id", $id);
         $stmt->execute();
@@ -101,14 +146,18 @@ class Inventario {
 
     }
 
-    public function editarInventario($id, $habitacion_id, $articulo_id, $cantidad, $estado, $comentarios) {
+    public function editarInventario($id, $habitacion_id, $articulo_id, $cantidad, $estado, $comentarios, $codigo) {
 
+        if($codigo === ''){
+            $codigo = null;
+        }
         $sql = "UPDATE inventario
                 SET habitacion_id = :habitacion_id, 
                 articulo_id = :articulo_id, 
                 cantidad = :cantidad, 
                 estado = :estado, 
-                comentarios = :comentarios
+                comentarios = :comentarios,
+                codigo_barras = :codigo_barras
                 WHERE id = :id";
         
         $stmt = $this->conn->prepare($sql);
@@ -119,8 +168,31 @@ class Inventario {
         $stmt->bindParam(":cantidad", $cantidad);
         $stmt->bindParam(":estado", $estado);
         $stmt->bindParam(":comentarios", $comentarios);
+        $stmt->bindParam(":codigo_barras", $codigo);
 
-        $stmt->execute();
+        try {
+
+            $stmt->execute();
+
+            return [
+                'exito' => true
+            ];
+
+        } catch(PDOException $e){
+
+            if($e->getCode() == 23000){
+
+                return [
+                    'exito' => false,
+                    'error' => 'duplicado'
+                ];
+            }
+
+            return [
+                'exito' => false,
+                'error' => 'general'
+            ];
+        }
     }
 
     public function obtenerNumeroHabitacion($id) {

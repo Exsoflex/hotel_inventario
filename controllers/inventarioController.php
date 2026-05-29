@@ -32,26 +32,46 @@ class InventarioController {
             $estado = $_POST['estado'];
             $comentarios = $_POST['comentarios'];
 
+            $inventario = new Inventario();
+
+            $codigo = $_POST['codigo_barras'] ?? null;
+
+            $articulo = $inventario->obtenerArticuloPorId($articulo_id);
+
+            if(!$articulo['usa_codigo_barras']){
+                $codigo = null;
+            }
+
             if (
                 empty($habitacion_id) || 
                 empty($articulo_id) || 
                 $cantidad === '' || 
                 empty($estado))
             {
-                 exit ("Llena todos los campos por favor");
+                $errorFormulario = 'Llena todos los campos por favor';
+
+                $inventarios = $inventario->obtenerTodo();
+                $habitaciones = $inventario->obtenerHabitaciones();
+                $articulos = $inventario->obtenerArticulos();
+
+                require_once __DIR__ . "/../views/inventario/index.php";
+                return;
             }
 
             $inventario = new Inventario();
 
-            $idNuevo =$inventario->agregarInventario(
+            $resultado = $inventario->agregarInventario(
                 $habitacion_id,
-                $articulo_id, 
-                $cantidad, 
+                $articulo_id,
+                $cantidad,
                 $estado,
-                $comentarios
+                $comentarios,
+                $codigo
             );
 
-            $habitaciones = $inventario->obtenerNumeroHabitacion($habitacion_id);
+            if($resultado['exito']){
+                $idNuevo = $resultado['id'];
+                            $habitaciones = $inventario->obtenerNumeroHabitacion($habitacion_id);
             $articulos = $inventario->obtenerNombreArticulo($articulo_id);
 
             // Registrar movimiento
@@ -65,8 +85,20 @@ class InventarioController {
 
             header("Location: index.php?modulo=inventario&mensaje=agregado#inventario-$idNuevo");
             exit();
-        }
+            }else{
 
+                $errorFormulario =
+                    $resultado['error'] === 'duplicado'
+                    ? 'Ya existe ese artículo en esa habitación.'
+                    : 'Ocurrió un error al guardar.';
+
+                $inventarios = $inventario->obtenerTodo();
+                $habitaciones = $inventario->obtenerHabitaciones();
+                $articulos = $inventario->obtenerArticulos();
+
+                require_once __DIR__ . "/../views/inventario/index.php";
+            }
+        }  
     }
 
     public function eliminar() {
@@ -102,72 +134,83 @@ class InventarioController {
 
     }
 
-    public function editar() {
+public function editar() {
 
-        verificarRol(
-        ['admin', 'supervisor']
-        );
-        
+    verificarRol(['admin', 'supervisor']);
+
     $modelInventario = new Inventario();
 
-        // === MOSTRAR FORMULARIO === ///
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    // ======================
+    // MOSTRAR FORMULARIO
+    // ======================
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-            $id = $_GET['id'];
-            $inventarioEditar = $modelInventario->obtenerPorId($id);
-            $inventarios = $modelInventario->obtenerTodo();
-            $habitaciones = $modelInventario->obtenerHabitaciones();
-            $articulos = $modelInventario->obtenerArticulos();
-            require_once __DIR__ . "/../views/inventario/index.php";
+        $id = $_GET['id'];
 
+        $inventarioEditar = $modelInventario->obtenerPorId($id);
+        $inventarios = $modelInventario->obtenerTodo();
+        $habitaciones = $modelInventario->obtenerHabitaciones();
+        $articulos = $modelInventario->obtenerArticulos();
+
+        require_once __DIR__ . "/../views/inventario/index.php";
+        return;
+    }
+
+    // ======================
+    // GUARDAR CAMBIOS
+    // ======================
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        $id = $_POST['id'];
+
+        $habitacion_id = trim($_POST['habitacion_id']);
+        $articulo_id = trim($_POST['articulo_id']);
+        $cantidad = trim($_POST['cantidad']);
+        $estado = trim($_POST['estado']);
+        $comentarios = trim($_POST['comentarios']);
+        $codigo = trim($_POST['codigo_barras'] ?? '');
+
+        // VALIDACIÓN AQUÍ (NO ARRIBA)
+        if (
+            empty($habitacion_id) ||
+            empty($articulo_id) ||
+            $cantidad === '' ||
+            empty($estado)
+        ) {
+            exit("Llena todos los campos por favor");
         }
 
-        // === GUARDAR CAMBIOS === ///
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Verificar si la solicitud es de tipo POST
+        $articulo = $modelInventario->obtenerArticuloPorId($articulo_id);
 
-            $id = $_POST['id'];
+        if (!$articulo['usa_codigo_barras']) {
+            $codigo = null;
+        }
 
-            $habitacion_id = trim($_POST['habitacion_id']);
-            $articulo_id = trim($_POST['articulo_id']);
-            $cantidad = trim($_POST['cantidad']);
-            $estado = trim($_POST['estado']);
-            $comentarios = trim($_POST['comentarios']);
+        $resultado = $modelInventario->editarInventario(
+            $id,
+            $habitacion_id,
+            $articulo_id,
+            $cantidad,
+            $estado,
+            $comentarios,
+            $codigo
+        );
 
-            if (
-                empty($habitacion_id) ||
-                empty($articulo_id) ||
-                $cantidad === '' ||
-                empty($estado)
-            ) {
-                exit ("Llena todos los campos por favor");
-            }
-
-            $modelInventario->editarInventario( 
-                $id,
-                $habitacion_id,
-                $articulo_id, 
-                $cantidad, 
-                $estado,
-                $comentarios
-            );
-
-            $habitaciones = $modelInventario->obtenerNumeroHabitacion($habitacion_id);
-            $articulos = $modelInventario->obtenerNombreArticulo($articulo_id);
-
-            // Registrar movimiento
-                $mov = new Movimientos();
-                $mov->registrar(
-                    'inventario',
-                    'editar',
-                    "Editó el inventario a la habitación \"$habitaciones\" con el artículos \"$articulos\" (cantidad: $cantidad)",
-                    $id
-                );
+        if ($resultado['exito']) {
 
             header("Location: index.php?modulo=inventario&mensaje=editado#inventario-$id");
             exit();
 
+        } else {
+
+            $inventarioEditar = $modelInventario->obtenerPorId($id);
+            $inventarios = $modelInventario->obtenerTodo();
+            $habitaciones = $modelInventario->obtenerHabitaciones();
+            $articulos = $modelInventario->obtenerArticulos();
+
+            require_once __DIR__ . "/../views/inventario/index.php";
         }
     }
-
-
 }
+}
+

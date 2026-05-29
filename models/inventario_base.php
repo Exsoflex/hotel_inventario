@@ -57,9 +57,15 @@ class Inventario_base {
         $stmt->bindParam(":articulo_id", $articulo_id);
         $stmt->bindParam(":cantidad", $cantidad);
 
-        $stmt->execute();
-
-        return $this->conn->lastInsertId();
+        try {
+            $stmt->execute();
+            return ['exito' => true, 'id' => $this->conn->lastInsertId()];
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) { // Violación de unique
+                return ['exito' => false, 'error' => 'duplicado'];
+            }
+            return ['exito' => false, 'error' => 'general'];
+        }
 
         }
 
@@ -99,7 +105,15 @@ class Inventario_base {
         $stmt->bindParam(":articulo_id", $articulo_id);
         $stmt->bindParam(":cantidad", $cantidad);
 
-        $stmt->execute();
+        try {
+            $stmt->execute();
+            return ['exito' => true];
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) {
+                return ['exito' => false, 'error' => 'duplicado'];
+            }
+            return ['exito' => false, 'error' => 'general'];
+        }
     }
 
     public function obtenerNombreArticulo($articulo_id) {

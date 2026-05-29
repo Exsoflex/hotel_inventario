@@ -99,6 +99,13 @@ ksort($inventarioPorHabitacion);
                     </div>
                     <div class="inventario-info">
 
+                    <?php if($i['usa_codigo_barras']): ?>
+                        <p>
+                            <strong>Código:</strong>
+                            <?= $i['codigo_barras'] ?: 'Sin asignar' ?>
+                        </p>
+                    <?php endif; ?>
+
                         <p>
                             <strong>Cantidad:</strong>
                             <?= $i['cantidad'] ?>
@@ -145,7 +152,7 @@ ksort($inventarioPorHabitacion);
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
 
 <!-- ////////////// MODAL INVENTARIO //////////////////////////////// -->       
-       </div>
+       
 
         <div class="modal-overlay" id="modalInventario">
 
@@ -170,6 +177,14 @@ ksort($inventarioPorHabitacion);
         id="inventarioFormulario"
         action="index.php?modulo=inventario&accion=<?= isset($inventarioEditar) ? 'editar' : 'agregar' ?>"
         method="POST">
+
+        <?php if(isset($errorFormulario)): ?>
+
+        <div class="alerta-error">
+            ⚠ <?= htmlspecialchars($errorFormulario) ?>
+        </div>
+
+        <?php endif; ?>
 
             <input
             type="hidden"
@@ -197,23 +212,22 @@ ksort($inventarioPorHabitacion);
                 <?php endforeach; ?>
             </select>
             <label>Artículo</label>
-            <select name="articulo_id">
+            <select name="articulo_id" id="articulo_id">
 
                 <option value="">Seleccione un artículo</option>
                 <?php foreach($articulos as $a): ?>
 
-                    <option
-                    value="<?= $a['id'] ?>"
-
-                    <?= isset($inventarioEditar)
-                        && $inventarioEditar['articulo_id'] == $a['id']
-                        ? 'selected'
-                        : ''
-                    ?>
-
-                    >
-                        <?= $a['nombre'] ?>
-                    </option>
+                <option
+                value="<?= $a['id'] ?>"
+                data-codigo="<?= $a['usa_codigo_barras'] ?>"
+                <?= isset($inventarioEditar)
+                    && $inventarioEditar['articulo_id'] == $a['id']
+                    ? 'selected'
+                    : ''
+                ?>
+                >
+                    <?= $a['nombre'] ?>
+                </option>
 
                 <?php endforeach; ?>
 
@@ -228,6 +242,18 @@ ksort($inventarioPorHabitacion);
             required
             value="<?= $inventarioEditar['cantidad'] ?? '' ?>"
             >
+
+            <div id="contenedorCodigo">
+
+                <label>Código</label>
+
+                <input
+                type="text"
+                name="codigo_barras"
+                value="<?= $inventarioEditar['codigo_barras'] ?? '' ?>"
+                >
+
+            </div>
 
             <label>Estado</label>
 
@@ -413,15 +439,30 @@ function abrirModal(){
 
 function cerrarModal(){
 
-    document
-    .getElementById('modalInventario')
-    .classList
-    .remove('active');
-    document.body.style.overflow = 'auto';
+    <?php if(isset($inventarioEditar)): ?>
+
+        window.location.href =
+            'index.php?modulo=inventario';
+
+    <?php else: ?>
+
+        document
+        .getElementById('modalInventario')
+        .classList
+        .remove('active');
+
+        document.body.style.overflow = 'auto';
+
+    <?php endif; ?>
 }
 
-<?php if(isset($inventarioEditar)): ?>
+<?php if(
+    isset($inventarioEditar)
+    || isset($errorFormulario)
+): ?>
+
 abrirModal();
+
 <?php endif; ?>
 
 /*////////---- Confirmar eliminación ----/////////*/
@@ -472,6 +513,47 @@ function cerrarModalEliminar(){
 
     modalEliminar.classList.remove('active');
 }
+
+</script>
+
+<!--//////////-- Mostrar campo de codigo si el articulo lo amerita --//////////-->
+
+<script>
+
+const selectArticulo =
+    document.querySelector('select[name="articulo_id"]');
+
+const contenedorCodigo =
+    document.getElementById('contenedorCodigo');
+
+function actualizarCampoCodigo(){
+
+    const opcionSeleccionada =
+        selectArticulo.options[selectArticulo.selectedIndex];
+
+    const usaCodigo =
+        opcionSeleccionada.dataset.codigo;
+
+    if(usaCodigo == "1"){
+
+        contenedorCodigo.style.display = 'block';
+
+    }else{
+
+        contenedorCodigo.style.display = 'none';
+
+    }
+}
+
+selectArticulo.addEventListener(
+    'change',
+    actualizarCampoCodigo
+);
+
+document.addEventListener(
+    'DOMContentLoaded',
+    actualizarCampoCodigo
+);
 
 </script>
 

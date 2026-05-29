@@ -90,6 +90,7 @@
 
 <?php if($pagina > 1): ?>
 
+    
     <a href="index.php?modulo=movimientos&pagina=<?= $pagina - 1 ?>">
         ← Anterior
     </a>
@@ -108,7 +109,7 @@
 <?php endfor; ?>
 
 <?php if($pagina < $totalPaginas): ?>
-<p></p>
+
     <a href="index.php?modulo=movimientos&pagina=<?= $pagina + 1 ?>">
        Siguiente →
     </a>

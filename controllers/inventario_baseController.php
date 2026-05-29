@@ -33,25 +33,48 @@ class InventariobaseController {
 
             $inventario_base = new Inventario_base();
 
-            $idNuevo = $inventario_base->agregarInventario_base(
+            if (empty($tipo) || empty($articulo_id) || $cantidad === '') {
+                $errorFormulario = 'Llena todos los campos por favor';
+                $inventarios_base = $inventario_base->obtenerTodo();
+                $articulos = $inventario_base->obtenerArticulos();
+                require_once __DIR__ . "/../views/inventario_base/index.php";
+                return;
+            }
+
+            $resultado = $inventario_base->agregarInventario_base(
                 $tipo,
                 $articulo_id,
                 $cantidad
             );
 
-            // Obtener nombre del artículo para el log
-            $nombreArticulo = $inventario_base->obtenerNombreArticulo($articulo_id);
+            if ($resultado['exito']) {
 
-            $mov = new Movimientos();
-            $mov->registrar(
-                'inventario_base',
-                'crear',
-                "Agregó \"$nombreArticulo\" (cantidad: $cantidad) al inventario base de habitación $tipo",
-                $idNuevo
-            );
+                $idNuevo = $resultado['id'];
 
-            header("Location: index.php?modulo=inventario_base#inventario_base-$idNuevo");
-            exit();
+                $nombreArticulo = $inventario_base->obtenerNombreArticulo($articulo_id);
+
+                $mov = new Movimientos();
+                $mov->registrar(
+                    'inventario_base',
+                    'crear',
+                    "Agregó \"$nombreArticulo\" (cantidad: $cantidad) al inventario base de habitación $tipo",
+                    $idNuevo
+                );
+
+                header("Location: index.php?modulo=inventario_base#inventario_base-$idNuevo");
+                exit();
+
+            }else {
+
+                $errorFormulario = $resultado['error'] === 'duplicado'
+                    ? 'Ya existe ese artículo para ese tipo de habitación.'
+                    : 'Ocurrió un error al guardar.';
+
+                $inventarios_base = $inventario_base->obtenerTodo();
+                $articulos = $inventario_base->obtenerArticulos();
+
+                require_once __DIR__ . "/../views/inventario_base/index.php";
+            }
         }
     }
 
@@ -115,18 +138,50 @@ class InventariobaseController {
             $modelInventario_base->editarInventario_base($id, $tipo, $articulo_id, $cantidad);
 
             // Obtener nombre del artículo para el log
-            $nombreArticulo = $modelInventario_base->obtenerNombreArticulo($articulo_id);
+        $resultado = $modelInventario_base->editarInventario_base(
+            $id,
+            $tipo,
+            $articulo_id,
+            $cantidad
+        );
 
-            $mov = new Movimientos();
-            $mov->registrar(
-                'inventario_base',
-                'editar',
-                "Editó \"$nombreArticulo\" en inventario base de habitación $tipo: cantidad $cantidad",
-                $id
-            );
+            if ($resultado['exito']) {
 
-            header("Location: index.php?modulo=inventario_base#inventario_base-$id");
-            exit();
+                $nombreArticulo =
+                    $modelInventario_base->obtenerNombreArticulo($articulo_id);
+
+                $mov = new Movimientos();
+
+                $mov->registrar(
+                    'inventario_base',
+                    'editar',
+                    "Editó \"$nombreArticulo\" en inventario base de habitación $tipo: cantidad $cantidad",
+                    $id
+                );
+
+                header(
+                    "Location: index.php?modulo=inventario_base#inventario_base-$id"
+                );
+                exit();
+
+            } else {
+
+                $errorFormulario =
+                    $resultado['error'] === 'duplicado'
+                    ? 'Ya existe ese artículo para ese tipo de habitación.'
+                    : 'Ocurrió un error al guardar.';
+
+                $inventario_baseEditar =
+                    $modelInventario_base->obtenerPorId($id);
+
+                $inventarios_base =
+                    $modelInventario_base->obtenerTodo();
+
+                $articulos =
+                    $modelInventario_base->obtenerArticulos();
+
+                require_once __DIR__ . "/../views/inventario_base/index.php";
+            }
         }
     }
 
