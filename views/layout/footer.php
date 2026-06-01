@@ -58,12 +58,6 @@ const userDropdown = document.getElementById("userDropdown");
 if(userMenuBtn){
 
     userMenuBtn.addEventListener("click", () => {
-
-    /* NO abrir si sidebar está colapsada */
-
-        if(sidebar.classList.contains("collapsed")){
-            return;
-        }
         userDropdown.classList.toggle("active");
     });
 

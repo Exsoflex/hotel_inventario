@@ -27,6 +27,56 @@ body {
     color: #333;
 }
 
+.topbar {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 80px;
+
+    background: white;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 0 25px;
+
+    z-index: 2000;
+
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+
+.topbar-left {
+
+    display: flex;
+
+    align-items: center;
+}
+
+.topbar-logo {
+
+    height: 55px;
+
+    width: auto;
+
+    object-fit: contain;
+}
+
+.topbar-right {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+}
+
 /* ===== CONTENEDOR ===== */
 
 .container {
@@ -43,6 +93,8 @@ body {
 }
 
 .container-base {
+
+    margin-top: 80px;
 
     width: 100%;
 
@@ -332,6 +384,7 @@ button:hover {
     flex: 1;
 
     padding: 25px;
+    margin-top: 0px;
 
     overflow-x: auto;
 
@@ -407,35 +460,24 @@ a:hover::after {
 /* ====================== */
 
 .sidebar {
-     width: 240px;
 
-    position: fixed;
-
-    top: 0;
+    width: 240px;
+    position:fixed;
+    
+    top: 80px;
     left: 0;
 
-    height: 100vh;
-
     background: white;
-
-    display: flex;
-
-    flex-direction: column;
-
-    overflow: hidden;
+   /* border-right: 1px solid #ececec;*/
+    height: calc(100vh - 80px);
+    min-height: auto;
 
     z-index: 1000;
 
     transition: width 0.2s ease;
-}
-
-.sidebar-content {
-
-    flex: 1;
-
-    overflow-y: auto;
-
+    
     overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .sidebar span {
@@ -453,32 +495,6 @@ a:hover::after {
     overflow: hidden;
 
     pointer-events: none;
-}
-
-.sidebar.collapsed .user-menu-btn {
-
-    justify-content: center;
-
-    padding: 10px;
-
-    gap: 0;
-}
-
-.sidebar.collapsed .user-menu-btn i {
-
-    display: none;
-}
-
-.sidebar.collapsed .user-dropdown {
-
-    left: 95px;
-
-    right: auto;
-
-    width: 220px;
-
-    top: auto;
-    bottom: 15px;
 }
 
 .sidebar-preload .sidebar {
@@ -508,19 +524,6 @@ a:hover::after {
 /* ================================= */
 /* ===== USUARIO SIDEBAR ========== */
 /* =============================== */
-
-.sidebar-user {
-
-    padding: 15px;
-
-    border-top: 1px solid #ececec;
-
-    background: white;
-
-    flex-shrink: 0;
-
-    position: relative;
-}
 
 .user-menu-btn {
 
@@ -610,11 +613,13 @@ a:hover::after {
 
     position: absolute;
 
-    bottom: 90px;
+    top: calc(100% + 10px);
 
-    left: 15px;
+    right: 0;
 
-    right: 15px;
+    left: auto;
+
+    width: 220px;
 
     background: white;
 
@@ -754,7 +759,7 @@ a:hover::after {
 .menu-btn {
 
 
-    margin-top: 35px;
+    margin-top: 20px;
     padding: 8px;
     width: 42px;
     height: 42px;
@@ -875,6 +880,8 @@ a:hover::after {
 /* ========================= */
 
 .page-header {
+
+    margin-top: 0px;
 
     background: white;
 

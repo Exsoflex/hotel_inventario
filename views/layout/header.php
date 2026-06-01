@@ -25,23 +25,79 @@
 
 <div class="layout">
 
+<!-- ///////////////////////////////////////-->
+<div class="topbar">
+
+    <div class="topbar-left">
+
+        <button id="toggleSidebar" class="menu-btn">
+            <i data-lucide="menu"></i>
+        </button>
+        <a href="index.php?modulo=dashboard">
+            <img src="assets/img/HLH_logo.png"
+                 alt="logo"
+                 class="topbar-logo">
+        </a>
+
+    </div>
+
+    <?php if(isset($_SESSION['usuario'])): ?>
+
+    <div class="topbar-right">
+
+        <button class="user-menu-btn" id="userMenuBtn">
+
+            <div class="user-avatar">
+                <?= strtoupper(substr($_SESSION['usuario']['nombre'], 0, 1)) ?>
+            </div>
+
+            <div class="user-info">
+
+                <strong>
+                    <?= $_SESSION['usuario']['nombre'] ?>
+                </strong>
+
+                <span>
+                    <?= $_SESSION['usuario']['rol'] ?>
+                </span>
+
+            </div>
+
+            <i data-lucide="chevron-down"></i>
+
+        </button>
+
+        <div class="user-dropdown" id="userDropdown">
+
+            <a href="#">
+                <i data-lucide="user"></i>
+                Perfil
+            </a>
+
+            <a href="#">
+                <i data-lucide="settings"></i>
+                Configuración
+            </a>
+
+            <a href="index.php?modulo=auth&accion=logout">
+                <i data-lucide="log-out"></i>
+                Cerrar sesión
+            </a>
+
+        </div>
+
+    </div>
+
+    <?php endif; ?>
+
+</div>
+<!-- ///////////////////////////////////////-->
+
     <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
 <!--------------------------------->
 <div class="sidebar-content">
-<!--------------------------------->
-        <div class="sidebar-top">
-            <button id="toggleSidebar" class="menu-btn">
-                <i data-lucide="menu"></i>
-            </button>
 
-            <span class="logo-text">
-            <a href="index.php?modulo=dashboard">
-            <img src="assets/img/HLH_logo.png" alt="logo" class="logo-img">
-            </a>    
-            </span>
-        </div>
-<!--------------------------------->
         <nav class="sidebar-nav">
 
             <a href="index.php?modulo=dashboard">
@@ -107,7 +163,6 @@
             
         </nav>
 <!--------------------------------->
-</div>
 <!--------------------------------->
     <?php if(
         in_array(
@@ -119,9 +174,9 @@
     <?php endif; ?>
 
     <?php if(isset($_SESSION['usuario'])): ?>
-<!--------------------------------->
+<!---------------------------------
     <div class="sidebar-user">
-<!--------------------------------->
+-------------------------------
         <button class="user-menu-btn" id="userMenuBtn">
 
             <div class="user-avatar">
@@ -143,7 +198,7 @@
             <i data-lucide="chevron-up"></i>
 
         </button>
-<!--------------------------------->
+-------------------------------
         <div class="user-dropdown" id="userDropdown">
 
             <a href="#">
@@ -163,7 +218,7 @@
 
             </a>
         </div>
-<!--------------------------------->
+--------------------------------->
     </div>
 <!--------------------------------->
     <?php endif; ?>
