@@ -26,10 +26,11 @@
 <div class="layout">
 
     <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-
+<aside class="sidebar" id="sidebar">
+<!--------------------------------->
+<div class="sidebar-content">
+<!--------------------------------->
         <div class="sidebar-top">
-
             <button id="toggleSidebar" class="menu-btn">
                 <i data-lucide="menu"></i>
             </button>
@@ -39,10 +40,8 @@
             <img src="assets/img/HLH_logo.png" alt="logo" class="logo-img">
             </a>    
             </span>
-
-
         </div>
-
+<!--------------------------------->
         <nav class="sidebar-nav">
 
             <a href="index.php?modulo=dashboard">
@@ -107,7 +106,9 @@
             <?php endif; ?>
             
         </nav>
-
+<!--------------------------------->
+</div>
+<!--------------------------------->
     <?php if(
         in_array(
             $_SESSION['usuario']['rol'],
@@ -118,9 +119,9 @@
     <?php endif; ?>
 
     <?php if(isset($_SESSION['usuario'])): ?>
-
+<!--------------------------------->
     <div class="sidebar-user">
-
+<!--------------------------------->
         <button class="user-menu-btn" id="userMenuBtn">
 
             <div class="user-avatar">
@@ -142,7 +143,7 @@
             <i data-lucide="chevron-up"></i>
 
         </button>
-
+<!--------------------------------->
         <div class="user-dropdown" id="userDropdown">
 
             <a href="#">
@@ -162,10 +163,11 @@
 
             </a>
         </div>
+<!--------------------------------->
     </div>
+<!--------------------------------->
     <?php endif; ?>
-
-    </aside>
+</aside>
 
     <!-- CONTENIDO -->
     <main class="main-content">

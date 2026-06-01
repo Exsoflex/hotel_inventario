@@ -407,23 +407,35 @@ a:hover::after {
 /* ====================== */
 
 .sidebar {
+     width: 240px;
 
-    width: 240px;
-    position:fixed;
-    
+    position: fixed;
+
     top: 0;
     left: 0;
 
+    height: 100vh;
+
     background: white;
-   /* border-right: 1px solid #ececec;*/
-    min-height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    overflow: hidden;
 
     z-index: 1000;
 
     transition: width 0.2s ease;
-    
-    overflow-x: hidden;
+}
+
+.sidebar-content {
+
+    flex: 1;
+
     overflow-y: auto;
+
+    overflow-x: hidden;
 }
 
 .sidebar span {
@@ -499,9 +511,13 @@ a:hover::after {
 
 .sidebar-user {
 
-    margin-top: auto;
-
     padding: 15px;
+
+    border-top: 1px solid #ececec;
+
+    background: white;
+
+    flex-shrink: 0;
 
     position: relative;
 }
