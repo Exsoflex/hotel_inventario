@@ -67,6 +67,11 @@
 
 <br><br>
 
+            <a href="index.php?modulo=movimientos">
+                <i data-lucide="logs"></i>
+                <span>Movimientos</span>
+            </a>
+
             <a href="index.php?modulo=habitaciones">
                 <i data-lucide="bed-double"></i>
                 <span>Habitaciones</span>
@@ -99,11 +104,6 @@
                 <i data-lucide="users"></i>
                 <span>Usuarios</span>
             </a>
-
-            <a href="index.php?modulo=movimientos">
-                <i data-lucide="logs"></i>
-                <span>Movimientos</span>
-            </a>
             <?php endif; ?>
             
         </nav>
@@ -114,8 +114,6 @@
             ['operador']
         )
         ): ?>
-
-    <br><br><br><br><br>
 <!-- //////////////////////////////////////////////////////////////////////////////// -->
     <?php endif; ?>
 

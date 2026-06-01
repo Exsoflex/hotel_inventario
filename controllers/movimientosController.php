@@ -5,19 +5,22 @@ require_once __DIR__ . '/../config/auth.php';
 
 class MovimientosController {
 
-    public function index() {
+public function index() {
 
-        verificarRol(['admin', 'supervisor']);
+    $mov = new Movimientos();
 
-        $mov = new Movimientos();
+    $rol = $_SESSION['usuario']['rol'];
+    $usuario_id = $_SESSION['usuario']['id'];
 
-        $pagina = isset($_GET['pagina'])
-            ? (int)$_GET['pagina']
-            : 1;
+    $pagina = isset($_GET['pagina'])
+        ? (int)$_GET['pagina']
+        : 1;
 
-        $porPagina = 20;
+    $porPagina = 20;
 
-        $offset = ($pagina - 1) * $porPagina;
+    $offset = ($pagina - 1) * $porPagina;
+
+    if ($rol === 'admin') {
 
         $movimientos =
             $mov->obtenerTodo(
@@ -28,15 +31,30 @@ class MovimientosController {
         $totalRegistros =
             $mov->contarTodos();
 
-        $totalPaginas =
-            ceil(
-                $totalRegistros /
-                $porPagina
+    } else {
+
+        $movimientos =
+            $mov->obtenerTodo(
+                $porPagina,
+                $offset,
+                $usuario_id
             );
 
-        require_once __DIR__
-            . "/../views/movimientos/index.php";
+        $totalRegistros =
+            $mov->contarTodos(
+                $usuario_id
+            );
     }
+
+    $totalPaginas =
+        ceil(
+            $totalRegistros /
+            $porPagina
+        );
+
+    require_once __DIR__
+        . "/../views/movimientos/index.php";
+}
 
 
 }

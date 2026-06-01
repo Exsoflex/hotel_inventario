@@ -56,29 +56,40 @@ class HistorialCodigos {
     }
 
     // Obtener todo el historial con joins
-    public function obtenerTodo() {
+public function obtenerTodo($usuario_id = null) {
 
-        $sql = "SELECT 
-                    hc.id,
-                    hc.fecha_hora,
-                    u.nombre AS usuario,
-                    i.codigo_barras,
-                    a.nombre AS articulo,
-                    h.numero AS habitacion,
-                    i.estado,
-                    i.id AS inventario_id
-                FROM historial_codigos hc
-                JOIN usuarios u ON hc.usuario_id = u.id
-                JOIN inventario i ON hc.inventario_id = i.id
-                JOIN articulos a ON i.articulo_id = a.id
-                JOIN habitaciones h ON i.habitacion_id = h.id
-                ORDER BY hc.fecha_hora DESC";
+    $sql = "SELECT 
+                hc.id,
+                hc.fecha_hora,
+                u.nombre AS usuario,
+                i.codigo_barras,
+                a.nombre AS articulo,
+                h.numero AS habitacion,
+                i.estado,
+                i.id AS inventario_id
+            FROM historial_codigos hc
+            JOIN usuarios u ON hc.usuario_id = u.id
+            JOIN inventario i ON hc.inventario_id = i.id
+            JOIN articulos a ON i.articulo_id = a.id
+            JOIN habitaciones h ON i.habitacion_id = h.id";
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Si se pasa un usuario_id, filtrar solo sus registros
+    if ($usuario_id !== null) {
+        $sql .= " WHERE hc.usuario_id = :usuario_id";
     }
+
+    $sql .= " ORDER BY hc.fecha_hora DESC";
+
+    $stmt = $this->conn->prepare($sql);
+
+    if ($usuario_id !== null) {
+        $stmt->bindParam(':usuario_id', $usuario_id);
+    }
+
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
     // Eliminar registro del historial
     public function eliminar($id) {

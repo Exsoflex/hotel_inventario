@@ -9,7 +9,16 @@ class HistorialCodigosController {
     public function index() {
 
         $modelo = new HistorialCodigos();
-        $historial = $modelo->obtenerTodo();
+
+        $rol       = $_SESSION['usuario']['rol'];
+        $usuario_id = $_SESSION['usuario']['id'];
+
+        // Admin ve todo, los demás solo lo suyo
+        if ($rol === 'admin') {
+            $historial = $modelo->obtenerTodo();
+        } else {
+            $historial = $modelo->obtenerTodo($usuario_id);
+        }
 
         require_once __DIR__ . "/../views/historial_codigos/index.php";
     }

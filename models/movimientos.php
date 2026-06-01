@@ -42,23 +42,57 @@ class Movimientos {
     // OBTENER TODOS
     // ===========================
 
-    public function obtenerTodo($limite, $offset) {
+    public function obtenerTodo(
+        $limite,
+        $offset,
+        $usuario_id = null
+    ) {
 
         $sql = "SELECT
-                    m.id,
-                    u.nombre AS usuario,
-                    u.rol,
-                    m.modulo,
-                    m.accion,
-                    m.descripcion,
-                    m.fecha
-                FROM movimientos m
-                JOIN usuarios u
-                    ON m.usuario_id = u.id
-                ORDER BY m.fecha DESC
-                LIMIT $limite OFFSET $offset";
+            m.id,
+            u.nombre AS usuario,
+            u.rol,
+            m.modulo,
+            m.accion,
+            m.descripcion,
+            m.fecha
+        FROM movimientos m
+        JOIN usuarios u
+            ON m.usuario_id = u.id";
+
+        if ($usuario_id !== null) {
+            $sql .= "
+                WHERE m.usuario_id = :usuario_id";
+        }
+
+        $sql .= "
+            ORDER BY m.fecha DESC
+            LIMIT :limite
+            OFFSET :offset";
 
         $stmt = $this->conn->prepare($sql);
+
+        if ($usuario_id !== null) {
+
+            $stmt->bindParam(
+                ':usuario_id',
+                $usuario_id,
+                PDO::PARAM_INT
+            );
+        }
+
+        $stmt->bindParam(
+            ':limite',
+            $limite,
+            PDO::PARAM_INT
+        );
+
+        $stmt->bindParam(
+            ':offset',
+            $offset,
+            PDO::PARAM_INT
+        );
+
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -90,15 +124,31 @@ class Movimientos {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function contarTodos() {
+    public function contarTodos($usuario_id = null) {
 
         $sql = "SELECT COUNT(*) as total
                 FROM movimientos";
 
+        if ($usuario_id !== null) {
+            $sql .= "
+                WHERE usuario_id = :usuario_id";
+        }
+        
         $stmt = $this->conn->prepare($sql);
+
+        if ($usuario_id !== null) {
+
+            $stmt->bindParam(
+                ':usuario_id',
+                $usuario_id,
+                PDO::PARAM_INT
+            );
+        }
+
         $stmt->execute();
 
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $resultado =
+            $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $resultado['total'];
     }

@@ -40,14 +40,18 @@ $permisos = [
         'inventario',
         'habitaciones',
         'articulos',
-        'inventario_base'
+        'inventario_base',
+        'movimientos',
+        'historial_codigos'
     ],
 
     'operador' => [
         'dashboard',
         'revision',
         'inventario',
-        'habitaciones'
+        'habitaciones',
+        'movimientos',
+        'historial_codigos'
     ]
 ];
 
