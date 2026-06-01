@@ -30,7 +30,8 @@ $permisos = [
         'articulos',
         'inventario_base',
         'usuarios',
-        'movimientos'
+        'movimientos',
+        'historial_codigos'
     ],
 
     'supervisor' => [
@@ -125,6 +126,12 @@ switch($modulo) {
         $controller = new MovimientosController();
         break;
 
+    case 'historial_codigos':
+
+        require_once __DIR__ . "/controllers/historial_codigosController.php";
+        $controller = new HistorialCodigosController();
+        break;
+
     default:
 
         require_once __DIR__ . "/controllers/authController.php";
@@ -154,17 +161,21 @@ switch($action) {
         $controller->editar();
         break;
 
+    case 'activar':
+        $controller->activar();
+        break;
+
+    case 'desactivar':
+        $controller->desactivar();
+        break;
+
+    case 'buscar':
+        $controller->buscar();
+        break;
+
     default:
         $controller->index();
         break;
-
-    case 'activar':
-    $controller->activar();
-    break;
-
-    case 'desactivar':
-    $controller->desactivar();
-    break;
 }
 
 ?>

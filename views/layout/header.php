@@ -60,6 +60,11 @@
                 <span>Inventario</span>
             </a>
 
+            <a href="index.php?modulo=historial_codigos">
+                <i data-lucide="barcode"></i>
+                <span>Códigos de Barras</span>
+            </a>
+
 <br><br>
 
             <a href="index.php?modulo=habitaciones">
