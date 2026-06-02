@@ -47,8 +47,111 @@
 <div class="container">
 
 <div class="inventario-topbar">
+
     <input type="text" id="buscador" placeholder="Buscar..."
     value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
+
+    <div class="filtro-wrapper">
+<!-- ------------------------------------------------------- -->
+        <button
+            type="button"
+            id="btnFiltros"
+            class="btn-filtros"
+        >
+            Filtros
+        </button>
+<!-- ------------------------------------------------------- -->
+        <div
+            id="menuFiltros"
+            class="menu-filtros"
+        >
+
+            <label>Estado</label>
+
+            <select id="filtroEstado">
+                <option value="">Todos</option>
+                <option value="bueno">Bueno</option>
+                <option value="dañado">Dañado</option>
+                <option value="en_reparacion">
+                    En reparación
+                </option>
+                <option value="perdido">
+                    Perdido
+                </option>
+            </select>
+
+<!-- ------------------------------------------------------- -->
+        <label style="margin-top: 7px">Artículos</label>
+
+        <button
+            type="button"
+            id="btnArticulos"
+            class="btn-subfiltro"
+        >
+            Seleccionar artículos
+        </button>
+                <!-- ==== -->
+
+        <div class="acciones-articulos">
+
+            <button
+                type="button"
+                id="seleccionarTodos"
+                class="btn-mini"
+            >
+                Todos
+            </button>
+
+            <button
+                type="button"
+                id="limpiarArticulos"
+                class="btn-mini"
+            >
+                Limpiar
+            </button>
+
+        </div>
+                <!-- ==== -->
+        <div
+            id="listaArticulos"
+            class="lista-articulos"
+        >
+
+            <div class="filtro-articulos">
+
+            <?php
+
+            $articulosUnicos = [];
+
+            foreach($inventarios as $item){
+                $articulosUnicos[$item['nombre']] = true;
+            }
+
+            ksort($articulosUnicos);
+
+            ?>
+
+            <?php foreach(array_keys($articulosUnicos) as $articulo): ?>
+
+            <label class="check-articulo">
+
+                <input
+                    type="checkbox"
+                    class="filtro-articulo"
+                    value="<?= strtolower($articulo) ?>"
+                >
+
+                <?= $articulo ?>
+
+            </label>
+
+            <?php endforeach; ?>
+
+            </div>
+        </div>
+<!-- ------------------------------------------------------- -->
+        </div>
+    </div>
 
     <?php if(
     in_array(
@@ -88,7 +191,10 @@ ksort($inventarioPorHabitacion);
 
         <div class="inventario-grid">
             <?php foreach($items as $i): ?>
-                <div class="inventario-card">
+                <div class="inventario-card"
+                data-estado="<?= $i['estado'] ?>"
+                data-articulo="<?= strtolower($i['nombre'])?>"
+                >
                     <div class="inventario-card-header">
                         <div>
                             <h3><?= $i['nombre'] ?></h3>
@@ -374,43 +480,92 @@ ksort($inventarioPorHabitacion);
 
 const buscador = document.getElementById('buscador');
 
+const filtroEstado =
+    document.getElementById('filtroEstado');
+const filtrosArticulo =
+    document.querySelectorAll('.filtro-articulo');
+
 function filtrarInventario(){
 
-    let texto = buscador.value.toLowerCase();
+    let texto =
+        buscador.value.toLowerCase();
 
-    let secciones = document.querySelectorAll('.habitacion-section');
+    let estadoSeleccionado =
+        filtroEstado.value;
+
+    let secciones =
+        document.querySelectorAll('.habitacion-section');
+
+    let articulosSeleccionados =
+        Array.from(filtrosArticulo)
+        .filter(c => c.checked)
+        .map(c => c.value);
 
     secciones.forEach(function(seccion){
 
-        let tituloHabitacion = seccion
-            .querySelector('.habitacion-section-header h2')
-            .textContent
-            .toLowerCase();
-
-        let cards = seccion.querySelectorAll('.inventario-card');
+        let cards =
+            seccion.querySelectorAll('.inventario-card');
 
         let algunaVisible = false;
 
         cards.forEach(function(card){
 
-            let contenido = card.textContent.toLowerCase();
+            let contenido =
+                card.textContent.toLowerCase();
 
-            let coincide =
-                contenido.includes(texto) ||
-                tituloHabitacion.includes(texto);
+            let estado =
+                card.dataset.estado;
 
-            card.style.display = coincide ? '' : 'none';
+            let articulo =
+                card.dataset.articulo;
 
-            if(coincide){
+            let coincideTexto =
+                contenido.includes(texto);
+
+            let coincideEstado =
+                estadoSeleccionado === '' ||
+                estado === estadoSeleccionado;
+
+            let coincideArticulo =
+                articulosSeleccionados.length === 0 ||
+                articulosSeleccionados.includes(
+                    articulo
+                );
+
+            let mostrar =
+
+                coincideTexto &&
+                coincideEstado &&
+                coincideArticulo;
+
+            card.style.display =
+                mostrar ? '' : 'none';
+
+            if(mostrar){
                 algunaVisible = true;
             }
 
         });
 
-        seccion.style.display = algunaVisible ? '' : 'none';
+        seccion.style.display =
+            algunaVisible ? '' : 'none';
 
     });
 }
+
+filtroEstado.addEventListener(
+    'change',
+    filtrarInventario
+);
+
+filtrosArticulo.forEach(check => {
+
+    check.addEventListener(
+        'change',
+        filtrarInventario
+    );
+
+});
 
 buscador.addEventListener('keyup', filtrarInventario);
 
@@ -424,6 +579,37 @@ document.addEventListener('DOMContentLoaded', function(){
 
 </script>
 
+<!-- /////////////////////////////////////////////////////// -->
+ <script>
+
+const btnFiltros =
+    document.getElementById('btnFiltros');
+
+const menuFiltros =
+    document.getElementById('menuFiltros');
+
+btnFiltros.addEventListener('click', function(e){
+
+    e.stopPropagation();
+
+    menuFiltros.classList.toggle('active');
+
+});
+
+document.addEventListener('click', function(e){
+
+    if(
+        !menuFiltros.contains(e.target) &&
+        !btnFiltros.contains(e.target)
+    ){
+
+        menuFiltros.classList.remove('active');
+
+    }
+
+});
+
+</script>
 <!--//////////-- Modal Inventario --//////////-->
 
 <script>
@@ -555,6 +741,53 @@ document.addEventListener(
     actualizarCampoCodigo
 );
 
+</script>
+
+<!--//////////-- Mostrar seccion de articulos --//////////-->
+<script>
+const btnArticulos =
+    document.getElementById('btnArticulos');
+
+const listaArticulos =
+    document.getElementById('listaArticulos');
+
+btnArticulos.addEventListener('click', function(){
+
+    listaArticulos.classList.toggle('active');
+
+});
+
+// Botones para seleccionar/limpiar todos los articulos //
+
+const btnTodos =
+    document.getElementById('seleccionarTodos');
+
+const btnLimpiar =
+    document.getElementById('limpiarArticulos');
+
+btnTodos.addEventListener('click', function(){
+
+    filtrosArticulo.forEach(check => {
+
+        check.checked = true;
+
+    });
+
+    filtrarInventario();
+
+});
+
+btnLimpiar.addEventListener('click', function(){
+
+    filtrosArticulo.forEach(check => {
+
+        check.checked = false;
+
+    });
+
+    filtrarInventario();
+
+});
 </script>
 
 </body>
