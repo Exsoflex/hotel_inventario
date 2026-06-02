@@ -23,10 +23,55 @@
 <!-- /////////////////////////////////////////////////////// -->
 
 <div class="container">
+
+<div class="inventario-topbar">
+
 <input type="text" id="buscador" placeholder="Buscar..."
 value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
 
-<br><br>
+    <div class="filtro-wrapper">
+<!-- ------------------------------------------------------- -->
+        <button
+            type="button"
+            id="btnFiltros"
+            class="btn-filtros"
+        >
+            Filtros
+        </button>
+<!-- ------------------------------------------------------- -->
+        <div
+            id="menuFiltros"
+            class="menu-filtros"
+        >
+
+            <label>Estado</label>
+
+            <select id="filtroEstado">
+
+            <option value="">
+                Todas
+            </option>
+
+            <option value="completa">
+                Completas
+            </option>
+
+            <option value="faltante">
+                Con faltantes
+            </option>
+
+            </select>
+            <button
+                style="margin-top: 10px"
+                type="button"
+                id="btnLimpiarFiltros"
+                class="btn-mini"
+            >
+                Limpiar filtros
+            </button>
+    </div>
+</div>
+</div>
 
 <?php
 
@@ -51,6 +96,19 @@ foreach ($faltantes as $f) {
 }
 ?>
 
+<p>
+    Habitaciones con faltantes:
+    <?= count(array_filter(
+        $habitacionesAgrupadas,
+        fn($hab) => count(array_filter(
+            $hab['items'],
+            fn($item) => $item['faltantes'] > 0
+        )) > 0
+    )) ?>
+</p>
+
+<br>
+
 <div class="revision-grid">
 
 <?php foreach($habitacionesAgrupadas as $hab): ?>
@@ -65,7 +123,9 @@ foreach ($faltantes as $f) {
     $estaCompleta = count($faltantesHabitacion) == 0;
     ?>
 
-    <div class="habitacion-card">
+    <div class="habitacion-card"
+    data-estado="<?= $estaCompleta ? 'completa' : 'faltante' ?>"
+    >
 
         <!--///////////////////////////// HEADER CARD ////////////////////////////-->
         <div class="habitacion-card-header">
@@ -127,22 +187,53 @@ foreach ($faltantes as $f) {
 
 <script>
 const buscador = document.getElementById('buscador');
+
+const filtroEstado =
+    document.getElementById('filtroEstado');
+
 function filtrar() {
 
-    let texto = buscador.value.toLowerCase();
-    let cards = document.querySelectorAll(".habitacion-card");
+    let texto =
+        buscador.value.toLowerCase();
+
+    let estadoSeleccionado =
+        filtroEstado.value;
+
+    let cards =
+        document.querySelectorAll('.habitacion-card');
 
     cards.forEach(function(card){
-        let contenido = card.textContent.toLowerCase();
-        if(contenido.includes(texto)){
-            card.style.display = "";
-        } else {
-            card.style.display = "none";
-        }
+
+        let contenido =
+            card.textContent.toLowerCase();
+
+        let estado =
+            card.dataset.estado;
+
+        let coincideTexto =
+            contenido.includes(texto);
+
+        let coincideEstado =
+            estadoSeleccionado === '' ||
+            estado === estadoSeleccionado;
+
+        let mostrar =
+            coincideTexto &&
+            coincideEstado;
+
+        card.style.display =
+            mostrar ? '' : 'none';
+
     });
 }
 
 buscador.addEventListener('keyup', filtrar);
+
+filtroEstado.addEventListener(
+    'change',
+    filtrar
+);
+
 document.addEventListener('DOMContentLoaded', function() {
 
     if (buscador.value.trim() !== '') {
@@ -151,6 +242,54 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
+// -------------------------------------------------------
 </script>
+
+<script>
+
+const btnFiltros =
+    document.getElementById('btnFiltros');
+
+const menuFiltros =
+    document.getElementById('menuFiltros');
+
+btnFiltros.addEventListener('click', function(e){
+
+    e.stopPropagation();
+
+    menuFiltros.classList.toggle('active');
+
+});
+
+document.addEventListener('click', function(e){
+
+    if(
+        !menuFiltros.contains(e.target) &&
+        !btnFiltros.contains(e.target)
+    ){
+
+        menuFiltros.classList.remove('active');
+
+    }
+
+});
+
+const btnLimpiarFiltros =
+    document.getElementById('btnLimpiarFiltros');
+
+btnLimpiarFiltros.addEventListener('click', function(){
+
+    buscador.value = '';
+
+    filtroEstado.value = '';
+
+    filtrar();
+
+});
+
+
+
+</script>
+
 </body>
 </html>
