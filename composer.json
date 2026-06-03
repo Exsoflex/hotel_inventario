@@ -1,0 +1,17 @@
+{
+    "name": "hecto/hotel_inventario",
+    "autoload": {
+        "psr-4": {
+            "Hecto\\HotelInventario\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Hector",
+            "email": "hectorlucioholguin@gmail.com"
+        }
+    ],
+    "require": {
+        "phpoffice/phpspreadsheet": "^5.7"
+    }
+}

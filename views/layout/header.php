@@ -69,7 +69,7 @@
 
         <div class="user-dropdown" id="userDropdown">
 
-            <a href="#">
+            <a href="index.php?modulo=perfil">
                 <i data-lucide="user"></i>
                 Perfil
             </a>
@@ -163,65 +163,6 @@
             
         </nav>
 <!--------------------------------->
-<!--------------------------------->
-    <?php if(
-        in_array(
-            $_SESSION['usuario']['rol'],
-            ['operador']
-        )
-        ): ?>
-<!-- //////////////////////////////////////////////////////////////////////////////// -->
-    <?php endif; ?>
-
-    <?php if(isset($_SESSION['usuario'])): ?>
-<!---------------------------------
-    <div class="sidebar-user">
--------------------------------
-        <button class="user-menu-btn" id="userMenuBtn">
-
-            <div class="user-avatar">
-                <?= strtoupper(substr($_SESSION['usuario']['nombre'], 0, 1)) ?>
-            </div>
-
-            <div class="user-info">
-
-                <strong>
-                    <?= $_SESSION['usuario']['nombre'] ?>
-                </strong>
-
-                <span>
-                    <?= $_SESSION['usuario']['rol'] ?>
-                </span>
-
-            </div>
-
-            <i data-lucide="chevron-up"></i>
-
-        </button>
--------------------------------
-        <div class="user-dropdown" id="userDropdown">
-
-            <a href="#">
-                <i data-lucide="user"></i>
-                Perfil
-            </a>
-
-            <a href="#">
-                <i data-lucide="settings"></i>
-                Configuración
-            </a>
-
-            <a href="index.php?modulo=auth&accion=logout">
-                <i data-lucide="log-out"></i>
-
-                Cerrar sesión
-
-            </a>
-        </div>
---------------------------------->
-    </div>
-<!--------------------------------->
-    <?php endif; ?>
 </aside>
 
     <!-- CONTENIDO -->

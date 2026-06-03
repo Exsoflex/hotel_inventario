@@ -142,16 +142,41 @@ class Usuarios {
         $stmt->execute();
     }
 
-  
+  /* ---------------------------------------------------- */
 
     public function obtenerNombreUsuario($id) {
 
-        $sql = "SELECT nombre FROM usuarios WHERE id = :id";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(":id", $id);
-        $stmt->execute();
+            $sql = "SELECT nombre FROM usuarios WHERE id = :id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(":id", $id);
+            $stmt->execute();
 
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $resultado ? $resultado['nombre'] : "usuario #$id";
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $resultado ? $resultado['nombre'] : "usuario #$id";
+        }
+
+
+        public function editarPerfil($id, $nombre, $correo) {
+
+        $sql = "UPDATE usuarios
+                SET nombre = :nombre, correo = :correo
+                WHERE id = :id";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->bindParam(":id", $id);
+        $stmt->bindParam(":nombre", $nombre);
+        $stmt->bindParam(":correo", $correo);
+
+        try {
+            $stmt->execute();
+            return ['exito' => true];
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) {
+                return ['exito' => false, 'error' => 'duplicado'];
+            }
+            return ['exito' => false, 'error' => 'general'];
+        }
     }
+
 }

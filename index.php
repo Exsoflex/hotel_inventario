@@ -31,7 +31,8 @@ $permisos = [
         'inventario_base',
         'usuarios',
         'movimientos',
-        'historial_codigos'
+        'historial_codigos',
+        'perfil'
     ],
 
     'supervisor' => [
@@ -42,7 +43,8 @@ $permisos = [
         'articulos',
         'inventario_base',
         'movimientos',
-        'historial_codigos'
+        'historial_codigos',
+        'perfil'
     ],
 
     'operador' => [
@@ -51,7 +53,8 @@ $permisos = [
         'inventario',
         'habitaciones',
         'movimientos',
-        'historial_codigos'
+        'historial_codigos',
+        'perfil'
     ]
 ];
 
@@ -134,6 +137,11 @@ switch($modulo) {
 
         require_once __DIR__ . "/controllers/historial_codigosController.php";
         $controller = new HistorialCodigosController();
+        break;
+
+    case 'perfil':
+        require_once __DIR__ . "/controllers/perfilController.php";
+        $controller = new PerfilController();
         break;
 
     default:
