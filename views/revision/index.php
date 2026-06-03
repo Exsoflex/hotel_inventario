@@ -61,6 +61,31 @@ value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
             </option>
 
             </select>
+ <!-- ====================== -->   
+            <label style="margin-top:10px">
+                Tipo de habitación
+            </label>
+
+            <select id="filtroTipo">
+
+                <option value="">
+                    Todas
+                </option>
+
+                <option value="sencilla">
+                    Sencilla
+                </option>
+
+                <option value="doble">
+                    Doble
+                </option>
+
+                <option value="superior">
+                    Superior
+                </option>
+
+            </select>
+<!-- ====================== -->    
             <button
                 style="margin-top: 10px"
                 type="button"
@@ -72,6 +97,7 @@ value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
     </div>
 </div>
 </div>
+<!-- ====================== --> 
 
 <?php
 
@@ -125,6 +151,7 @@ foreach ($faltantes as $f) {
 
     <div class="habitacion-card"
     data-estado="<?= $estaCompleta ? 'completa' : 'faltante' ?>"
+    data-tipo="<?= strtolower($hab['tipo']) ?>"
     >
 
         <!--///////////////////////////// HEADER CARD ////////////////////////////-->
@@ -191,6 +218,9 @@ const buscador = document.getElementById('buscador');
 const filtroEstado =
     document.getElementById('filtroEstado');
 
+const filtroTipo =
+    document.getElementById('filtroTipo');
+
 function filtrar() {
 
     let texto =
@@ -210,6 +240,12 @@ function filtrar() {
         let estado =
             card.dataset.estado;
 
+        let tipoSeleccionado =
+            filtroTipo.value;
+
+        let tipo =
+            card.dataset.tipo;
+
         let coincideTexto =
             contenido.includes(texto);
 
@@ -217,9 +253,14 @@ function filtrar() {
             estadoSeleccionado === '' ||
             estado === estadoSeleccionado;
 
+        let coincideTipo =
+            tipoSeleccionado === '' ||
+            tipo === tipoSeleccionado;
+
         let mostrar =
             coincideTexto &&
-            coincideEstado;
+            coincideEstado &&
+            coincideTipo;
 
         card.style.display =
             mostrar ? '' : 'none';
@@ -230,6 +271,11 @@ function filtrar() {
 buscador.addEventListener('keyup', filtrar);
 
 filtroEstado.addEventListener(
+    'change',
+    filtrar
+);
+
+filtroTipo.addEventListener(
     'change',
     filtrar
 );
@@ -282,6 +328,8 @@ btnLimpiarFiltros.addEventListener('click', function(){
     buscador.value = '';
 
     filtroEstado.value = '';
+
+    filtroTipo.value = '';
 
     filtrar();
 

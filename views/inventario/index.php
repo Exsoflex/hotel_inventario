@@ -478,50 +478,19 @@ ksort($inventarioPorHabitacion);
 
 <script>
 
-const buscador = document.getElementById('buscador');
-
-const filtroEstado =
-    document.getElementById('filtroEstado');
-
-function filtrar(){
-
-    let texto =
-        buscador.value.toLowerCase();
-
-    let estado =
-        filtroEstado.value;
-
-    let cards =
-        document.querySelectorAll('.habitacion-card');
-
-    cards.forEach(function(card){
-
-        let contenido =
-            card.textContent.toLowerCase();
-
-        let estadoCard =
-            card.dataset.estado;
-
-        let coincideTexto =
-            contenido.includes(texto);
-
-        let coincideEstado =
-            estado === '' ||
-            estado === estadoCard;
-
-        card.style.display =
-            coincideTexto &&
-            coincideEstado
-            ? ''
-            : 'none';
-
-    });
-}
-
 const filtrosArticulo =
     document.querySelectorAll('.filtro-articulo');
 
 function filtrarInventario(){
+
+    let buscador =
+        document.getElementById('buscador');
+
+    let filtroEstado =
+        document.getElementById('filtroEstado');
+
+    let filtroArticulo =
+        document.getElementById('filtroArticulo');
 
     let texto =
         buscador.value.toLowerCase();
@@ -591,7 +560,7 @@ function filtrarInventario(){
 
 filtroEstado.addEventListener(
     'change',
-    filtrar
+    filtrarInventario
 );
 
 filtrosArticulo.forEach(check => {
