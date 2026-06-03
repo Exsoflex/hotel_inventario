@@ -420,7 +420,7 @@ ksort($inventarioPorHabitacion);
                 </button>
 
                 <button
-                type="button"
+                type="reset"
                 onclick="cerrarModal()">
 
                     Cancelar

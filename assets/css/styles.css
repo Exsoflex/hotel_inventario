@@ -1497,7 +1497,7 @@ input.filtro-articulo{
 
     justify-content: center;
 
-    z-index: 999;
+    z-index: 3000;
 }
 
 .modal-overlay.active {
