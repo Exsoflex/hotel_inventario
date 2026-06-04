@@ -32,6 +32,14 @@
         id="buscador" 
         placeholder="Buscar articulos..."
         >
+
+        <a
+        href="index.php?modulo=articulos&accion=exportar"
+        class="filtro-wrapper"
+        >
+            <i data-lucide="download"></i>
+        </a>
+
         <?php if(
         in_array(
             $_SESSION['usuario']['rol'],

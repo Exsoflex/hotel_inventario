@@ -32,6 +32,13 @@
         placeholder="Buscar habitaciones..."
         >
 
+        <a
+        href="index.php?modulo=habitaciones&accion=exportar"
+        class="filtro-wrapper"
+        >
+            <i data-lucide="download"></i>
+        </a>
+
         <?php if(
         in_array(
             $_SESSION['usuario']['rol'],

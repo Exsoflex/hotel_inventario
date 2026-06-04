@@ -3,6 +3,12 @@
 require_once __DIR__ . "/../models/habitacion.php";
 require_once __DIR__ . "/../models/movimientos.php";
 require_once __DIR__ . '/../config/auth.php';
+require_once __DIR__ . '/../config/auth.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 
 class HabitacionesController {
@@ -174,4 +180,158 @@ class HabitacionesController {
             }
         }
     }
+
+     public function exportar() {
+
+        $habitacion = new Habitacion();
+        $habitaciones = $habitacion->obtenerTodo();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue(
+            'A1',
+            'REPORTE DE HABITACIONES'
+        );
+        $sheet->mergeCells('A1:E1');
+
+        date_default_timezone_set('America/Matamoros');
+
+        $sheet->setCellValue(
+            'A2',
+            'Fecha de exportación: ' . date('d/m/Y - h:i:s A')
+        );
+
+        $sheet->mergeCells('A2:E2');
+
+        $sheet->setCellValue('A4', 'ID');
+        $sheet->setCellValue('B4', 'Piso');
+        $sheet->setCellValue('C4', 'Número');
+        $sheet->setCellValue('D4', 'Tipo');
+        $sheet->setCellValue('E4', 'Descripción');
+
+        $fila = 5;
+
+        foreach($habitaciones as $h){
+
+            $sheet->setCellValue(
+                'A' . $fila,
+                $h['id']
+            );
+
+            $sheet->setCellValue(
+                'B' . $fila,
+                $h['piso']
+            );
+
+            $sheet->setCellValue(
+                'C' . $fila,
+                $h['numero']
+            );
+
+            $sheet->setCellValue(
+                'D' . $fila,
+                $h['tipo']
+            );
+
+            $sheet->setCellValue(
+                'E' . $fila,
+                $h['descripcion']
+            );
+
+            $fila++;
+        }
+//------------------- ESTILOS ----------------------------------------------//
+         $sheet->getStyle('A4:E4')->applyFromArray([
+            'font' => [
+                'bold' => true
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => [
+                    'rgb' => 'D9EAD3'
+                ]
+            ]
+        ]);
+
+        $sheet->getStyle('A1')->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'size' => 16
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER
+            ]
+        ]);
+
+        foreach (range('A', 'E') as $columna) {
+
+            $sheet->getColumnDimension($columna)
+                ->setAutoSize(true);
+
+        }
+
+        $sheet->getStyle('E:E')
+            ->getAlignment()
+            ->setWrapText(true);
+
+
+        for($i = 5; $i < $fila; $i++){
+            $sheet->getRowDimension($i)
+                ->setRowHeight(30);
+        }
+
+        $sheet->getStyle(
+            'A4:E' . ($fila - 1)
+        )->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' =>
+                        \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                ]
+            ]
+        ]);
+
+        $sheet->getStyle('A2')->applyFromArray([
+            'alignment' => [
+                'horizontal' =>
+                    Alignment::HORIZONTAL_CENTER
+            ]
+        ]);
+
+        $sheet->freezePane('A5');
+
+        $sheet->getStyle('A:C')->applyFromArray([
+            'alignment' => [
+                'horizontal' =>
+                    Alignment::HORIZONTAL_CENTER
+            ]
+        ]);
+
+        $writer = new Xlsx($spreadsheet);
+
+        // Registrar movimiento
+        $mov = new Movimientos();
+        $mov->registrar(
+            'habitaciones',
+            'exportar',
+            'Exportó la lista de habitaciones a Excel',
+            null
+        );
+
+        header(
+            'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+
+        header(
+            'Content-Disposition: attachment;filename="habitaciones.xlsx"'
+        );
+
+        header(
+            'Cache-Control: max-age=0'
+        );
+
+        $writer->save('php://output');
+        exit;
+        }
 }

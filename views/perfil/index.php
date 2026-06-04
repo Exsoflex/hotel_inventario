@@ -84,7 +84,25 @@
             style="color:#aaa; cursor:not-allowed;"
         >
 
-        <br>
+            <label>Contraseña</label>
+        <div class="input-password">
+
+            <input
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Nueva contraseña"
+            >
+
+            <button
+                type="button"
+                class="menu-btn"
+                id="btnMostrarPassword"
+            >
+                <i data-lucide="eye"></i>
+            </button>
+
+        </div>
 
         <div style="display:flex; gap:12px; margin-top:10px;">
             <button type="submit" class="btn-agregar">
@@ -105,6 +123,42 @@
 document.addEventListener('DOMContentLoaded', function() {
     lucide.createIcons();
 });
+</script>
+
+<script>
+
+lucide.createIcons();
+
+const inputPassword =
+    document.getElementById('password');
+
+const btnMostrarPassword =
+    document.getElementById('btnMostrarPassword');
+
+let mostrando = false;
+
+btnMostrarPassword.addEventListener('click', function(){
+
+    mostrando = !mostrando;
+
+    if(mostrando){
+
+        inputPassword.type = 'text';
+
+        btnMostrarPassword.innerHTML =
+            '<i data-lucide="eye-off"></i>';
+
+    }else{
+
+        inputPassword.type = 'password';
+
+        btnMostrarPassword.innerHTML =
+            '<i data-lucide="eye"></i>';
+    }
+
+    lucide.createIcons();
+});
+
 </script>
 
 </body>

@@ -185,6 +185,10 @@ switch($action) {
         $controller->buscar();
         break;
 
+    case 'exportar':
+        $controller->exportar();
+        break;
+
     default:
         $controller->index();
         break;

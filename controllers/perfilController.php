@@ -21,6 +21,8 @@ class PerfilController {
             $id     = $_SESSION['usuario']['id'];
             $nombre = trim($_POST['nombre']);
             $correo = trim($_POST['correo']);
+            $password = trim($_POST['password']);
+                
 
             if (empty($nombre) || empty($correo)) {
                 $errorFormulario = 'Llena todos los campos por favor';
@@ -31,7 +33,7 @@ class PerfilController {
             }
 
             $usuario   = new Usuarios();
-            $resultado = $usuario->editarPerfil($id, $nombre, $correo);
+            $resultado = $usuario->editarPerfil($id, $nombre, $correo, $password);
 
             if ($resultado['exito']) {
 
@@ -42,7 +44,7 @@ class PerfilController {
                 $mov->registrar(
                     'perfil',
                     'editar',
-                    "Actualizó su perfil: nombre \"$nombre\", correo \"$correo\"",
+                    "Actualizó su perfil: nombre \"$nombre\", correo \"$correo\".",
                     $id
                 );
 

@@ -302,7 +302,7 @@ textarea:focus {
 
     background: white;
 
-    box-shadow: 0 0 0 4px rgba(147, 36, 92, 0.12);
+    box-shadow: 0 0 0 4px rgba(160, 83, 188, 0.12), 0 4px 12px rgba(0,0,0,0.04), 0 10px 24px rgba(0,0,0,0.08);
 }
 
 /* =============================== */
@@ -759,7 +759,7 @@ a:hover::after {
 .menu-btn {
 
 
-    margin-top: 20px;
+    margin-top: 0px;
     padding: 8px;
     width: 42px;
     height: 42px;
@@ -1934,6 +1934,11 @@ input.filtro-articulo{
     color: #4b5563;
 }
 
+.badge-exportar {
+    background: #e8fbf9;
+    color: #089773;
+}
+
 /* ===== BADGES ROL ===== */
 
 .estado-admin {
@@ -1950,3 +1955,51 @@ input.filtro-articulo{
     background: #f3f4f6;
     color: #4b5563;
 }
+
+/* =========================== */
+/* ===== INPUT PASSWORD ===== */
+/* ========================= */
+
+.input-password{
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-password input{
+    width: 100%;
+    padding-right: 85px;
+    padding-left: 15px;
+}
+
+.password-btn{
+
+    transform: translateY(-50%);
+    top: 50%;
+    right: 15px;
+    margin-top: 0px;
+    padding-left: 50px;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0);
+    color: #333;
+    border: none;
+    border-radius: 50%;
+    transition: all 0.2s ease-in-out;
+
+
+    position: absolute;
+    right: 20px;
+    background: none;
+}
+
+.password-btn:hover {
+    background-color: rgb(255, 255, 255);
+    transform: translateY(calc(-50% - 4px));
+    box-shadow: 0 9px 20px rgba(0,0,0,0.12);
+}
+
