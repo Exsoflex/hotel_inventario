@@ -32,6 +32,13 @@
         placeholder="Buscar inventario base..."
         >
 
+        <a
+        href="index.php?modulo=inventario_base&accion=exportar"
+        class="filtro-wrapper"
+        >
+            <i data-lucide="download"></i>
+        </a>
+
         <?php if(
         in_array(
             $_SESSION['usuario']['rol'],

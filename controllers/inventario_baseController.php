@@ -3,6 +3,11 @@
 require_once __DIR__ . "/../models/inventario_base.php";
 require_once __DIR__ . "/../models/movimientos.php";
 require_once __DIR__ . '/../config/auth.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class InventariobaseController {
 
@@ -135,8 +140,6 @@ class InventariobaseController {
                 return;
             }
 
-            $modelInventario_base->editarInventario_base($id, $tipo, $articulo_id, $cantidad);
-
             // Obtener nombre del artículo para el log
         $resultado = $modelInventario_base->editarInventario_base(
             $id,
@@ -184,5 +187,153 @@ class InventariobaseController {
             }
         }
     }
+
+        public function exportar() {
+
+        $inventario_base = new Inventario_base();
+        $inventario_base = $inventario_base->obtenerTodo();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue(
+            'A1',
+            'REPORTE DE INVENTARIO BASE'
+        );
+        $sheet->mergeCells('A1:D1');
+
+        date_default_timezone_set('America/Matamoros');
+
+        $sheet->setCellValue(
+            'A2',
+            'Fecha de exportación: ' . date('d/m/Y - h:i:s A')
+        );
+
+        $sheet->mergeCells('A2:D2');
+
+        $sheet->setCellValue('A4', 'ID');
+        $sheet->setCellValue('B4', 'Tipo de habitación');
+        $sheet->setCellValue('C4', 'Artículo');
+        $sheet->setCellValue('D4', 'Cantidad');
+
+        $fila = 5;
+
+        foreach($inventario_base as $i){
+
+            $sheet->setCellValue(
+                'A' . $fila,
+                $i['id']
+            );
+
+            $sheet->setCellValue(
+                'B' . $fila,
+                $i['tipo_habitacion']
+            );
+
+            $sheet->setCellValue(
+                'C' . $fila,
+                $i['nombre']
+            );
+
+            $sheet->setCellValue(
+                'D' . $fila,
+                $i['cantidad']
+            );
+
+            $fila++;
+        }
+//------------------- ESTILOS ----------------------------------------------//
+         $sheet->getStyle('A4:D4')->applyFromArray([
+            'font' => [
+                'bold' => true
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => [
+                    'rgb' => 'D9EAD3'
+                ]
+            ]
+        ]);
+
+        $sheet->getStyle('A1')->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'size' => 16
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER
+            ]
+        ]);
+
+        foreach (range('A', 'D') as $columna) {
+
+            $sheet->getColumnDimension($columna)
+                ->setAutoSize(true);
+
+        }
+
+        $sheet->getStyle('C:C')
+            ->getAlignment()
+            ->setWrapText(true);
+
+
+        for($i = 5; $i < $fila; $i++){
+            $sheet->getRowDimension($i)
+                ->setRowHeight(30);
+        }
+
+        $sheet->getStyle(
+            'A4:D' . ($fila - 1)
+        )->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' =>
+                        \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                ]
+            ]
+        ]);
+
+        $sheet->getStyle('A2')->applyFromArray([
+            'alignment' => [
+                'horizontal' =>
+                    Alignment::HORIZONTAL_CENTER
+            ]
+        ]);
+
+        $sheet->freezePane('A5');
+
+        $sheet->getStyle('A:C')->applyFromArray([
+            'alignment' => [
+                'horizontal' =>
+                    Alignment::HORIZONTAL_CENTER
+            ]
+        ]);
+
+        $writer = new Xlsx($spreadsheet);
+
+        // Registrar movimiento
+        $mov = new Movimientos();
+        $mov->registrar(
+            'inventario_base',
+            'exportar',
+            'Exportó la lista de inventario base a Excel',
+            null
+        );
+
+        header(
+            'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+
+        header(
+            'Content-Disposition: attachment;filename="inventario_base.xlsx"'
+        );
+
+        header(
+            'Cache-Control: max-age=0'
+        );
+
+        $writer->save('php://output');
+        exit;
+        }
 
 }

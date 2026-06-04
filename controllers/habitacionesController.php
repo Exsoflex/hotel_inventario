@@ -3,7 +3,6 @@
 require_once __DIR__ . "/../models/habitacion.php";
 require_once __DIR__ . "/../models/movimientos.php";
 require_once __DIR__ . '/../config/auth.php';
-require_once __DIR__ . '/../config/auth.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
