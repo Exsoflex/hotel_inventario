@@ -29,6 +29,13 @@
 <input type="text" id="buscador" placeholder="Buscar..."
 value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
 
+    <button 
+    class="btn-filtros"
+    onclick="exportarExcelRevision()">
+        <i data-lucide="download"></i>
+    </button>
+
+
     <div class="filtro-wrapper">
 <!-- ------------------------------------------------------- -->
         <button
@@ -36,7 +43,7 @@ value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
             id="btnFiltros"
             class="btn-filtros"
         >
-            Filtros
+        <i data-lucide="filter"></i>
         </button>
 <!-- ------------------------------------------------------- -->
         <div
@@ -122,18 +129,7 @@ foreach ($faltantes as $f) {
 }
 ?>
 
-<p>
-    Habitaciones con faltantes:
-    <?= count(array_filter(
-        $habitacionesAgrupadas,
-        fn($hab) => count(array_filter(
-            $hab['items'],
-            fn($item) => $item['faltantes'] > 0
-        )) > 0
-    )) ?>
-</p>
-
-<br>
+<br><br>
 
 <div class="revision-grid">
 
@@ -334,9 +330,37 @@ btnLimpiarFiltros.addEventListener('click', function(){
     filtrar();
 
 });
+</script>
 
+<script>
+function exportarExcelRevision(){
 
+    let texto =
+        document.getElementById('buscador')
+        .value;
 
+    let estado =
+        document.getElementById('filtroEstado')
+        .value;
+
+    let tipo =
+        document.getElementById('filtroTipo')
+        .value;
+
+    let url =
+        'index.php?modulo=revision&accion=exportar';
+
+    url += '&buscar=' +
+        encodeURIComponent(texto);
+
+    url += '&estado=' +
+        encodeURIComponent(estado);
+
+    url += '&tipo=' +
+        encodeURIComponent(tipo);
+
+    window.location.href = url;
+}
 </script>
 
 </body>

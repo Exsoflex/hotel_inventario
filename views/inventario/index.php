@@ -51,6 +51,13 @@
     <input type="text" id="buscador" placeholder="Buscar..."
     value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
 
+    <button 
+    class="btn-filtros"
+    onclick="exportarExcel()">
+        <i data-lucide="download"></i>
+    </button>
+
+
     <div class="filtro-wrapper">
 <!-- ------------------------------------------------------- -->
         <button
@@ -58,7 +65,7 @@
             id="btnFiltros"
             class="btn-filtros"
         >
-            Filtros
+        <i data-lucide="filter"></i>
         </button>
 <!-- ------------------------------------------------------- -->
         <div
@@ -794,6 +801,39 @@ btnLimpiar.addEventListener('click', function(){
 
 });
 </script>
+
+<script>
+function exportarExcel(){
+
+    let texto =
+        document.getElementById('buscador')
+        .value;
+
+    let estado =
+        document.getElementById('filtroEstado')
+        .value;
+
+    let articulosSeleccionados =
+        Array.from(document.querySelectorAll('.filtro-articulo'))
+        .filter(c => c.checked)
+        .map(c => c.value);
+
+    let url =
+        'index.php?modulo=inventario&accion=exportar';
+
+    url += '&buscar=' + encodeURIComponent(texto);
+
+    url += '&estado=' + encodeURIComponent(estado);
+
+    url += '&articulos=' +
+        encodeURIComponent(
+            articulosSeleccionados.join(',')
+        );
+
+    window.location.href = url;
+}
+</script>
+
 
 </body>
 </html>

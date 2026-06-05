@@ -38,6 +38,13 @@
             placeholder="Buscar habitación..."
             autocomplete="off"
             >
+
+        <a
+            href="index.php?modulo=dashboard&accion=exportar&buscar=<?= urlencode($_GET['buscar'] ?? '') ?>"
+            class="menu-btn"
+            >
+            <i data-lucide="download"></i>
+        </a>
         </div>
 
 <br>

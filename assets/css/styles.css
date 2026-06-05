@@ -721,6 +721,16 @@ a:hover::after {
     overflow-x: auto;
 }
 
+.dashboard-buscador{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dashboard-buscador input{
+    flex: 1;
+}
+
 .dashboard-panel-derecho {
     flex: 1;
     background-color: white;
@@ -1961,6 +1971,7 @@ input.filtro-articulo{
 /* ========================= */
 
 .input-password{
+    gap: 10px;
     position: relative;
     display: flex;
     align-items: center;

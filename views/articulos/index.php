@@ -35,7 +35,7 @@
 
         <a
         href="index.php?modulo=articulos&accion=exportar"
-        class="filtro-wrapper"
+        class="menu-btn"
         >
             <i data-lucide="download"></i>
         </a>

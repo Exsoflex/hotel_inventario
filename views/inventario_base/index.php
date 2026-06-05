@@ -34,7 +34,7 @@
 
         <a
         href="index.php?modulo=inventario_base&accion=exportar"
-        class="filtro-wrapper"
+        class="menu-btn"
         >
             <i data-lucide="download"></i>
         </a>
