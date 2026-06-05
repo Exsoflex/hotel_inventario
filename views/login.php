@@ -7,7 +7,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/hotel_inventario/assets/css/styles.css">
-
+    <script>
+    (function(){
+        var savedTheme = localStorage.getItem("theme");
+        if(savedTheme === "dark" || (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)){
+            document.documentElement.setAttribute("data-theme", "dark");
+        }
+    })();
+    </script>
 
     <title>Iniciar sesión</title>
 

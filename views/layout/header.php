@@ -10,9 +10,15 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@100..1000&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
-    if(localStorage.getItem("sidebarCollapsed") === "true"){
-        document.documentElement.classList.add("sidebar-preload");
-    }
+    (function(){
+        if(localStorage.getItem("sidebarCollapsed") === "true"){
+            document.documentElement.classList.add("sidebar-preload");
+        }
+        var savedTheme = localStorage.getItem("theme");
+        if(savedTheme === "dark" || (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)){
+            document.documentElement.setAttribute("data-theme", "dark");
+        }
+    })();
     </script>
     <link rel="icon" href="assets/img/HLH_logo.png" type="image/x-icon">
 
@@ -74,10 +80,12 @@
                 Perfil
             </a>
 
-            <a href="#">
-                <i data-lucide="settings"></i>
-                Configuración
-            </a>
+            <button type="button" id="themeToggle" class="dropdown-theme-btn" aria-label="Cambiar tema">
+                <i data-lucide="moon" class="icon-theme-dark"></i>
+                <i data-lucide="sun" class="icon-theme-light"></i>
+                <span class="theme-label-dark">Modo oscuro</span>
+                <span class="theme-label-light">Modo claro</span>
+            </button>
 
             <a href="index.php?modulo=auth&accion=logout">
                 <i data-lucide="log-out"></i>
@@ -164,6 +172,8 @@
         </nav>
 <!--------------------------------->
 </aside>
+
+<div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
     <!-- CONTENIDO -->
     <main class="main-content">

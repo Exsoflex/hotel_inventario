@@ -2,13 +2,13 @@
 
 
 //Para verificar la instalacion de la libreria de PhpSpreadsheet
-require_once __DIR__ . '/../../vendor/autoload.php';
+/*require_once __DIR__ . '/../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 $spreadsheet = new Spreadsheet();
 
-echo "PhpSpreadsheet instalado correctamente";
+echo "PhpSpreadsheet instalado correctamente";*/
 
 
 
@@ -16,5 +16,5 @@ echo "PhpSpreadsheet instalado correctamente";
 
 //Remplaza 777 por tu contraseña
 
-/*$password = 777;
-echo password_hash("$password", PASSWORD_DEFAULT);*/
+$password = 777;
+echo password_hash("$password", PASSWORD_DEFAULT);
