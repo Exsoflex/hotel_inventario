@@ -104,7 +104,7 @@
             <button
                 type="button"
                 id="seleccionarTodos"
-                class="btn-mini"
+                class="btn-subfiltro"
             >
                 Todos
             </button>
@@ -112,7 +112,7 @@
             <button
                 type="button"
                 id="limpiarArticulos"
-                class="btn-mini"
+                class="btn-subfiltro"
             >
                 Limpiar
             </button>

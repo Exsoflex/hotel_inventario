@@ -97,7 +97,7 @@ value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
                 style="margin-top: 10px"
                 type="button"
                 id="btnLimpiarFiltros"
-                class="btn-mini"
+                class="btn-subfiltro"
             >
                 Limpiar filtros
             </button>
