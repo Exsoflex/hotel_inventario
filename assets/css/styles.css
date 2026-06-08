@@ -62,7 +62,7 @@
 [data-theme="dark"] {
     color-scheme: dark;
 
-    --bg-gradient: linear-gradient(125deg, #421c56 0%, #5a2b7c 28%, #30457a 52%, #642b5b 78%, #391e52 100%);
+    --bg-gradient: linear-gradient(125deg, #391c51 0%, #433c8b 28%, #50c7d9 52%, #3d4b8a 78%, #38337d 100%);
     --bg-surface: #1a1a27;
     --bg-surface-alt: #222233;
     --bg-muted: #2a2a3d;
@@ -2044,6 +2044,47 @@ input.filtro-articulo{
 .estado-empleado {
     background: #f3f4f6;
     color: #4b5563;
+}
+
+/* ======================================== */
+/* ===== BADGES ESTADO HABITACION ======== */
+/* ====================================== */
+
+.badge-accion {
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.badge-disponible {
+    background: #e9f9ef;
+    color: #1d8f4d;
+}
+
+.badge-limpieza {
+    background: #fff8e8;
+    color: #c58a00;
+}
+
+.badge-bloqueada {
+    background: #fff0f0;
+    color: #d11f1f;
+}
+
+.badge-ocupada {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.badge-mantenimiento {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.badge-exportar {
+    background: #e8fbf9;
+    color: #089773;
 }
 
 /* =========================== */

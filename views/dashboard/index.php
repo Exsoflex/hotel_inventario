@@ -171,7 +171,7 @@
             $habitaciones,
             fn($h) =>
                 $h['total_faltantes'] > 0 &&
-                $h['total_faltantes'] < 8
+                $h['total_faltantes'] > 0
         );
 
         usort(

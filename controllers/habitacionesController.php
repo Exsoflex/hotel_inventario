@@ -31,6 +31,7 @@ class HabitacionesController {
             $numero = trim($_POST['numero']);
             $tipo = trim($_POST['tipo']);
             $descripcion = trim($_POST['descripcion']);
+            $estado = trim($_POST['estado']);
 
               if (
                 empty($piso) ||
@@ -49,7 +50,8 @@ class HabitacionesController {
                 $piso, 
                 $numero, 
                 $tipo, 
-                $descripcion);
+                $descripcion,
+                $estado);
 
             if ($resultado['exito']) {
                 $idNuevo = $resultado['id'];
@@ -131,6 +133,7 @@ class HabitacionesController {
             $numero = trim($_POST['numero']);
             $tipo = trim($_POST['tipo']);
             $descripcion = trim($_POST['descripcion']);
+            $estado = trim($_POST['estado']);
 
               if (
                 empty($id) ||
@@ -152,7 +155,8 @@ class HabitacionesController {
                 $piso, 
                 $numero, 
                 $tipo, 
-                $descripcion
+                $descripcion, 
+                $estado
             );
 
             if ($resultado['exito']) {
@@ -166,16 +170,16 @@ class HabitacionesController {
                     $id
                 );
             
-                header("Location: index.php?modulo=articulos#articulo-$id");
+                header("Location: index.php?modulo=habitaciones#habitacion-$id");
                 exit();
             } else {
                 $errorFormulario = $resultado['error'] === 'duplicado'
-                    ? "Ya existe un artículo con ese nombre."
+                    ? "Ya existe una habitación con ese nombre."
                     : "Ocurrió un error al guardar. Intenta de nuevo.";
 
                 $articuloEditar = $modelarticulo->obtenerPorId($id);
                 $articulos = $modelarticulo->obtenerTodo();
-                require_once __DIR__ . "/../views/articulos/index.php";
+                require_once __DIR__ . "/../views/habitaciones/index.php";
             }
         }
     }
@@ -201,13 +205,14 @@ class HabitacionesController {
             'Fecha de exportación: ' . date('d/m/Y - h:i:s A')
         );
 
-        $sheet->mergeCells('A2:E2');
+        $sheet->mergeCells('A2:F2');
 
         $sheet->setCellValue('A4', 'ID');
         $sheet->setCellValue('B4', 'Piso');
         $sheet->setCellValue('C4', 'Número');
         $sheet->setCellValue('D4', 'Tipo');
         $sheet->setCellValue('E4', 'Descripción');
+        $sheet->setCellValue('F4', 'Estado');
 
         $fila = 5;
 
@@ -238,10 +243,15 @@ class HabitacionesController {
                 $h['descripcion']
             );
 
+            $sheet->setCellValue(
+                'F' . $fila,
+                $h['estado']
+            );
+
             $fila++;
         }
 //------------------- ESTILOS ----------------------------------------------//
-         $sheet->getStyle('A4:E4')->applyFromArray([
+         $sheet->getStyle('A4:F4')->applyFromArray([
             'font' => [
                 'bold' => true
             ],
@@ -263,14 +273,14 @@ class HabitacionesController {
             ]
         ]);
 
-        foreach (range('A', 'E') as $columna) {
+        foreach (range('A', 'F') as $columna) {
 
             $sheet->getColumnDimension($columna)
                 ->setAutoSize(true);
 
         }
 
-        $sheet->getStyle('E:E')
+        $sheet->getStyle('F:F')
             ->getAlignment()
             ->setWrapText(true);
 
@@ -281,7 +291,7 @@ class HabitacionesController {
         }
 
         $sheet->getStyle(
-            'A4:E' . ($fila - 1)
+            'A4:F' . ($fila - 1)
         )->applyFromArray([
             'borders' => [
                 'allBorders' => [

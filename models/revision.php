@@ -16,7 +16,8 @@ class Revision {
     public function obtenerFaltantes() {
 
         $sql = "SELECT *
-        FROM faltantes_por_habitacion";
+        FROM vista_faltantes
+        WHERE estado_habitacion != 'bloqueada'";
 
         $stmt = $this->conn->prepare($sql);
 

@@ -68,7 +68,9 @@
             <th>Piso</th>
             <th>Numero</th>
             <th>Tipo</th>
+            <th>Estado</th>
             <th>Descripción</th>
+ 
 
             <?php if(
             in_array(
@@ -93,7 +95,13 @@
                 <td><?= $h['piso'] ?></td>
                 <td><?= $h['numero'] ?></td>
                 <td><?= $h['tipo'] ?></td>
+                <td>
+                    <span class="estado-badge badge-<?= $h['estado'] ?>">
+                        <?= ucfirst($h['estado']) ?>
+                    </span>
+                </td>
                 <td><?= $h['descripcion'] ?></td>
+
 
                 <?php if(
                 in_array(
@@ -216,6 +224,51 @@
                 <?= isset($habitacionEditar) && $habitacionEditar['tipo'] == 'superior' ? 'selected' : '' ?>
                 >
                     Superior
+                </option>
+
+            </select>
+
+            <label>Estado de la habitación</label>
+
+            <select name="estado" required>
+
+                <option value="">
+                    Seleccione un estado
+                </option>
+
+                <option 
+                value="disponible"
+                <?= isset($habitacionEditar) && $habitacionEditar['estado'] == 'sencilla' ? 'selected' : '' ?>
+                >
+                    Disponible
+                </option>
+
+                <option 
+                value="ocupada"
+                <?= isset($habitacionEditar) && $habitacionEditar['estado'] == 'ocupada' ? 'selected' : '' ?>
+                >
+                    Ocupada
+                </option>
+
+                <option 
+                value="limpieza"
+                <?= isset($habitacionEditar) && $habitacionEditar['estado'] == 'limpieza' ? 'selected' : '' ?>
+                >
+                    Limpieza
+                </option>
+
+                <option 
+                value="mantenimiento"
+                <?= isset($habitacionEditar) && $habitacionEditar['estado'] == 'mantenimiento' ? 'selected' : '' ?>
+                >
+                    Mantenimiento
+                </option>
+
+                <option 
+                value="bloqueada"
+                <?= isset($habitacionEditar) && $habitacionEditar['estado'] == 'bloqueada' ? 'selected' : '' ?>
+                >
+                    Bloqueada
                 </option>
 
             </select>

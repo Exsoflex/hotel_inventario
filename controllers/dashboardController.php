@@ -238,7 +238,7 @@ $sheet->setCellValue('G8', $sinBase);
 $criticas = array_filter(
     $habitaciones,
     fn($h) =>
-        $h['total_faltantes'] <= 9
+        $h['total_faltantes'] > 0
 );
 
 usort(

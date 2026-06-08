@@ -56,7 +56,7 @@
                         </span>
                     </td>
 
-                    <td><?= htmlspecialchars($m['modulo']) ?></td>
+                    <td><?= htmlspecialchars($m['modulo']) ?></td> 
 
                     <td>
                         <span class="badge-accion badge-<?= $m['accion'] ?>">

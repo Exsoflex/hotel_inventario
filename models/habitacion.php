@@ -20,15 +20,16 @@ class Habitacion {
 
     }
 
-    public function agregarHabitacion($piso,$numero, $tipo, $descripcion) {
+    public function agregarHabitacion($piso,$numero, $tipo, $descripcion, $estado) {
 
-        $sql = "INSERT INTO habitaciones (piso, numero, tipo, descripcion) VALUES (:piso,:numero, :tipo, :descripcion)";
+        $sql = "INSERT INTO habitaciones (piso, numero, tipo, descripcion, estado) VALUES (:piso,:numero, :tipo, :descripcion, :estado)";
         $stmt = $this->conn->prepare($sql);
 
         $stmt->bindParam(":piso", $piso);
         $stmt->bindParam(":numero", $numero);
         $stmt->bindParam(":tipo", $tipo);
         $stmt->bindParam(":descripcion", $descripcion);
+        $stmt->bindParam(":estado", $estado);
 
         try {
             $stmt->execute();
@@ -60,9 +61,9 @@ class Habitacion {
         return $stmt->fetch (PDO::FETCH_ASSOC);
     }
 
-    public function editarHabitacion($id, $piso, $numero, $tipo, $descripcion) {
+    public function editarHabitacion($id, $piso, $numero, $tipo, $descripcion, $estado) {
 
-        $sql = "UPDATE habitaciones SET piso = :piso, numero = :numero, tipo = :tipo, descripcion = :descripcion WHERE id = :id";
+        $sql = "UPDATE habitaciones SET piso = :piso, numero = :numero, tipo = :tipo, descripcion = :descripcion, estado = :estado WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
 
         $stmt->bindParam(":id", $id);
@@ -70,6 +71,7 @@ class Habitacion {
         $stmt->bindParam(":numero", $numero);
         $stmt->bindParam(":tipo", $tipo);
         $stmt->bindParam(":descripcion", $descripcion);  
+        $stmt->bindParam(":estado", $estado);
 
         try {
             $stmt->execute();
