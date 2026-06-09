@@ -35,4 +35,32 @@ class Dashboard {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function obtenerFaltantesPorPiso() {
+
+        $sql = "
+            SELECT
+                piso,
+                SUM(total_faltantes) AS total_faltantes
+            FROM vista_dashboard
+            WHERE estado_habitacion != 'bloqueada'
+            GROUP BY piso
+            ORDER BY piso
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function obtenerEstadisticasPisos() {
+
+        $sql = "SELECT * FROM vista_estadisticas_pisos";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }

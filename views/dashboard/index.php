@@ -161,14 +161,62 @@
         <br>
         <p style="color:gray;">⚠ Sin inventario base: <strong><?= $sinBase ?></strong></p>
 
+
 <br><br>
 
-    <h2>Artículos más faltantes</h2>
-<div class="contenedor-grafica">
-    <canvas id="graficaArticulos"></canvas>
+<div class="grafica-card">
+
+    <div class="graficas-fila">
+
+        <!-- DONA -->
+        <div class="mini-grafica">
+
+            <h2>Estado del inventario</h2>
+
+            <div class="contenedor-dona">
+                <canvas id="graficaEstadoInventario"></canvas>
+            </div>
+
+        </div>
+
+        <!-- BARRAS -->
+        <div class="mini-grafica">
+
+            <h2>Estado de habitaciones por piso</h2>
+
+            <div class="contenedor-mini-barra">
+                <canvas id="graficaHabitacionesPiso"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
-    </canvas>
+<br>
+
+<div class="grafica-card">
+
+    <h2>Faltantes por piso</h2>
+
+    <div class="contenedor-grafica">
+        <canvas id="graficaFaltantesPiso"></canvas>
+    </div>
+
+</div>
+
+<br>
+
+<div class="grafica-card">
+
+    <h2>Artículos más faltantes</h2>
+
+    <div class="contenedor-grafica">
+        <canvas id="graficaArticulos"></canvas>
+    </div>
+
+</div>
 
     
 <br><br>
@@ -218,7 +266,18 @@
         <?php endif; ?>
 
     </div>
+<!-- ---------------------------------------- -->
+<?php
 
+$datosInventario = [
+    $completas,
+    $conFaltantes,
+    $sinBase
+];
+
+?>
+
+<!-- ---------------------------------------- -->
 </div>
 
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
@@ -284,9 +343,12 @@ new Chart(ctx, {
         labels: labels,
         datasets: [{
 
+            backgroundColor: '#fd9b2cb3',
+
             label: 'Cantidad faltante',
             data: datos,
-            borderWidth: 1
+            borderWidth: 1,
+            borderColor: '#d78324'
 
         }]
     },
@@ -307,6 +369,203 @@ options: {
 }
 }
 );
+</script>
+
+<script>
+
+const datosInventario = 
+<?= json_encode($datosInventario) ?>;
+
+const ctxInventario = document.getElementById(
+    'graficaEstadoInventario'
+);
+
+new Chart(ctxInventario, {
+
+    type: 'doughnut',
+
+    data: {
+
+        labels: [
+            'Completas',
+            'Con faltantes',
+            'Sin inventario base'
+        ],
+
+        datasets: [{
+
+            barThickness: 20,
+            data: datosInventario,
+
+            backgroundColor: [
+                '#3359eddd',
+                '#ee2424cf',
+                '#9E9E9E'
+            ],
+
+            borderWidth: 2
+
+        }]
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+</script>
+
+<script>
+
+const datosHabitaciones =
+<?= json_encode($estadisticasPisos) ?>;
+
+const labelsHabitaciones =
+    datosHabitaciones.map(
+        p => 'Piso ' + p.piso
+    );
+
+const habitacionesCompletas =
+    datosHabitaciones.map(
+        p => Number(
+            p.habitaciones_completas
+        )
+    );
+
+const habitacionesFaltantes =
+    datosHabitaciones.map(
+        p => Number(
+            p.habitaciones_con_faltantes
+        )
+    );
+
+const ctxHabitaciones =
+    document.getElementById(
+        'graficaHabitacionesPiso'
+    );
+
+new Chart(ctxHabitaciones, {
+
+    type: 'bar',
+
+    data: {
+
+        labels: labelsHabitaciones,
+
+        datasets: [
+
+            {
+
+                label: 'Completas',
+
+                data: habitacionesCompletas,
+
+                backgroundColor: '#4caf4f93',
+
+                borderColor: '#388E3C',
+
+                borderWidth: 1,
+
+                barThickness: 22
+            },
+
+            {
+
+                label: 'Con faltantes',
+
+                data: habitacionesFaltantes,
+
+                backgroundColor: '#a836f4b3',
+
+                borderColor: '#ac28c6',
+
+                borderWidth: 1,
+
+                barThickness: 22
+            }
+
+        ]
+    },
+
+    options: {
+
+        responsive: true,
+
+        maintainAspectRatio: false,
+
+        plugins: {
+
+            legend: {
+                position: 'bottom'
+            }
+        },
+
+        scales: {
+
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            }
+        }
+    }
+});
+
+</script>
+
+<script>
+
+const datosPisos =
+<?= json_encode($faltantesPorPiso) ?>;
+
+const labelsFaltantes =
+    datosPisos.map(p => 'Piso ' + p.piso);
+
+const valoresFaltantes =
+    datosPisos.map(
+        p => Number(p.total_faltantes)
+    );
+
+const ctxFaltantes =
+    document.getElementById(
+        'graficaFaltantesPiso'
+    );
+
+new Chart(ctxFaltantes, {
+
+    type: 'bar',
+
+    data: {
+
+        labels: labelsFaltantes,
+
+        datasets: [{
+
+            label: 'Artículos faltantes',
+
+            data: valoresFaltantes,
+
+            borderWidth: 1
+        }]
+    },
+
+    options: {
+
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+
+
 </script>
 
 

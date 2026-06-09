@@ -800,7 +800,7 @@ a:hover::after {
 }
 
 .dashboard-panel-izquierdo {
-    flex: 2;
+    flex: 1.6;
     background-color: var(--bg-surface);
     border-radius: 30px;
     padding: 25px;
@@ -833,6 +833,94 @@ a:hover::after {
     position: relative;
     height: 400px;
     width: 100%;
+}
+
+.dashboard-graficas {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 20px;
+
+    margin-top: 20px;
+}
+
+.grafica-card {
+
+    background: var(--bg-glass-border);
+
+    border-radius: 20px;
+
+    padding: 20px;
+
+    box-shadow: 0 0 10px rgba(0,0,0,0.08);
+
+    margin-bottom: 20px;
+}
+
+.grafica-pequena {
+
+    max-width: 400px;
+}
+
+.contenedor-grafica {
+
+    position: relative;
+
+    height: 350px;
+}
+
+.contenedor-dona {
+
+    position: relative;
+
+    height: 250px;
+}
+
+.graficas-fila {
+
+    display: flex;
+
+    gap: 20px;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    flex-wrap: wrap;
+}
+
+.mini-grafica {
+
+    flex: 1;
+
+    min-width: 250px;
+}
+
+.contenedor-dona {
+
+    position: relative;
+
+    height: 220px;
+
+    max-width: 250px;
+
+    margin: auto;
+}
+
+.contenedor-mini-barra {
+
+    position: relative;
+
+    height: 220px;
+}
+
+.contenedor-grafica {
+
+    position: relative;
+
+    height: 350px;
 }
 /* ////////////////////////////*/
 /* ===== LAYOUT GENERAL ===== */
