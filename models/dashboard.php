@@ -24,4 +24,15 @@ class Dashboard {
 
     }
 
+    public function obtenerEstadisticasArticulos() {
+
+        $sql = "SELECT * FROM vista_estadisticas_articulos
+                ORDER BY total_faltantes DESC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }

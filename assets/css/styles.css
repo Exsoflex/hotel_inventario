@@ -62,7 +62,7 @@
 [data-theme="dark"] {
     color-scheme: dark;
 
-    --bg-gradient: linear-gradient(125deg, #391c51 0%, #433c8b 28%, #50c7d9 52%, #3d4b8a 78%, #38337d 100%);
+    --bg-gradient: linear-gradient(125deg, #391c51 0%, #433c8b 28%, #55aab7 52%, #3d4b8a 78%, #38337d 100%);
     --bg-surface: #1a1a27;
     --bg-surface-alt: #222233;
     --bg-muted: #2a2a3d;
@@ -800,7 +800,7 @@ a:hover::after {
 }
 
 .dashboard-panel-izquierdo {
-    flex: 2.5;
+    flex: 2;
     background-color: var(--bg-surface);
     border-radius: 30px;
     padding: 25px;
@@ -828,6 +828,12 @@ a:hover::after {
     min-width: 0;
 }
 
+.contenedor-grafica{
+
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
 /* ////////////////////////////*/
 /* ===== LAYOUT GENERAL ===== */
 /* //////////////////////////*/

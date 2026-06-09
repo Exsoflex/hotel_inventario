@@ -20,7 +20,8 @@
         }
     })();
     </script>
-    <link rel="icon" href="assets/img/HLH_logo.png" type="image/x-icon">
+    <link rel="icon" type="image/png" href="/hotel_inventario/assets/img/HLH_logo.png?v=1">
+
 
     <title>Hotel Inventario</title>
 </head>

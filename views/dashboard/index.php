@@ -6,7 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Dashboard</title>
+    <link rel="icon" type="image/png" href="/hotel_inventario/assets/img/HLH_logo.png">
 </head>
 
 <body class="dashboard-body">
@@ -124,8 +126,7 @@
     <div class="dashboard-panel-derecho">
 
         <h2>Resumen</h2>
-
-        <br>
+<br>
 
     <?php
 
@@ -160,7 +161,18 @@
         <br>
         <p style="color:gray;">⚠ Sin inventario base: <strong><?= $sinBase ?></strong></p>
 
-        <br><br>
+<br><br>
+
+    <h2>Artículos más faltantes</h2>
+<div class="contenedor-grafica">
+    <canvas id="graficaArticulos"></canvas>
+</div>
+
+    </canvas>
+
+    
+<br><br>
+
 
         <h2>Habitaciones críticas</h2>
         <br>
@@ -248,8 +260,56 @@ function filtrar() {
 }
 
 buscador.addEventListener('input', filtrar);
-
 </script>
+
+<script>
+
+const estadisticas = <?= json_encode($estadisticas) ?>;
+
+console.log(estadisticas);
+
+const labels = estadisticas.map(e => e.articulo);
+
+const datos = estadisticas.map(
+    e => Number(e.total_faltantes)
+);
+
+const ctx = document.getElementById('graficaArticulos');
+
+new Chart(ctx, {
+
+    type: 'bar',
+    data: {
+
+        labels: labels,
+        datasets: [{
+
+            label: 'Cantidad faltante',
+            data: datos,
+            borderWidth: 1
+
+        }]
+    },
+
+options: {
+
+    indexAxis: 'y',
+
+    responsive: true,
+    maintainAspectRatio: false,
+
+    scales: {
+
+        x: {
+            beginAtZero: true
+        }
+    }
+}
+}
+);
+</script>
+
+
 
 </body>
 </html>

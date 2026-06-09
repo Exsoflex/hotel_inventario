@@ -13,6 +13,7 @@ class DashboardController {
 
         $dashboard = new Dashboard();
         $habitaciones = $dashboard->obtenerResumen();
+        $estadisticas = $dashboard->obtenerEstadisticasArticulos();
 
         require_once __DIR__ . "/../views/dashboard/index.php";
 
