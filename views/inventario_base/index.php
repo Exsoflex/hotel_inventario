@@ -244,7 +244,6 @@ id="modalInventarioBase"
 
                 <button 
                 type="reset" 
-                class="btn-cancelar"
                 onclick="cerrarModal()"
                 >
                     Cancelar

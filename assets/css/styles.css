@@ -1823,9 +1823,9 @@ input.filtro-articulo{
 
 .btn-cancelar {
 
-    background: var(--bg-muted);
-
     color: var(--text-primary);
+
+    background: var(--bg-muted);
 
     padding: 14px 22px;
 

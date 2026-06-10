@@ -190,8 +190,7 @@
                 </button>
 
                 <button 
-                type="button"
-                class="btn-cancelar"
+                type="reset"
                 onclick="cerrarModal()"
                 >
                     Cancelar
