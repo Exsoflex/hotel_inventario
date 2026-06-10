@@ -49,8 +49,15 @@
 
 <div class="inventario-topbar">
 
-    <input type="text" id="buscador" placeholder="Buscar..."
-    value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
+    <input 
+        type="text" 
+        id="buscador" 
+        placeholder="Buscar..."
+        value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>"
+    >
+       <!-- Los hidden inputs solo sirven para pasar los filtros al form de agregar/editar -->
+    <input type="hidden" id="hidden_buscar"        value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
+    <input type="hidden" id="hidden_estado_filtro" value="<?= htmlspecialchars($_GET['estado'] ?? '') ?>">
 
     <button 
     class="btn-filtros"
@@ -77,15 +84,11 @@
             <label>Estado</label>
 
             <select id="filtroEstado">
-                <option value="">Todos</option>
-                <option value="bueno">Bueno</option>
-                <option value="dañado">Dañado</option>
-                <option value="en_reparacion">
-                    En reparación
-                </option>
-                <option value="perdido">
-                    Perdido
-                </option>
+                <option value=""          <?= ($_GET['estado'] ?? '') === ''            ? 'selected' : '' ?>>Todos</option>
+                <option value="bueno"     <?= ($_GET['estado'] ?? '') === 'bueno'       ? 'selected' : '' ?>>Bueno</option>
+                <option value="dañado"    <?= ($_GET['estado'] ?? '') === 'dañado'      ? 'selected' : '' ?>>Dañado</option>
+                <option value="en_reparacion" <?= ($_GET['estado'] ?? '') === 'en_reparacion' ? 'selected' : '' ?>>En reparación</option>
+                <option value="perdido"   <?= ($_GET['estado'] ?? '') === 'perdido'     ? 'selected' : '' ?>>Perdido</option>
             </select>
 
 <!-- ------------------------------------------------------- -->
@@ -240,17 +243,20 @@ ksort($inventarioPorHabitacion);
                     ): ?>
                     <div class="inventario-actions">    
                              
-                        <a href="index.php?modulo=inventario&accion=editar&id=<?= $i['id'] ?>">
-                            Editar
-                        </a>   
-                        <a 
-                        href="#"
-                        class="btn-eliminar"
-                        data-url="index.php?modulo=inventario&accion=eliminar&id=<?= $i['id'] ?>"
-                        data-inventario="<?= $i['nombre'] ?>"
-                        >
-                        Eliminar
-                        </a>
+                <!-- Editar -->
+                <a href="index.php?modulo=inventario&accion=editar&id=<?= $i['id'] ?>&buscar=<?= urlencode($_GET['buscar'] ?? '') ?>&estado=<?= urlencode($_GET['estado'] ?? '') ?>">
+                    Editar
+                </a>
+
+                <!-- Eliminar -->
+                <a 
+                    href="#"
+                    class="btn-eliminar"
+                    data-url="index.php?modulo=inventario&accion=eliminar&id=<?= $i['id'] ?>&buscar=<?= urlencode($_GET['buscar'] ?? '') ?>&estado=<?= urlencode($_GET['estado'] ?? '') ?>"
+                    data-inventario="<?= $i['nombre'] ?>"
+                >
+                    Eliminar
+                </a>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -267,8 +273,7 @@ ksort($inventarioPorHabitacion);
 
 <!-- ////////////// MODAL INVENTARIO //////////////////////////////// -->       
        
-
-        <div class="modal-overlay" id="modalInventario">
+<div class="modal-overlay" id="modalInventario">
 
     <div class="modal">
 
@@ -287,10 +292,16 @@ ksort($inventarioPorHabitacion);
         
 </div>
 
-        <form
-        id="inventarioFormulario"
-        action="index.php?modulo=inventario&accion=<?= isset($inventarioEditar) ? 'editar' : 'agregar' ?>"
-        method="POST">
+    <form
+    id="inventarioFormulario"
+    action="index.php?modulo=inventario&accion=<?= isset($inventarioEditar) ? 'editar' : 'agregar' ?>"
+    method="POST">
+
+        <!-- Preservar búsqueda -->
+        <input type="hidden" name="buscar"        id="hidden_buscar"       value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
+        <input type="hidden" name="estado_filtro" id="hidden_estado_filtro" value="<?= htmlspecialchars($_GET['estado'] ?? '') ?>">
+
+        <!-- resto del form igual -->
 
         <?php if(isset($errorFormulario)): ?>
 
@@ -486,8 +497,28 @@ ksort($inventarioPorHabitacion);
 
 <script>
 
-const filtrosArticulo =
-    document.querySelectorAll('.filtro-articulo');
+// Buscador — filtra en pantalla Y actualiza el hidden
+const buscador        = document.getElementById('buscador');
+const hiddenBuscar    = document.getElementById('hidden_buscar');
+const hiddenEstado    = document.getElementById('hidden_estado_filtro');
+const filtroEstado    = document.getElementById('filtroEstado');
+const filtrosArticulo = document.querySelectorAll('.filtro-articulo');
+
+buscador.addEventListener('keyup', function () {
+    hiddenBuscar.value = this.value;
+    filtrarInventario();
+});
+
+filtroEstado.addEventListener('change', function () {
+    hiddenEstado.value = this.value;
+    filtrarInventario();
+});
+
+filtrosArticulo.forEach(check => {
+    check.addEventListener('change', filtrarInventario);
+});
+
+document.addEventListener('DOMContentLoaded', filtrarInventario);
 
 function filtrarInventario(){
 
@@ -521,10 +552,19 @@ function filtrarInventario(){
 
         let algunaVisible = false;
 
-        cards.forEach(function(card){
+    let tituloHabitacion =
+        seccion.querySelector('h2')
+        .textContent
+        .toLowerCase();
 
-            let contenido =
-                card.textContent.toLowerCase();
+    cards.forEach(function(card){
+
+        let contenido =
+            (
+                card.textContent +
+                ' ' +
+                tituloHabitacion
+            ).toLowerCase();
 
             let estado =
                 card.dataset.estado;
@@ -564,13 +604,14 @@ function filtrarInventario(){
             algunaVisible ? '' : 'none';
 
     });
-}
 
+}
+/*
 filtroEstado.addEventListener(
     'change',
     filtrarInventario
 );
-
+*/
 filtrosArticulo.forEach(check => {
 
     check.addEventListener(
@@ -583,10 +624,7 @@ filtrosArticulo.forEach(check => {
 buscador.addEventListener('keyup', filtrarInventario);
 
 document.addEventListener('DOMContentLoaded', function(){
-
-    if(buscador.value.trim() !== ''){
         filtrarInventario();
-    }
 
 });
 
@@ -636,22 +674,15 @@ function abrirModal(){
     document.body.style.overflow = 'hidden';
 }
 
-function cerrarModal(){
-
-    <?php if(isset($inventarioEditar)): ?>
-
+function cerrarModal() {
+    <?php if (isset($inventarioEditar)): ?>
         window.location.href =
-            'index.php?modulo=inventario';
-
+            'index.php?modulo=inventario'
+            + '&buscar='  + encodeURIComponent(hiddenBuscar.value)
+            + '&estado='  + encodeURIComponent(hiddenEstado.value);
     <?php else: ?>
-
-        document
-        .getElementById('modalInventario')
-        .classList
-        .remove('active');
-
+        document.getElementById('modalInventario').classList.remove('active');
         document.body.style.overflow = 'auto';
-
     <?php endif; ?>
 }
 
@@ -674,8 +705,16 @@ function confirmarEliminacion(id){
 
     if(confirmar){
 
-        window.location.href =
-            "index.php?modulo=inventario&accion=eliminar&id=" + id;
+const textoBusqueda =
+    document.getElementById('buscador').value;
+
+const estadoBusqueda =
+    document.getElementById('filtroEstado').value;
+
+window.location.href =
+    'index.php?modulo=inventario'
+    + '&buscar=' + encodeURIComponent(textoBusqueda)
+    + '&estado=' + encodeURIComponent(estadoBusqueda);
     }
 }
 
@@ -831,7 +870,7 @@ function exportarExcel(){
             articulosSeleccionados.join(',')
         );
 
-    window.location.href = url;
+        window.location.href = url;
 }
 </script>
 

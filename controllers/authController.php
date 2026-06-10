@@ -28,8 +28,8 @@ class AuthController {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $login = trim($_POST['login']);
-            $password = $_POST['password'];
+        $login = trim($_POST['login'] ?? '');
+        $password = $_POST['password'] ?? '';
 
             if(empty($login) || empty($password)){
 
@@ -68,7 +68,7 @@ class AuthController {
             // =========================
 
             //session_start();
-
+            session_regenerate_id(true);
             $_SESSION['usuario'] = [
 
                 'id' => $usuarioDB['id'],
@@ -100,13 +100,17 @@ class AuthController {
 
     public function logout() {
 
-        // Antes de session_destroy():
         $mov = new Movimientos();
+
         $mov->registrar(
             'auth',
             'logout',
             "Cerró sesión"
         );
+
+        $_SESSION = [];
+
+        session_unset();
 
         session_destroy();
 

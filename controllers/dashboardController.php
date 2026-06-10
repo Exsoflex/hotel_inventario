@@ -376,7 +376,7 @@ $seriesEP = new DataSeries(
     // HEADERS Y DESCARGA
     // ============================================================
     for ($i = 5; $i < $fila; $i++) {
-        $sheet->getRowDimension($i)->setRowHeight(22);
+        $sheet->getRowDimension($i)->setRowHeight(-1);
     }
 
 

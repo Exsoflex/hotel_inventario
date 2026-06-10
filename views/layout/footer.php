@@ -152,5 +152,18 @@ if(themeToggle){
 
 </script>
 
+<script>
+window.addEventListener('pageshow', function(event) {
+
+    if (
+        event.persisted ||
+        window.performance.navigation.type === 2
+    ) {
+
+        window.location.reload();
+    }
+});
+</script>
+
 </body>
 </html>
