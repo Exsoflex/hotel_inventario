@@ -1,3 +1,6 @@
+<?php
+$buscar = $buscar ?? ($_GET['buscar'] ?? '');
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -31,10 +34,13 @@
         type="text" 
         id="buscador" 
         placeholder="Buscar habitaciones..."
+        value="<?= htmlspecialchars($buscar) ?>"
         >
 
         <a
-        href="index.php?modulo=habitaciones&accion=exportar"
+        href="index.php?modulo=habitaciones&accion=exportar&buscar=<?= urlencode($buscar) ?>"
+        data-base-url="index.php?modulo=habitaciones&accion=exportar"
+        id="btnExportar"
         class="menu-btn"
         >
             <i data-lucide="download"></i>
@@ -114,14 +120,18 @@
                     <a 
                     href="#"
                     class="btn-eliminar"
-                    data-url="index.php?modulo=habitaciones&accion=eliminar&id=<?= $h['id'] ?>"
+                    data-base-url="index.php?modulo=habitaciones&accion=eliminar&id=<?= $h['id'] ?>"
                     data-habitacion="<?= $h['numero'] ?>"
-                    class="table-action">
+                    >
                     Eliminar
                     </a>
                 </td>
                 <td>
-                    <a href="index.php?modulo=habitaciones&accion=editar&id=<?= $h['id'] ?>" class="table-action">                
+                    <a
+                    href="index.php?modulo=habitaciones&accion=editar&id=<?= $h['id'] ?>&buscar=<?= urlencode($buscar) ?>"
+                    class="table-action btn-editar"
+                    data-base-url="index.php?modulo=habitaciones&accion=editar&id=<?= $h['id'] ?>"
+                    >                
                     Editar
                     </a>
                 </td>  
@@ -164,6 +174,13 @@
         id="habitacionFormulario"
         action="index.php?modulo=habitaciones&accion=<?= isset($habitacionEditar) ? 'editar' : 'agregar' ?>" 
         method="POST">
+
+            <input
+            type="hidden"
+            name="buscar"
+            id="form_buscar"
+            value="<?= htmlspecialchars($buscar) ?>"
+            >
 
         <?php if (isset($errorFormulario)): ?>
         <div class="alerta-error">
@@ -346,7 +363,43 @@
 <script>
 
 const buscador = document.getElementById('buscador');
-buscador.addEventListener('keyup', function() {
+const formBuscar = document.getElementById('form_buscar');
+const btnExportar = document.getElementById('btnExportar');
+
+function crearUrlConBusqueda(baseUrl) {
+
+    const url = new URL(baseUrl, window.location.href);
+    const texto = buscador.value.trim();
+
+    if (texto) {
+        url.searchParams.set('buscar', texto);
+    } else {
+        url.searchParams.delete('buscar');
+    }
+
+    return url.pathname + '?' + url.searchParams.toString();
+}
+
+function sincronizarBusqueda() {
+
+    formBuscar.value = buscador.value.trim();
+
+    document.querySelectorAll('.btn-editar').forEach(link => {
+        link.href = crearUrlConBusqueda(link.dataset.baseUrl);
+    });
+
+    if (btnExportar) {
+        btnExportar.href = crearUrlConBusqueda(btnExportar.dataset.baseUrl);
+    }
+
+    window.history.replaceState(
+        {},
+        '',
+        crearUrlConBusqueda('index.php?modulo=habitaciones')
+    );
+}
+
+function filtrarTabla() {
 
     let texto = buscador.value.toLowerCase();
     let filas = document.querySelectorAll("table tbody tr");
@@ -361,7 +414,16 @@ buscador.addEventListener('keyup', function() {
             fila.style.display = "none";
         }
     });
-});
+}
+
+function actualizarBusqueda() {
+
+    sincronizarBusqueda();
+    filtrarTabla();
+}
+
+buscador.addEventListener('keyup', actualizarBusqueda);
+document.addEventListener('DOMContentLoaded', actualizarBusqueda);
 
 </script>
 
@@ -379,14 +441,12 @@ botonesEliminar.forEach(boton => {
 
         e.preventDefault();
 
-        const url = this.dataset.url;
-
         const habitacion = this.dataset.habitacion;
 
         mensajeEliminar.textContent =
             `¿Seguro que deseas eliminar la habitación ${habitacion}?`;
 
-        btnConfirmarEliminar.href = url;
+        btnConfirmarEliminar.href = crearUrlConBusqueda(this.dataset.baseUrl);
 
         modalEliminar.classList.add('active');
     });
@@ -413,7 +473,7 @@ function cerrarModal(){
 
     <?php if(isset($habitacionEditar)): ?>
 
-        window.location.href = 'index.php?modulo=habitaciones';
+        window.location.href = crearUrlConBusqueda('index.php?modulo=habitaciones');
 
     <?php else: ?>
 

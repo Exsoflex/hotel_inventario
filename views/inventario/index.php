@@ -1,3 +1,14 @@
+<?php
+$filtros = $filtros ?? [
+    'buscar' => $_GET['buscar'] ?? '',
+    'estado' => $_GET['estado'] ?? '',
+    'articulos' => $_GET['articulos'] ?? '',
+];
+
+$articulosFiltrados = array_filter(
+    array_map('strtolower', array_map('trim', explode(',', $filtros['articulos'])))
+);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -53,11 +64,8 @@
         type="text" 
         id="buscador" 
         placeholder="Buscar..."
-        value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>"
+        value="<?= htmlspecialchars($filtros['buscar']) ?>"
     >
-       <!-- Los hidden inputs solo sirven para pasar los filtros al form de agregar/editar -->
-    <input type="hidden" id="hidden_buscar"        value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
-    <input type="hidden" id="hidden_estado_filtro" value="<?= htmlspecialchars($_GET['estado'] ?? '') ?>">
 
     <button 
     class="btn-filtros"
@@ -84,11 +92,11 @@
             <label>Estado</label>
 
             <select id="filtroEstado">
-                <option value=""          <?= ($_GET['estado'] ?? '') === ''            ? 'selected' : '' ?>>Todos</option>
-                <option value="bueno"     <?= ($_GET['estado'] ?? '') === 'bueno'       ? 'selected' : '' ?>>Bueno</option>
-                <option value="dañado"    <?= ($_GET['estado'] ?? '') === 'dañado'      ? 'selected' : '' ?>>Dañado</option>
-                <option value="en_reparacion" <?= ($_GET['estado'] ?? '') === 'en_reparacion' ? 'selected' : '' ?>>En reparación</option>
-                <option value="perdido"   <?= ($_GET['estado'] ?? '') === 'perdido'     ? 'selected' : '' ?>>Perdido</option>
+                <option value=""          <?= $filtros['estado'] === ''            ? 'selected' : '' ?>>Todos</option>
+                <option value="bueno"     <?= $filtros['estado'] === 'bueno'       ? 'selected' : '' ?>>Bueno</option>
+                <option value="dañado"    <?= $filtros['estado'] === 'dañado'      ? 'selected' : '' ?>>Dañado</option>
+                <option value="en_reparacion" <?= $filtros['estado'] === 'en_reparacion' ? 'selected' : '' ?>>En reparación</option>
+                <option value="perdido"   <?= $filtros['estado'] === 'perdido'     ? 'selected' : '' ?>>Perdido</option>
             </select>
 
 <!-- ------------------------------------------------------- -->
@@ -150,6 +158,7 @@
                     type="checkbox"
                     class="filtro-articulo"
                     value="<?= strtolower($articulo) ?>"
+                    <?= in_array(strtolower($articulo), $articulosFiltrados) ? 'checked' : '' ?>
                 >
 
                 <?= $articulo ?>
@@ -203,6 +212,7 @@ ksort($inventarioPorHabitacion);
         <div class="inventario-grid">
             <?php foreach($items as $i): ?>
                 <div class="inventario-card"
+                id="inventario-<?= $i['id'] ?>"
                 data-estado="<?= $i['estado'] ?>"
                 data-articulo="<?= strtolower($i['nombre'])?>"
                 >
@@ -244,7 +254,11 @@ ksort($inventarioPorHabitacion);
                     <div class="inventario-actions">    
                              
                 <!-- Editar -->
-                <a href="index.php?modulo=inventario&accion=editar&id=<?= $i['id'] ?>&buscar=<?= urlencode($_GET['buscar'] ?? '') ?>&estado=<?= urlencode($_GET['estado'] ?? '') ?>">
+                <a
+                    class="btn-editar"
+                    data-base-url="index.php?modulo=inventario&accion=editar&id=<?= $i['id'] ?>"
+                    href="index.php?modulo=inventario&accion=editar&id=<?= $i['id'] ?>&buscar=<?= urlencode($filtros['buscar']) ?>&estado=<?= urlencode($filtros['estado']) ?>&articulos=<?= urlencode($filtros['articulos']) ?>"
+                >
                     Editar
                 </a>
 
@@ -252,7 +266,7 @@ ksort($inventarioPorHabitacion);
                 <a 
                     href="#"
                     class="btn-eliminar"
-                    data-url="index.php?modulo=inventario&accion=eliminar&id=<?= $i['id'] ?>&buscar=<?= urlencode($_GET['buscar'] ?? '') ?>&estado=<?= urlencode($_GET['estado'] ?? '') ?>"
+                    data-base-url="index.php?modulo=inventario&accion=eliminar&id=<?= $i['id'] ?>"
                     data-inventario="<?= $i['nombre'] ?>"
                 >
                     Eliminar
@@ -298,8 +312,9 @@ ksort($inventarioPorHabitacion);
     method="POST">
 
         <!-- Preservar búsqueda -->
-        <input type="hidden" name="buscar"        id="hidden_buscar"       value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
-        <input type="hidden" name="estado_filtro" id="hidden_estado_filtro" value="<?= htmlspecialchars($_GET['estado'] ?? '') ?>">
+        <input type="hidden" name="buscar" id="form_buscar" value="<?= htmlspecialchars($filtros['buscar']) ?>">
+        <input type="hidden" name="estado_filtro" id="form_estado_filtro" value="<?= htmlspecialchars($filtros['estado']) ?>">
+        <input type="hidden" name="articulos_filtro" id="form_articulos_filtro" value="<?= htmlspecialchars($filtros['articulos']) ?>">
 
         <!-- resto del form igual -->
 
@@ -497,39 +512,75 @@ ksort($inventarioPorHabitacion);
 
 <script>
 
-// Buscador — filtra en pantalla Y actualiza el hidden
 const buscador        = document.getElementById('buscador');
-const hiddenBuscar    = document.getElementById('hidden_buscar');
-const hiddenEstado    = document.getElementById('hidden_estado_filtro');
 const filtroEstado    = document.getElementById('filtroEstado');
 const filtrosArticulo = document.querySelectorAll('.filtro-articulo');
+const formBuscar      = document.getElementById('form_buscar');
+const formEstado      = document.getElementById('form_estado_filtro');
+const formArticulos   = document.getElementById('form_articulos_filtro');
 
-buscador.addEventListener('keyup', function () {
-    hiddenBuscar.value = this.value;
-    filtrarInventario();
-});
+function obtenerFiltrosActuales() {
 
-filtroEstado.addEventListener('change', function () {
-    hiddenEstado.value = this.value;
+    const articulosSeleccionados =
+        Array.from(filtrosArticulo)
+        .filter(c => c.checked)
+        .map(c => c.value);
+
+    return {
+        buscar: buscador.value.trim(),
+        estado: filtroEstado.value,
+        articulos: articulosSeleccionados.join(',')
+    };
+}
+
+function crearUrlConFiltros(baseUrl) {
+
+    const filtros = obtenerFiltrosActuales();
+    const url = new URL(baseUrl, window.location.href);
+
+    ['buscar', 'estado', 'articulos'].forEach(nombre => {
+        if (filtros[nombre]) {
+            url.searchParams.set(nombre, filtros[nombre]);
+        } else {
+            url.searchParams.delete(nombre);
+        }
+    });
+
+    return url.pathname + '?' + url.searchParams.toString();
+}
+
+function sincronizarFiltros() {
+
+    const filtros = obtenerFiltrosActuales();
+
+    formBuscar.value = filtros.buscar;
+    formEstado.value = filtros.estado;
+    formArticulos.value = filtros.articulos;
+
+    document.querySelectorAll('.btn-editar').forEach(link => {
+        link.href = crearUrlConFiltros(link.dataset.baseUrl);
+    });
+
+    const urlActual = crearUrlConFiltros('index.php?modulo=inventario');
+    window.history.replaceState({}, '', urlActual);
+}
+
+function actualizarFiltro() {
+
+    sincronizarFiltros();
     filtrarInventario();
-});
+}
+
+buscador.addEventListener('keyup', actualizarFiltro);
+filtroEstado.addEventListener('change', actualizarFiltro);
 
 filtrosArticulo.forEach(check => {
-    check.addEventListener('change', filtrarInventario);
+    check.addEventListener('change', actualizarFiltro);
 });
 
-document.addEventListener('DOMContentLoaded', filtrarInventario);
+document.addEventListener('DOMContentLoaded', actualizarFiltro);
 
 function filtrarInventario(){
-
-    let buscador =
-        document.getElementById('buscador');
-
-    let filtroEstado =
-        document.getElementById('filtroEstado');
-
-    let filtroArticulo =
-        document.getElementById('filtroArticulo');
 
     let texto =
         buscador.value.toLowerCase();
@@ -606,27 +657,6 @@ function filtrarInventario(){
     });
 
 }
-/*
-filtroEstado.addEventListener(
-    'change',
-    filtrarInventario
-);
-*/
-filtrosArticulo.forEach(check => {
-
-    check.addEventListener(
-        'change',
-        filtrarInventario
-    );
-
-});
-
-buscador.addEventListener('keyup', filtrarInventario);
-
-document.addEventListener('DOMContentLoaded', function(){
-        filtrarInventario();
-
-});
 
 </script>
 
@@ -677,9 +707,7 @@ function abrirModal(){
 function cerrarModal() {
     <?php if (isset($inventarioEditar)): ?>
         window.location.href =
-            'index.php?modulo=inventario'
-            + '&buscar='  + encodeURIComponent(hiddenBuscar.value)
-            + '&estado='  + encodeURIComponent(hiddenEstado.value);
+            crearUrlConFiltros('index.php?modulo=inventario');
     <?php else: ?>
         document.getElementById('modalInventario').classList.remove('active');
         document.body.style.overflow = 'auto';
@@ -734,14 +762,12 @@ botonesEliminar.forEach(boton => {
 
         e.preventDefault();
 
-        const url = this.dataset.url;
-
         const inventario = this.dataset.inventario;
 
         mensajeEliminar.textContent =
             `¿Seguro que deseas eliminar el artículo "${inventario}" del inventario?`;
 
-        btnConfirmarEliminar.href = url;
+        btnConfirmarEliminar.href = crearUrlConFiltros(this.dataset.baseUrl);
 
         modalEliminar.classList.add('active');
     });
@@ -825,7 +851,7 @@ btnTodos.addEventListener('click', function(){
 
     });
 
-    filtrarInventario();
+    actualizarFiltro();
 
 });
 
@@ -837,7 +863,7 @@ btnLimpiar.addEventListener('click', function(){
 
     });
 
-    filtrarInventario();
+    actualizarFiltro();
 
 });
 </script>
@@ -845,32 +871,8 @@ btnLimpiar.addEventListener('click', function(){
 <script>
 function exportarExcel(){
 
-    let texto =
-        document.getElementById('buscador')
-        .value;
-
-    let estado =
-        document.getElementById('filtroEstado')
-        .value;
-
-    let articulosSeleccionados =
-        Array.from(document.querySelectorAll('.filtro-articulo'))
-        .filter(c => c.checked)
-        .map(c => c.value);
-
-    let url =
-        'index.php?modulo=inventario&accion=exportar';
-
-    url += '&buscar=' + encodeURIComponent(texto);
-
-    url += '&estado=' + encodeURIComponent(estado);
-
-    url += '&articulos=' +
-        encodeURIComponent(
-            articulosSeleccionados.join(',')
-        );
-
-        window.location.href = url;
+    window.location.href =
+        crearUrlConFiltros('index.php?modulo=inventario&accion=exportar');
 }
 </script>
 

@@ -9,7 +9,12 @@ class PerfilController {
     public function index() {
 
         $usuario = new Usuarios();
-        $perfil = $usuario->obtenerPorId($_SESSION['usuario']['id']);
+        $perfil  = $usuario->obtenerPorId($_SESSION['usuario']['id']);
+
+        // Cargar movimientos del usuario actual
+        $mov            = new Movimientos();
+        $usuario_id     = $_SESSION['usuario']['id'];
+        $movimientos    = $mov->obtenerTodo(50, 0, $usuario_id);
 
         require_once __DIR__ . "/../views/perfil/index.php";
     }
@@ -18,16 +23,17 @@ class PerfilController {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $id     = $_SESSION['usuario']['id'];
-            $nombre = trim($_POST['nombre']);
-            $correo = trim($_POST['correo']);
+            $id       = $_SESSION['usuario']['id'];
+            $nombre   = trim($_POST['nombre']);
+            $correo   = trim($_POST['correo']);
             $password = trim($_POST['password']);
-                
 
             if (empty($nombre) || empty($correo)) {
                 $errorFormulario = 'Llena todos los campos por favor';
-                $usuario = new Usuarios();
-                $perfil = $usuario->obtenerPorId($id);
+                $usuario         = new Usuarios();
+                $perfil          = $usuario->obtenerPorId($id);
+                $mov             = new Movimientos();
+                $movimientos     = $mov->obtenerTodo(50, 0, $id);
                 require_once __DIR__ . "/../views/perfil/index.php";
                 return;
             }
@@ -37,7 +43,6 @@ class PerfilController {
 
             if ($resultado['exito']) {
 
-                // Actualizar sesión con el nuevo nombre
                 $_SESSION['usuario']['nombre'] = $nombre;
 
                 $mov = new Movimientos();
@@ -57,7 +62,10 @@ class PerfilController {
                     ? "Ese nombre o correo ya está en uso."
                     : "Ocurrió un error al guardar. Intenta de nuevo.";
 
-                $perfil = $usuario->obtenerPorId($id);
+                $perfil      = $usuario->obtenerPorId($id);
+                $mov         = new Movimientos();
+                $movimientos = $mov->obtenerTodo(50, 0, $id);
+
                 require_once __DIR__ . "/../views/perfil/index.php";
             }
         }

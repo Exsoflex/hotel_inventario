@@ -188,8 +188,9 @@ body {
 
     background-color: var(--bg-glass);
 
-    backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+
+    backdrop-filter: blur(20px);
 
     border: 1px solid var(--bg-glass-border);
 }
@@ -389,10 +390,9 @@ textarea:focus {
 
 select {
 
-    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-
+    appearance: none;
     cursor: pointer;
 
     padding-right: 50px;
@@ -1959,9 +1959,9 @@ input.filtro-articulo{
 
     border: 1px solid rgba(255,255,255,0.18);
 
-    backdrop-filter: blur(18px);
-
     -webkit-backdrop-filter: blur(18px);
+
+    backdrop-filter: blur(18px);
 
     padding: 30px;
 
@@ -1990,9 +1990,9 @@ input.filtro-articulo{
 
     background: rgba(255,255,255,0.92);
 
-    backdrop-filter: blur(20px);
-
     -webkit-backdrop-filter: blur(20px);
+
+    backdrop-filter: blur(20px);
 
     border-radius: 35px;
 
@@ -2614,3 +2614,50 @@ body.sidebar-mobile-open {
     }
 }
 
+/* ===============================*/
+/* ===== PERFIL =================*/
+/* =============================*/
+
+
+/* Layout de dos columnas del perfil */
+.perfil-layout {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+}
+
+.perfil-form {
+    width: 420px;
+    flex-shrink: 0;
+}
+
+.perfil-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #eeeeee73;
+}
+
+/* Columna de movimientos con scroll */
+.perfil-movimientos {
+    flex: 1;
+    min-width: 0;
+}
+
+.perfil-movimientos-tabla {
+    max-height: 425px;
+    overflow-y: auto;
+    border-radius: 12px;
+}
+
+/* Responsive: apilar en pantallas chicas */
+@media (max-width: 860px) {
+    .perfil-layout {
+        flex-direction: column;
+    }
+    .perfil-form {
+        width: 100%;
+    }
+}

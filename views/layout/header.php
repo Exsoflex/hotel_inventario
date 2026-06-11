@@ -130,11 +130,17 @@
             </a>
 
 <br><br>
-
+            <?php if(
+            in_array(
+                $_SESSION['usuario']['rol'],
+                ['admin']
+            )
+            ): ?>
             <a href="index.php?modulo=movimientos">
                 <i data-lucide="logs"></i>
                 <span>Movimientos</span>
             </a>
+            <?php endif; ?>
 
             <a href="index.php?modulo=habitaciones">
                 <i data-lucide="bed-double"></i>

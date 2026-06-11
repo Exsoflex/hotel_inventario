@@ -12,9 +12,28 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class HabitacionesController {
 
+    private function obtenerBusquedaDesdeRequest() {
+
+        return trim($_REQUEST['buscar'] ?? '');
+    }
+
+    private function crearQueryHabitaciones($buscar = '') {
+
+        $query = [
+            'modulo' => 'habitaciones',
+        ];
+
+        if ($buscar !== '') {
+            $query['buscar'] = $buscar;
+        }
+
+        return http_build_query($query);
+    }
+
     public function index() {
 
         $habitacion = new Habitacion();
+        $buscar = $this->obtenerBusquedaDesdeRequest();
         $habitaciones = $habitacion->obtenerTodo();
         require_once __DIR__ . "/../views/habitaciones/index.php";
     }
@@ -27,6 +46,7 @@ class HabitacionesController {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Verificar si la solicitud es de tipo POST
 
+            $buscar = $this->obtenerBusquedaDesdeRequest();
             $piso = trim($_POST['piso']);
             $numero = trim($_POST['numero']);
             $tipo = trim($_POST['tipo']);
@@ -65,7 +85,9 @@ class HabitacionesController {
                     $idNuevo
                 );
 
-                header("Location: index.php?modulo=habitaciones#habitacion-$idNuevo");
+                $query = $this->crearQueryHabitaciones($buscar);
+
+                header("Location: index.php?$query#habitacion-$idNuevo");
                 exit();
             } else {
                 // Pasar error a la view
@@ -87,6 +109,7 @@ class HabitacionesController {
         );
 
         $id = $_GET['id'];
+        $buscar = $this->obtenerBusquedaDesdeRequest();
         $modelhabitacion = new Habitacion();
 
         // Obtener nombre antes de eliminar para el log
@@ -102,7 +125,10 @@ class HabitacionesController {
             $id
         );
 
-        header("Location: index.php?modulo=habitaciones"); // Redirigir a la página principal después de eliminar la habitación
+        $query = $this->crearQueryHabitaciones($buscar);
+
+        header("Location: index.php?$query"); // Redirigir a la página principal después de eliminar la habitación
+        exit();
 
     }
 
@@ -118,6 +144,7 @@ class HabitacionesController {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
             $id = $_GET['id'];
+            $buscar = $this->obtenerBusquedaDesdeRequest();
             $habitacionEditar = $modelhabitacion->obtenerPorId($id);
             $habitaciones = $modelhabitacion->obtenerTodo();
             require_once __DIR__ . "/../views/habitaciones/index.php";
@@ -127,6 +154,7 @@ class HabitacionesController {
         // === GUARDAR CAMBIOS === ///
         if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Verificar si la solicitud es de tipo POST
 
+            $buscar = $this->obtenerBusquedaDesdeRequest();
             $id = $_POST['id'];
 
             $piso = trim($_POST['piso']);
@@ -170,15 +198,17 @@ class HabitacionesController {
                     $id
                 );
             
-                header("Location: index.php?modulo=habitaciones#habitacion-$id");
+                $query = $this->crearQueryHabitaciones($buscar);
+
+                header("Location: index.php?$query#habitacion-$id");
                 exit();
             } else {
                 $errorFormulario = $resultado['error'] === 'duplicado'
                     ? "Ya existe una habitación con ese nombre."
                     : "Ocurrió un error al guardar. Intenta de nuevo.";
 
-                $articuloEditar = $modelarticulo->obtenerPorId($id);
-                $articulos = $modelarticulo->obtenerTodo();
+                $habitacionEditar = $modelhabitacion->obtenerPorId($id);
+                $habitaciones = $modelhabitacion->obtenerTodo();
                 require_once __DIR__ . "/../views/habitaciones/index.php";
             }
         }
@@ -186,8 +216,19 @@ class HabitacionesController {
 
      public function exportar() {
 
+        $buscar = $this->obtenerBusquedaDesdeRequest();
         $habitacion = new Habitacion();
         $habitaciones = $habitacion->obtenerTodo();
+
+        if ($buscar !== '') {
+            $habitaciones = array_filter($habitaciones, function ($habitacion) use ($buscar) {
+                return stripos((string) $habitacion['piso'], $buscar) !== false
+                    || stripos((string) $habitacion['numero'], $buscar) !== false
+                    || stripos($habitacion['tipo'], $buscar) !== false
+                    || stripos((string) $habitacion['descripcion'], $buscar) !== false
+                    || stripos($habitacion['estado'], $buscar) !== false;
+            });
+        }
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();

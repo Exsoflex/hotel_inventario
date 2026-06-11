@@ -11,6 +11,24 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class InventariobaseController {
 
+    private function obtenerBusquedaDesdeRequest() {
+
+        return trim($_REQUEST['buscar'] ?? '');
+    }
+
+    private function crearQueryInventarioBase($buscar = '') {
+
+        $query = [
+            'modulo' => 'inventario_base',
+        ];
+
+        if ($buscar !== '') {
+            $query['buscar'] = $buscar;
+        }
+
+        return http_build_query($query);
+    }
+
     public function index() {
 
         verificarRol(
@@ -18,6 +36,7 @@ class InventariobaseController {
         );
 
     $inventario_base = new Inventario_base();
+    $buscar = $this->obtenerBusquedaDesdeRequest();
     $inventarios_base = $inventario_base->obtenerTodo();
 
     $articulos = $inventario_base->obtenerArticulos();
@@ -32,6 +51,7 @@ class InventariobaseController {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+            $buscar      = $this->obtenerBusquedaDesdeRequest();
             $tipo        = $_POST['tipo'];
             $articulo_id = $_POST['articulo_id'];
             $cantidad    = $_POST['cantidad'];
@@ -66,7 +86,9 @@ class InventariobaseController {
                     $idNuevo
                 );
 
-                header("Location: index.php?modulo=inventario_base#inventario_base-$idNuevo");
+                $query = $this->crearQueryInventarioBase($buscar);
+
+                header("Location: index.php?$query#inventario_base-$idNuevo");
                 exit();
 
             }else {
@@ -88,6 +110,7 @@ class InventariobaseController {
         verificarRol(['admin', 'supervisor']);
 
         $id = $_GET['id'];
+        $buscar = $this->obtenerBusquedaDesdeRequest();
 
         $inventario_base = new Inventario_base();
 
@@ -105,7 +128,9 @@ class InventariobaseController {
             $id
         );
 
-        header("Location: index.php?modulo=inventario_base");
+        $query = $this->crearQueryInventarioBase($buscar);
+
+        header("Location: index.php?$query");
         exit();
     }
 
@@ -118,6 +143,7 @@ class InventariobaseController {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
             $id = $_GET['id'];
+            $buscar = $this->obtenerBusquedaDesdeRequest();
             $inventario_baseEditar = $modelInventario_base->obtenerPorId($id);
             $inventarios_base = $modelInventario_base->obtenerTodo();
             $articulos = $modelInventario_base->obtenerArticulos();
@@ -126,6 +152,7 @@ class InventariobaseController {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+            $buscar      = $this->obtenerBusquedaDesdeRequest();
             $id          = $_POST['id'];
             $tipo        = trim($_POST['tipo']);
             $articulo_id = trim($_POST['articulo_id']);
@@ -162,9 +189,9 @@ class InventariobaseController {
                     $id
                 );
 
-                header(
-                    "Location: index.php?modulo=inventario_base#inventario_base-$id"
-                );
+                $query = $this->crearQueryInventarioBase($buscar);
+
+                header("Location: index.php?$query#inventario_base-$id");
                 exit();
 
             } else {
@@ -190,8 +217,17 @@ class InventariobaseController {
 
         public function exportar() {
 
+        $buscar = $this->obtenerBusquedaDesdeRequest();
         $inventario_base = new Inventario_base();
         $inventario_base = $inventario_base->obtenerTodo();
+
+        if ($buscar !== '') {
+            $inventario_base = array_filter($inventario_base, function ($item) use ($buscar) {
+                return stripos($item['tipo_habitacion'], $buscar) !== false
+                    || stripos($item['nombre'], $buscar) !== false
+                    || stripos((string) $item['cantidad'], $buscar) !== false;
+            });
+        }
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();

@@ -46,7 +46,6 @@ $permisos = [
         'habitaciones',
         'articulos',
         'inventario_base',
-        'movimientos',
         'historial_codigos',
         'perfil'
     ],
@@ -56,7 +55,6 @@ $permisos = [
         'revision',
         'inventario',
         'habitaciones',
-        'movimientos',
         'historial_codigos',
         'perfil'
     ]

@@ -1,3 +1,6 @@
+<?php
+$buscar = $buscar ?? ($_GET['buscar'] ?? '');
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,10 +35,13 @@
         type="text" 
         id="buscador" 
         placeholder="Buscar articulos..."
+        value="<?= htmlspecialchars($buscar) ?>"
         >
 
         <a
-        href="index.php?modulo=articulos&accion=exportar"
+        href="index.php?modulo=articulos&accion=exportar&buscar=<?= urlencode($buscar) ?>"
+        data-base-url="index.php?modulo=articulos&accion=exportar"
+        id="btnExportar"
         class="menu-btn"
         >
             <i data-lucide="download"></i>
@@ -99,14 +105,18 @@
                     <a 
                     href="#"
                     class="btn-eliminar"
-                    data-url="index.php?modulo=articulos&accion=eliminar&id=<?= $a['id'] ?>"
+                    data-base-url="index.php?modulo=articulos&accion=eliminar&id=<?= $a['id'] ?>"
                     data-articulo="<?= $a['nombre'] ?>"
                     >
                     Eliminar
                     </a>
                 </td>
                 <td>
-                    <a href="index.php?modulo=articulos&accion=editar&id=<?= $a['id'] ?>">                
+                    <a
+                    class="btn-editar"
+                    data-base-url="index.php?modulo=articulos&accion=editar&id=<?= $a['id'] ?>"
+                    href="index.php?modulo=articulos&accion=editar&id=<?= $a['id'] ?>&buscar=<?= urlencode($buscar) ?>"
+                    >                
                     Editar
                     </a>
                 </td>  
@@ -151,6 +161,13 @@
         id="articuloFormulario" 
         action="index.php?modulo=articulos&accion=<?= isset($articuloEditar) ? 'editar' : 'agregar' ?>" 
         method="POST">
+
+            <input
+                type="hidden"
+                name="buscar"
+                id="form_buscar"
+                value="<?= htmlspecialchars($buscar) ?>"
+            >
 
         <?php if (isset($errorFormulario)): ?>
         <div class="alerta-error">
@@ -248,7 +265,43 @@
 <script>
 
 const buscador = document.getElementById('buscador');
-buscador.addEventListener('keyup', function() {
+const formBuscar = document.getElementById('form_buscar');
+const btnExportar = document.getElementById('btnExportar');
+
+function crearUrlConBusqueda(baseUrl) {
+
+    const url = new URL(baseUrl, window.location.href);
+    const texto = buscador.value.trim();
+
+    if (texto) {
+        url.searchParams.set('buscar', texto);
+    } else {
+        url.searchParams.delete('buscar');
+    }
+
+    return url.pathname + '?' + url.searchParams.toString();
+}
+
+function sincronizarBusqueda() {
+
+    formBuscar.value = buscador.value.trim();
+
+    document.querySelectorAll('.btn-editar').forEach(link => {
+        link.href = crearUrlConBusqueda(link.dataset.baseUrl);
+    });
+
+    if (btnExportar) {
+        btnExportar.href = crearUrlConBusqueda(btnExportar.dataset.baseUrl);
+    }
+
+    window.history.replaceState(
+        {},
+        '',
+        crearUrlConBusqueda('index.php?modulo=articulos')
+    );
+}
+
+function filtrarTabla() {
 
     let texto = buscador.value.toLowerCase();
     let filas = document.querySelectorAll("table tbody tr");
@@ -263,7 +316,16 @@ buscador.addEventListener('keyup', function() {
             fila.style.display = "none";
         }
     });
-});
+}
+
+function actualizarBusqueda() {
+
+    sincronizarBusqueda();
+    filtrarTabla();
+}
+
+buscador.addEventListener('keyup', actualizarBusqueda);
+document.addEventListener('DOMContentLoaded', actualizarBusqueda);
 
 </script>
 
@@ -285,7 +347,7 @@ function cerrarModal(){
 
     <?php if(isset($articuloEditar)): ?>
 
-        window.location.href = 'index.php?modulo=articulos';
+        window.location.href = crearUrlConBusqueda('index.php?modulo=articulos');
 
     <?php else: ?>
 
@@ -322,14 +384,12 @@ botonesEliminar.forEach(boton => {
 
         e.preventDefault();
 
-        const url = this.dataset.url;
-
         const articulo = this.dataset.articulo;
 
         mensajeEliminar.textContent =
             `¿Seguro que deseas eliminar el artículo "${articulo}"?`;
 
-        btnConfirmarEliminar.href = url;
+        btnConfirmarEliminar.href = crearUrlConBusqueda(this.dataset.baseUrl);
 
         modalEliminar.classList.add('active');
     });

@@ -11,11 +11,30 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class ArticulosController {
 
+    private function obtenerBusquedaDesdeRequest() {
+
+        return trim($_REQUEST['buscar'] ?? '');
+    }
+
+    private function crearQueryArticulos($buscar = '') {
+
+        $query = [
+            'modulo' => 'articulos',
+        ];
+
+        if ($buscar !== '') {
+            $query['buscar'] = $buscar;
+        }
+
+        return http_build_query($query);
+    }
+
     public function index() {
 
         verificarRol(['admin', 'supervisor']);
 
         $articulo = new Articulos();
+        $buscar = $this->obtenerBusquedaDesdeRequest();
         $articulos = $articulo->obtenerTodo();
         require_once __DIR__ . "/../views/articulos/index.php";
     }
@@ -26,6 +45,7 @@ class ArticulosController {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+            $buscar = $this->obtenerBusquedaDesdeRequest();
             $nombre     = trim($_POST['nombre']);
             $descripcion = trim($_POST['descripcion']);
 
@@ -53,7 +73,9 @@ class ArticulosController {
                     $idNuevo
                 );
 
-                header("Location: index.php?modulo=articulos#articulo-$idNuevo");
+                $query = $this->crearQueryArticulos($buscar);
+
+                header("Location: index.php?$query#articulo-$idNuevo");
                 exit();
 
             } else {
@@ -74,6 +96,7 @@ class ArticulosController {
         verificarRol(['admin', 'supervisor']);
 
         $id = $_GET['id'];
+        $buscar = $this->obtenerBusquedaDesdeRequest();
         $modelarticulo = new Articulos();
 
         // Obtener nombre antes de eliminar para el log
@@ -90,7 +113,9 @@ class ArticulosController {
             $id
         );
 
-        header("Location: index.php?modulo=articulos");
+        $query = $this->crearQueryArticulos($buscar);
+
+        header("Location: index.php?$query");
         exit();
     }
 
@@ -103,6 +128,7 @@ class ArticulosController {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
             $id = $_GET['id'];
+            $buscar = $this->obtenerBusquedaDesdeRequest();
             $articuloEditar = $modelarticulo->obtenerPorId($id);
             $articulos = $modelarticulo->obtenerTodo();
             require_once __DIR__ . "/../views/articulos/index.php";
@@ -110,6 +136,7 @@ class ArticulosController {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+            $buscar = $this->obtenerBusquedaDesdeRequest();
             $id          = $_POST['id'];
             $nombre      = trim($_POST['nombre']);
             $descripcion = trim($_POST['descripcion']);
@@ -135,7 +162,9 @@ class ArticulosController {
                     $id
                 );
 
-                header("Location: index.php?modulo=articulos#articulo-$id");
+                $query = $this->crearQueryArticulos($buscar);
+
+                header("Location: index.php?$query#articulo-$id");
                 exit();
 
             } else {
@@ -153,8 +182,16 @@ class ArticulosController {
 
     public function exportar() {
 
+        $buscar = $this->obtenerBusquedaDesdeRequest();
         $modelo = new Articulos();
         $articulos = $modelo->obtenerTodo();
+
+        if ($buscar !== '') {
+            $articulos = array_filter($articulos, function ($articulo) use ($buscar) {
+                return stripos($articulo['nombre'], $buscar) !== false
+                    || stripos((string) $articulo['descripcion'], $buscar) !== false;
+            });
+        }
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();

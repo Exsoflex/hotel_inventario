@@ -11,9 +11,38 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class InventarioController {
 
+private function obtenerFiltrosDesdeRequest() {
+
+    return [
+        'buscar' => trim($_REQUEST['buscar'] ?? ''),
+        'estado' => trim($_REQUEST['estado'] ?? ($_REQUEST['estado_filtro'] ?? '')),
+        'articulos' => trim($_REQUEST['articulos'] ?? ($_REQUEST['articulos_filtro'] ?? '')),
+    ];
+}
+
+private function crearQueryInventario($mensaje = null, $filtros = []) {
+
+    $query = [
+        'modulo' => 'inventario',
+    ];
+
+    if ($mensaje !== null) {
+        $query['mensaje'] = $mensaje;
+    }
+
+    foreach (['buscar', 'estado', 'articulos'] as $filtro) {
+        if (!empty($filtros[$filtro])) {
+            $query[$filtro] = $filtros[$filtro];
+        }
+    }
+
+    return http_build_query($query);
+}
+
 public function index() {
 
     $inventario = new Inventario();
+    $filtros = $this->obtenerFiltrosDesdeRequest();
     $inventarios = $inventario->obtenerTodo();
     $habitaciones = $inventario->obtenerHabitaciones();
     $articulos = $inventario->obtenerArticulos();
@@ -27,8 +56,7 @@ public function agregar() {
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        $buscar       = trim($_POST['buscar'] ?? '');
-        $estadoFiltro = trim($_POST['estado_filtro'] ?? '');
+        $filtros = $this->obtenerFiltrosDesdeRequest();
 
         $habitacion_id = $_POST['habitacion_id'];
         $articulo_id   = $_POST['articulo_id'];
@@ -73,12 +101,7 @@ public function agregar() {
                 $idNuevo
             );
 
-            $query = http_build_query([
-                'modulo'  => 'inventario',
-                'mensaje' => 'agregado',
-                'buscar'  => $buscar,
-                'estado'  => $estadoFiltro,
-            ]);
+            $query = $this->crearQueryInventario('agregado', $filtros);
 
             header("Location: index.php?$query#inventario-$idNuevo");
             exit();
@@ -103,8 +126,7 @@ public function eliminar() {
     verificarRol(['admin', 'supervisor']);
 
     $id           = $_GET['id'];
-    $buscar       = $_GET['buscar'] ?? '';
-    $estadoFiltro = $_GET['estado'] ?? '';
+    $filtros      = $this->obtenerFiltrosDesdeRequest();
 
     $inventario         = new Inventario();
     $inventarioEliminar = $inventario->obtenerPorId($id);
@@ -123,12 +145,7 @@ public function eliminar() {
         $id
     );
 
-    $query = http_build_query([
-        'modulo'  => 'inventario',
-        'mensaje' => 'eliminado',
-        'buscar'  => $buscar,
-        'estado'  => $estadoFiltro,
-    ]);
+    $query = $this->crearQueryInventario('eliminado', $filtros);
 
     header("Location: index.php?$query");
     exit();
@@ -143,8 +160,7 @@ public function editar() {
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
         $id           = $_GET['id'];
-        $buscar       = $_GET['buscar'] ?? '';
-        $estadoFiltro = $_GET['estado'] ?? '';
+        $filtros      = $this->obtenerFiltrosDesdeRequest();
 
         $inventarioEditar = $modelInventario->obtenerPorId($id);
         $inventarios      = $modelInventario->obtenerTodo();
@@ -158,8 +174,7 @@ public function editar() {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $id           = $_POST['id'];
-        $buscar       = trim($_POST['buscar'] ?? '');
-        $estadoFiltro = trim($_POST['estado_filtro'] ?? '');
+        $filtros      = $this->obtenerFiltrosDesdeRequest();
 
         $habitacion_id = trim($_POST['habitacion_id']);
         $articulo_id   = trim($_POST['articulo_id']);
@@ -196,12 +211,7 @@ public function editar() {
             $mov = new Movimientos();
             $mov->registrar('inventario', 'editar', "Editó inventario ID $id", $id);
 
-            $query = http_build_query([
-                'modulo'  => 'inventario',
-                'mensaje' => 'editado',
-                'buscar'  => $buscar,
-                'estado'  => $estadoFiltro,
-            ]);
+            $query = $this->crearQueryInventario('editado', $filtros);
 
             header("Location: index.php?$query#inventario-$id");
             exit();
