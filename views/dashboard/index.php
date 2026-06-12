@@ -1,3 +1,6 @@
+<?php
+$buscar = $buscar ?? ($_GET['buscar'] ?? '');
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,10 +42,13 @@
             id="buscador" 
             placeholder="Buscar habitación..."
             autocomplete="off"
+            value="<?= htmlspecialchars($buscar) ?>"
             >
 
         <a
-            href="index.php?modulo=dashboard&accion=exportar&buscar=<?= urlencode($_GET['buscar'] ?? '') ?>"
+            href="index.php?modulo=dashboard&accion=exportar&buscar=<?= urlencode($buscar) ?>"
+            data-base-url="index.php?modulo=dashboard&accion=exportar"
+            id="btnExportarDashboard"
             class="menu-btn"
             >
             <i data-lucide="download"></i>
@@ -285,8 +291,38 @@ $datosInventario = [
 <script>
 
 const buscador = document.getElementById('buscador');
+const btnExportarDashboard = document.getElementById('btnExportarDashboard');
+
+function crearUrlConBusqueda(baseUrl) {
+
+    const url = new URL(baseUrl, window.location.href);
+    const texto = buscador.value.trim();
+
+    if (texto) {
+        url.searchParams.set('buscar', texto);
+    } else {
+        url.searchParams.delete('buscar');
+    }
+
+    return url.pathname + '?' + url.searchParams.toString();
+}
+
+function sincronizarBusqueda() {
+
+    if (btnExportarDashboard) {
+        btnExportarDashboard.href = crearUrlConBusqueda(btnExportarDashboard.dataset.baseUrl);
+    }
+
+    window.history.replaceState(
+        {},
+        '',
+        crearUrlConBusqueda('index.php?modulo=dashboard')
+    );
+}
 
 function filtrar() {
+
+    sincronizarBusqueda();
 
     let texto = buscador.value.toLowerCase();
 
@@ -319,6 +355,7 @@ function filtrar() {
 }
 
 buscador.addEventListener('input', filtrar);
+document.addEventListener('DOMContentLoaded', filtrar);
 </script>
 
 <script>

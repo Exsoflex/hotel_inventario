@@ -16,9 +16,122 @@ use PhpOffice\PhpSpreadsheet\Chart\Title;
 
 class DashboardController {
 
+    private function obtenerBusquedaDesdeRequest() {
+
+        return trim($_REQUEST['buscar'] ?? '');
+    }
+
+    private function filtrarHabitaciones($habitaciones, $buscar) {
+
+        if ($buscar === '') {
+            return $habitaciones;
+        }
+
+        return array_values(array_filter($habitaciones, function ($habitacion) use ($buscar) {
+            $texto = strtolower($buscar);
+
+            return str_contains(strtolower((string) $habitacion['numero']), $texto)
+                || str_contains(strtolower((string) $habitacion['tipo']), $texto)
+                || str_contains(strtolower((string) $habitacion['piso']), $texto)
+                || str_contains(strtolower((string) $habitacion['articulos_faltantes']), $texto);
+        }));
+    }
+
+    private function calcularFaltantesPorPiso($habitaciones) {
+
+        $faltantesPorPiso = [];
+
+        foreach ($habitaciones as $habitacion) {
+            $piso = $habitacion['piso'];
+
+            if (!isset($faltantesPorPiso[$piso])) {
+                $faltantesPorPiso[$piso] = [
+                    'piso' => $piso,
+                    'total_faltantes' => 0,
+                ];
+            }
+
+            $faltantesPorPiso[$piso]['total_faltantes'] += (int) $habitacion['total_faltantes'];
+        }
+
+        ksort($faltantesPorPiso);
+
+        return array_values($faltantesPorPiso);
+    }
+
+    private function calcularEstadisticasPisos($habitaciones) {
+
+        $estadisticasPisos = [];
+
+        foreach ($habitaciones as $habitacion) {
+            $piso = $habitacion['piso'];
+
+            if (!isset($estadisticasPisos[$piso])) {
+                $estadisticasPisos[$piso] = [
+                    'piso' => $piso,
+                    'habitaciones_completas' => 0,
+                    'habitaciones_con_faltantes' => 0,
+                ];
+            }
+
+            if ((int) $habitacion['total_base'] > 0 && (int) $habitacion['total_faltantes'] === 0) {
+                $estadisticasPisos[$piso]['habitaciones_completas']++;
+            }
+
+            if ((int) $habitacion['total_faltantes'] > 0) {
+                $estadisticasPisos[$piso]['habitaciones_con_faltantes']++;
+            }
+        }
+
+        ksort($estadisticasPisos);
+
+        return array_values($estadisticasPisos);
+    }
+
+    private function calcularEstadisticasArticulos($habitaciones) {
+
+        $articulos = [];
+
+        foreach ($habitaciones as $habitacion) {
+            if ((int) $habitacion['total_faltantes'] <= 0 || empty($habitacion['articulos_faltantes'])) {
+                continue;
+            }
+
+            $faltantes = is_array($habitacion['articulos_faltantes'])
+                ? $habitacion['articulos_faltantes']
+                : explode(',', $habitacion['articulos_faltantes']);
+
+            foreach ($faltantes as $faltante) {
+                $nombre = is_array($faltante) && isset($faltante['articulo'])
+                    ? $faltante['articulo']
+                    : $faltante;
+
+                $nombre = trim((string) $nombre);
+
+                if ($nombre === '') {
+                    continue;
+                }
+
+                if (!isset($articulos[$nombre])) {
+                    $articulos[$nombre] = [
+                        'articulo' => $nombre,
+                        'total_faltantes' => 0,
+                    ];
+                }
+
+                $articulos[$nombre]['total_faltantes']++;
+            }
+        }
+
+        usort($articulos, fn($a, $b) => $b['total_faltantes'] - $a['total_faltantes']);
+
+        return $articulos;
+    }
+
     public function index() {
 
         $dashboard = new Dashboard();
+        $buscar = $this->obtenerBusquedaDesdeRequest();
         $habitaciones = $dashboard->obtenerResumen();
         $estadisticas = $dashboard->obtenerEstadisticasArticulos();
         $faltantesPorPiso = $dashboard->obtenerFaltantesPorPiso();
@@ -31,18 +144,29 @@ class DashboardController {
 public function exportar() {
 
     $dashboard = new Dashboard();
-    $estadisticas      = $dashboard->obtenerEstadisticasArticulos();
-    $faltantesPorPiso  = $dashboard->obtenerFaltantesPorPiso();
     $habitaciones      = $dashboard->obtenerResumen();
-    $estadisticasPisos = $dashboard->obtenerEstadisticasPisos();
+    $buscar            = $this->obtenerBusquedaDesdeRequest();
+    $habitaciones      = $this->filtrarHabitaciones($habitaciones, $buscar);
+    $estadisticas      = $this->calcularEstadisticasArticulos($habitaciones);
+    $faltantesPorPiso  = $this->calcularFaltantesPorPiso($habitaciones);
+    $estadisticasPisos = $this->calcularEstadisticasPisos($habitaciones);
 
-    $buscar = trim($_GET['buscar'] ?? '');
-    if ($buscar !== '') {
-        $habitaciones = array_filter($habitaciones, function($h) use ($buscar) {
-            $texto = strtolower($buscar);
-            return str_contains(strtolower($h['numero']), $texto)
-                || str_contains(strtolower($h['tipo']), $texto);
-        });
+    if (empty($estadisticas)) {
+        $estadisticas = [
+            ['articulo' => 'Sin faltantes', 'total_faltantes' => 0],
+        ];
+    }
+
+    if (empty($faltantesPorPiso)) {
+        $faltantesPorPiso = [
+            ['piso' => '-', 'total_faltantes' => 0],
+        ];
+    }
+
+    if (empty($estadisticasPisos)) {
+        $estadisticasPisos = [
+            ['piso' => '-', 'habitaciones_completas' => 0, 'habitaciones_con_faltantes' => 0],
+        ];
     }
 
     $porPiso = [];
