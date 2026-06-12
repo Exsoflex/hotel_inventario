@@ -1,4 +1,9 @@
 <?php
+/** @var array<int, array<string, mixed>> $habitaciones */
+/** @var array<int, array<string, mixed>> $estadisticas */
+/** @var array<int, array<string, mixed>> $faltantesPorPiso */
+/** @var array<int, array<string, mixed>> $estadisticasPisos */
+/** @var string $buscar */
 $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 ?>
 <!DOCTYPE html>

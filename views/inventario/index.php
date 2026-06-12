@@ -1,4 +1,9 @@
 <?php
+/** @var array<int, array<string, mixed>> $inventarios */
+/** @var array<int, array<string, mixed>> $habitaciones */
+/** @var array<int, array<string, mixed>> $articulos */
+/** @var array<string, string> $filtros */
+/** @var array<string, mixed>|null $inventarioEditar */
 $filtros = $filtros ?? [
     'buscar' => $_GET['buscar'] ?? '',
     'estado' => $_GET['estado'] ?? '',
@@ -488,7 +493,6 @@ ksort($inventarioPorHabitacion);
         <div class="modal-botones">
 
             <button 
-            class="btn-cancelar"
             onclick="cerrarModalEliminar()"
             >
                 Cancelar

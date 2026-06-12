@@ -1,3 +1,8 @@
+<?php
+/** @var array<int, array<string, mixed>> $movimientos */
+/** @var int $pagina */
+/** @var int $totalPaginas */
+?>
 <!DOCTYPE html>
 <html lang="en">
 

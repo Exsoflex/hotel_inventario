@@ -1,3 +1,8 @@
+<?php
+/** @var array<int, array<string, mixed>> $usuarios */
+/** @var array<string, mixed>|null $usuarioEditar */
+/** @var string|null $errorFormulario */
+?>
 <!DOCTYPE html>
 <html lang="en">
 

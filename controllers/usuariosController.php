@@ -42,7 +42,7 @@ class UsuariosController {
                 }  
 
             $usuario = new Usuarios();
-            $resultado = $idNuevo = $usuario->agregarUsuario(
+            $resultado = $usuario->agregarUsuario(
                 $nombre,
                 $correo,
                 $password,
@@ -52,7 +52,6 @@ class UsuariosController {
             if ($resultado['exito']) {
                 $idNuevo = $resultado['id'];
 
-                // Registrar movimiento
                 $mov = new Movimientos();
                 $mov->registrar(
                     'usuarios',
@@ -63,7 +62,6 @@ class UsuariosController {
                 header("Location: index.php?modulo=usuarios#usuario-$idNuevo");
                 exit();
             } else {
-                // Pasar error a la view
                 $errorFormulario = $resultado['error'] === 'duplicado'
                     ? "Ya existe un usuario con ese nombre o correo."
                     : "Ocurrió un error al guardar. Intenta de nuevo.";
@@ -87,7 +85,6 @@ class UsuariosController {
 
         $usuarios = $usuario->obtenerNombreUsuario($id);
 
-        // Registrar movimiento
         $mov = new Movimientos();
         $mov->registrar(
             'usuarios',
@@ -152,7 +149,6 @@ class UsuariosController {
 
             if ($resultado['exito']) {
 
-                // Registrar movimiento
                 $mov = new Movimientos();
                 $mov->registrar(
                     'usuarios',
@@ -167,8 +163,8 @@ class UsuariosController {
                     ? "Ya existe un usuario con ese nombre o correo."
                     : "Ocurrió un error al guardar. Intenta de nuevo.";
 
-                $usuarioEditar = $modelusuario->obtenerPorId($id);
-                $usuarios = $modelusuario->obtenerTodo();
+                $usuarioEditar = $usuario->obtenerPorId($id);
+                $usuarios = $usuario->obtenerTodo();
                 require_once __DIR__ . "/../views/usuarios/index.php";
             }
         }

@@ -1,4 +1,9 @@
 <?php
+/** @var array<int, array<string, mixed>> $inventarios_base */
+/** @var array<int, array<string, mixed>> $articulos */
+/** @var array<string, mixed>|null $inventario_baseEditar */
+/** @var string|null $errorFormulario */
+/** @var string $buscar */
 $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 ?>
 <!DOCTYPE html>
@@ -294,7 +299,6 @@ id="modalInventarioBase"
         <div class="modal-botones">
 
             <button 
-            class="btn-cancelar"
             onclick="cerrarModalEliminar()"
             >
                 Cancelar

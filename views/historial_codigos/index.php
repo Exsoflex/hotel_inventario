@@ -1,3 +1,6 @@
+<?php
+/** @var array<int, array<string, mixed>> $historial */
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -132,7 +135,7 @@
         <h2>Eliminar registro</h2>
         <p id="mensajeEliminar">¿Seguro que deseas eliminar este registro del historial?</p>
         <div class="modal-botones">
-            <button class="btn-cancelar" onclick="cerrarModalEliminar()">
+            <button onclick="cerrarModalEliminar()">
                 Cancelar
             </button>
             <a href="#" id="btnConfirmarEliminar" class="btn-confirmar">

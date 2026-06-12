@@ -1,3 +1,6 @@
+<?php
+/** @var array<int, array<string, mixed>> $faltantes */
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

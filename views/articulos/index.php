@@ -1,4 +1,8 @@
 <?php
+/** @var array<int, array<string, mixed>> $articulos */
+/** @var array<string, mixed>|null $articuloEditar */
+/** @var string|null $errorFormulario */
+/** @var string $buscar */
 $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 ?>
 <!DOCTYPE html>
@@ -240,7 +244,6 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
         <div class="modal-botones">
 
             <button 
-            class="btn-cancelar"
             onclick="cerrarModalEliminar()"
             >
                 Cancelar
