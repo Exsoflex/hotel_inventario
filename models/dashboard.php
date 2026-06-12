@@ -16,7 +16,8 @@ class Dashboard {
     public function obtenerResumen() {
 
         $sql = "SELECT * FROM vista_dashboard
-                WHERE estado_habitacion != 'bloqueada'";
+                WHERE estado_habitacion != 'bloqueada'
+                ORDER BY piso, numero ASC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
 
