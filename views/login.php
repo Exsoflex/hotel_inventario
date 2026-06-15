@@ -14,6 +14,10 @@
         if(savedTheme === "dark" || (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)){
             document.documentElement.setAttribute("data-theme", "dark");
         }
+        var savedPreset = localStorage.getItem("bgPreset");
+        if(savedPreset){
+            document.documentElement.setAttribute("data-bg-preset", savedPreset);
+        }
     })();
     </script>
 

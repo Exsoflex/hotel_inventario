@@ -15,7 +15,11 @@
 :root {
     color-scheme: light;
 
-    --bg-gradient: linear-gradient(90deg, #fe8b61 0%, #93245c 50%, #9600b7 100%);
+    --bg-gradient: linear-gradient(120deg, #ffb06b 0%, #e86a8a 42%, #a648c8 78%, #7b4cf8 100%);
+    --bg-ambient-1: rgba(255, 176, 107, 0.24);
+    --bg-ambient-2: rgba(232, 106, 138, 0.2);
+    --bg-ambient-3: rgba(123, 76, 248, 0.16);
+    --avatar-gradient: linear-gradient(135deg, #ffb06b 0%, #e86a8a 45%, #a648c8 100%);
     --bg-surface: #ffffff;
     --bg-surface-alt: #f8fafc;
     --bg-muted: #f3f4f6;
@@ -63,6 +67,10 @@
     color-scheme: dark;
 
     --bg-gradient: linear-gradient(125deg, #391c51 0%, #433c8b 28%, #55aab7 52%, #3d4b8a 78%, #38337d 100%);
+    --bg-ambient-1: rgba(255, 139, 97, 0.14);
+    --bg-ambient-2: rgba(111, 76, 255, 0.16);
+    --bg-ambient-3: rgba(76, 201, 240, 0.12);
+    --avatar-gradient: linear-gradient(135deg, #7b5cff 0%, #4a7cff 50%, #55aab7 100%);
     --bg-surface: #1a1a27;
     --bg-surface-alt: #222233;
     --bg-muted: #2a2a3d;
@@ -90,6 +98,86 @@
     --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23c4c4d4' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 }
 
+:root[data-bg-preset="sunset"] {
+    --bg-gradient: linear-gradient(120deg, #ffb06b 0%, #e86a8a 42%, #a648c8 78%, #7b4cf8 100%);
+    --bg-ambient-1: rgba(255, 176, 107, 0.24);
+    --bg-ambient-2: rgba(232, 106, 138, 0.2);
+    --bg-ambient-3: rgba(123, 76, 248, 0.16);
+    --avatar-gradient: linear-gradient(135deg, #ffb06b 0%, #e86a8a 45%, #a648c8 100%);
+}
+
+:root[data-bg-preset="aurora"] {
+    --bg-gradient: linear-gradient(120deg, #ff8f6b 0%, #ff5e7a 36%, #7b5cff 72%, #3b8cff 100%);
+    --bg-ambient-1: rgba(255, 143, 107, 0.24);
+    --bg-ambient-2: rgba(123, 92, 255, 0.2);
+    --bg-ambient-3: rgba(59, 140, 255, 0.18);
+    --avatar-gradient: linear-gradient(135deg, #ff8f6b 0%, #ff5e7a 45%, #3b8cff 100%);
+}
+
+:root[data-bg-preset="ocean"] {
+    --bg-gradient: linear-gradient(120deg, #2ec5f4 0%, #4d69ff 42%, #7a3ef2 78%, #b94cf5 100%);
+    --bg-ambient-1: rgba(46, 197, 244, 0.24);
+    --bg-ambient-2: rgba(77, 105, 255, 0.2);
+    --bg-ambient-3: rgba(185, 76, 245, 0.18);
+    --avatar-gradient: linear-gradient(135deg, #2ec5f4 0%, #4d69ff 45%, #7a3ef2 100%);
+}
+
+:root[data-bg-preset="berry"] {
+    --bg-gradient: linear-gradient(120deg, #ff7ba2 0%, #c44bff 46%, #6f4bff 100%);
+    --bg-ambient-1: rgba(255, 123, 162, 0.24);
+    --bg-ambient-2: rgba(196, 75, 255, 0.2);
+    --bg-ambient-3: rgba(111, 75, 255, 0.18);
+    --avatar-gradient: linear-gradient(135deg, #ff7ba2 0%, #c44bff 45%, #6f4bff 100%);
+}
+
+:root[data-bg-preset="mint"] {
+    --bg-gradient: linear-gradient(120deg, #58d6c4 0%, #4aa6ff 42%, #7e56ff 100%);
+    --bg-ambient-1: rgba(88, 214, 196, 0.24);
+    --bg-ambient-2: rgba(74, 166, 255, 0.2);
+    --bg-ambient-3: rgba(126, 86, 255, 0.18);
+    --avatar-gradient: linear-gradient(135deg, #58d6c4 0%, #4aa6ff 45%, #7e56ff 100%);
+}
+
+:root[data-bg-preset="violet"] {
+    --bg-gradient: linear-gradient(120deg, #9f7bff 0%, #6d4efc 48%, #4b5dff 100%);
+    --bg-ambient-1: rgba(159, 123, 255, 0.24);
+    --bg-ambient-2: rgba(109, 78, 252, 0.2);
+    --bg-ambient-3: rgba(75, 93, 255, 0.18);
+    --avatar-gradient: linear-gradient(135deg, #9f7bff 0%, #6d4efc 45%, #4b5dff 100%);
+}
+
+:root[data-bg-preset="ember"] {
+    --bg-gradient: linear-gradient(120deg, #ff8a5c 0%, #ff6b6b 45%, #ffc857 100%);
+    --bg-ambient-1: rgba(255, 138, 92, 0.24);
+    --bg-ambient-2: rgba(255, 107, 107, 0.2);
+    --bg-ambient-3: rgba(255, 200, 87, 0.18);
+    --avatar-gradient: linear-gradient(135deg, #ff8a5c 0%, #ff6b6b 45%, #ffc857 100%);
+}
+
+:root[data-bg-preset="seafoam"] {
+    --bg-gradient: linear-gradient(120deg, #42d7c8 0%, #5b7cff 45%, #9c7cff 100%);
+    --bg-ambient-1: rgba(66, 215, 200, 0.24);
+    --bg-ambient-2: rgba(91, 124, 255, 0.2);
+    --bg-ambient-3: rgba(156, 124, 255, 0.18);
+    --avatar-gradient: linear-gradient(135deg, #42d7c8 0%, #5b7cff 45%, #9c7cff 100%);
+}
+
+:root[data-bg-preset="lilac"] {
+    --bg-gradient: linear-gradient(120deg, #c084fc 0%, #8b5cf6 45%, #4f46e5 100%);
+    --bg-ambient-1: rgba(192, 132, 252, 0.24);
+    --bg-ambient-2: rgba(139, 92, 246, 0.2);
+    --bg-ambient-3: rgba(79, 70, 229, 0.18);
+    --avatar-gradient: linear-gradient(135deg, #c084fc 0%, #8b5cf6 45%, #4f46e5 100%);
+}
+
+:root[data-bg-preset="scarlet"] {
+    --bg-gradient: linear-gradient(120deg, #ff6b6b 0%, #ef4444 45%, #7c2d12 100%);
+    --bg-ambient-1: rgba(255, 107, 107, 0.24);
+    --bg-ambient-2: rgba(239, 68, 68, 0.2);
+    --bg-ambient-3: rgba(124, 45, 18, 0.18);
+    --avatar-gradient: linear-gradient(135deg, #ff6b6b 0%, #ef4444 45%, #7c2d12 100%);
+}
+
 /* ===== BODY ===== */
 
 body.loading-sidebar .sidebar,
@@ -102,37 +190,59 @@ body {
 
     font-family: "DM Sans", sans-serif;
 
-    background:
-        radial-gradient(circle at 10% 20%, rgba(255, 139, 97, 0.22) 0%, transparent 24%),
-        radial-gradient(circle at 85% 15%, rgba(147, 36, 92, 0.18) 0%, transparent 26%),
-        radial-gradient(circle at 50% 90%, rgba(76, 201, 240, 0.16) 0%, transparent 30%),
-        linear-gradient(120deg, #fe8b61 0%, #93245c 45%, #9600b7 80%, #55aab7 100%);
-    background-size: 180% 180%, 180% 180%, 180% 180%, 220% 220%;
-    background-repeat: no-repeat;
-    background-position: 0% 0%, 100% 0%, 50% 100%, 50% 50%;
-
-    animation: fondoAnimado 24s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-
     color: var(--text-primary);
 
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
     isolation: isolate;
+    background-color: transparent;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: -12%;
+    z-index: -2;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 10% 20%, var(--bg-ambient-1) 0%, transparent 24%),
+        radial-gradient(circle at 85% 15%, var(--bg-ambient-2) 0%, transparent 26%),
+        radial-gradient(circle at 50% 90%, var(--bg-ambient-3) 0%, transparent 30%),
+        var(--bg-gradient);
+    background-size: 200% 200%, 200% 200%, 200% 200%, 260% 260%;
+    background-repeat: no-repeat;
+    background-position: 0% 0%, 100% 0%, 50% 100%, 50% 50%;
+    animation: fondoAnimado 22s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    transform: translateZ(0);
+    will-change: background-position, background-size;
 }
 
 @keyframes fondoAnimado {
 
-    0% {
+    0%, 100% {
         background-position: 0% 0%, 100% 0%, 50% 100%, 50% 50%;
+        background-size: 200% 200%, 200% 200%, 200% 200%, 260% 260%;
     }
 
-    50% {
-        background-position: 40% 35%, 0% 100%, 100% 0%, 55% 45%;
+    20% {
+        background-position: 45% 18%, 70% 8%, 58% 92%, 42% 32%;
+        background-size: 230% 230%, 220% 220%, 240% 240%, 290% 290%;
     }
 
-    100% {
-        background-position: 0% 0%, 100% 0%, 50% 100%, 50% 50%;
+    40% {
+        background-position: 80% 35%, 25% 72%, 5% 12%, 62% 58%;
+        background-size: 260% 260%, 235% 235%, 220% 220%, 310% 310%;
+    }
+
+    60% {
+        background-position: 22% 70%, 88% 95%, 48% 6%, 35% 72%;
+        background-size: 240% 240%, 215% 215%, 235% 235%, 300% 300%;
+    }
+
+    80% {
+        background-position: 12% 45%, 60% 20%, 70% 85%, 55% 40%;
+        background-size: 225% 225%, 205% 205%, 250% 250%, 285% 285%;
     }
 }
 
@@ -860,7 +970,7 @@ a:hover::after {
 
     border-radius: 50%;
 
-    background: linear-gradient(135deg, #93245c, #9600b7);
+    background: var(--avatar-gradient);
 
     color: white;
 
@@ -875,6 +985,20 @@ a:hover::after {
     font-size: 18px;
 
     flex-shrink: 0;
+
+    background-size: 220% 220%;
+    background-position: 0% 0%;
+    animation: avatarGradientMove 10s ease-in-out infinite;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.16);
+}
+
+@keyframes avatarGradientMove {
+    0%, 100% {
+        background-position: 0% 0%;
+    }
+    50% {
+        background-position: 100% 100%;
+    }
 }
 
 .user-info {
@@ -970,11 +1094,6 @@ a:hover::after {
 /* /////////////////////*/
 
 .dashboard-body {
-    background: var(--bg-gradient);
-    background-size: 300% 300%;
-    background-repeat: no-repeat;
-    background-position: 0% 50%;
-    animation: fondoAnimado 18s ease infinite;
     min-height: 100vh;
     min-width: 100%;
 }
@@ -2122,12 +2241,6 @@ input.filtro-articulo{
     justify-content: center;
 
     padding: 40px;
-
-    background: var(--bg-gradient);
-    background-size: 300% 300%;
-    background-repeat: no-repeat;
-    background-position: 0% 50%;
-    animation: fondoAnimado 18s ease infinite;
 }
 
 .login-wrapper {
@@ -2844,7 +2957,13 @@ body.sidebar-mobile-open {
 .perfil-layout {
     display: flex;
     gap: 32px;
-    align-items: flex-start;
+    align-items: stretch;
+}
+
+.perfil-form,
+.perfil-movimientos {
+    display: flex;
+    flex-direction: column;
 }
 
 .perfil-form {
@@ -2865,10 +2984,59 @@ body.sidebar-mobile-open {
 .perfil-movimientos {
     flex: 1;
     min-width: 0;
+    gap: 18px;
+}
+
+.perfil-color-card,
+.perfil-actividad-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.perfil-color-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 12px 0 6px;
+}
+
+.perfil-color-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.95);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.16);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    background: var(--preset-gradient);
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+}
+
+.perfil-color-option::before {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.perfil-color-option:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.2);
+}
+
+.perfil-color-option.active {
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.7), 0 12px 24px rgba(0,0,0,0.18);
 }
 
 .perfil-movimientos-tabla {
-    max-height: 425px;
+    max-height: 300px;
     overflow-y: auto;
     border-radius: 12px;
 }
