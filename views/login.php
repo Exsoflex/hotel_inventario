@@ -23,6 +23,12 @@
 
 <body class="login-body">
 
+<div class="background-blobs" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+</div>
+
 <div class="login-wrapper">
 
     <!-- PANEL IZQUIERDO -->

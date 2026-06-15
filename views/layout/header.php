@@ -28,6 +28,14 @@
 
 <body>
 
+<div class="background-blobs">
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+</div>
+
 <!-- ///////////////////////////////////////-->
 
 <div class="layout">
