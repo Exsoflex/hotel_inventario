@@ -1742,6 +1742,14 @@ a:hover::after {
 
 .habitacion-section-header {
 
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
     margin-bottom: 20px;
 
     padding-bottom: 12px;
@@ -1834,6 +1842,77 @@ a:hover::after {
     transform: translateY(-2px);
 
     background: #1f2937;
+}
+
+.btn-ver-revision {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 10px 16px;
+
+    background: var(--bg-muted);
+
+    color: var(--text-primary);
+
+    border-radius: 14px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+
+    text-decoration: none;
+}
+
+.btn-ver-revision:hover {
+
+    background: var(--bg-hover);
+}
+
+.no-results-message {
+
+    min-height: 260px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-top: 24px;
+
+    padding: 28px;
+
+    border-radius: 24px;
+
+    background: var(--bg-surface-alt);
+
+    color: var(--text-muted);
+
+    border: 1px solid var(--border-light);
+
+    box-shadow: var(--shadow-sm);
+}
+
+.no-results-message p {
+
+    margin: 0;
+
+    font-size: 18px;
+
+    text-align: center;
+
+    max-width: 640px;
+}
+
+.no-results-message.hidden {
+
+    display: none !important;
 }
 
 /* =============================== */

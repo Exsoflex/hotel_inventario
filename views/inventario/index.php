@@ -212,6 +212,7 @@ ksort($inventarioPorHabitacion);
     <div class="habitacion-section">
         <div class="habitacion-section-header">
             <h2>Habitación <?= $numero ?></h2>
+            <a href="index.php?modulo=revision&buscar=<?= urlencode($numero) ?>" class="btn-ver-revision">Ver revisión</a>
         </div>
 
         <div class="inventario-grid">
@@ -284,6 +285,9 @@ ksort($inventarioPorHabitacion);
     </div>
 <?php endforeach; ?>
 
+<div id="noResultsInventario" class="no-results-message hidden">
+    <p>No se encontraron registros para los filtros seleccionados.</p>
+</div>
 
 <!-- /////////////////////////////////////////////////////// -->
 
@@ -600,6 +604,8 @@ function filtrarInventario(){
         .filter(c => c.checked)
         .map(c => c.value);
 
+    let algunaVisibleSection = false;
+
     secciones.forEach(function(seccion){
 
         let cards =
@@ -658,7 +664,21 @@ function filtrarInventario(){
         seccion.style.display =
             algunaVisible ? '' : 'none';
 
+        if(algunaVisible){
+            algunaVisibleSection = true;
+        }
+
     });
+
+    const noResultsMessage =
+        document.getElementById('noResultsInventario');
+
+    if(noResultsMessage){
+        noResultsMessage.classList.toggle(
+            'hidden',
+            algunaVisibleSection
+        );
+    }
 
 }
 
@@ -866,6 +886,10 @@ btnLimpiar.addEventListener('click', function(){
         check.checked = false;
 
     });
+
+    if (typeof filtroEstado !== 'undefined') {
+        filtroEstado.value = '';
+    }
 
     actualizarFiltro();
 

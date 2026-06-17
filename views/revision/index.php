@@ -206,6 +206,9 @@ foreach ($faltantes as $f) {
 
 </div>
 
+<div id="noResultsRevision" class="no-results-message hidden">
+    <p>No se encontraron registros para los filtros seleccionados.</p>
+</div>
 
 </div>
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
@@ -266,6 +269,12 @@ function filtrar() {
             mostrar ? '' : 'none';
 
     });
+
+    const noResultsMessage = document.getElementById('noResultsRevision');
+    if (noResultsMessage) {
+        const hayResultados = Array.from(cards).some(card => card.style.display !== 'none');
+        noResultsMessage.classList.toggle('hidden', hayResultados);
+    }
 }
 
 buscador.addEventListener('keyup', filtrar);
@@ -282,9 +291,7 @@ filtroTipo.addEventListener(
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    if (buscador.value.trim() !== '') {
-        filtrar();
-    }
+    filtrar();
 
 });
 
