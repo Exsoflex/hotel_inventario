@@ -45,7 +45,7 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
             <input 
             type="text" 
             id="buscador" 
-            placeholder="Buscar habitación..."
+            placeholder="Buscar por habitación o articulo..."
             autocomplete="off"
             value="<?= htmlspecialchars($buscar) ?>"
             >
@@ -74,7 +74,7 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
                     <tr>
                         <th>Habitación</th>
                         <th>Tipo</th>
-                        <th>Artículos faltantes</th>
+                        <th>Estado</th>
                         <th>Detalles</th>
                     </tr>
                 </thead>
@@ -89,29 +89,45 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 
                             <td><?= $h['tipo'] ?></td>
 
-                           <td>
+<td>
 
-                            <?php if ($h['total_faltantes'] > 0): ?>
+    <?php if ($h['total_base'] == 0): ?>
 
-                                <span style="color:red;">
-                                    <?= $h['articulos_faltantes'] ?>
-                                </span>
+        <span style="color:gray;">
+            Sin inventario base definido
+        </span>
 
-                            <?php elseif ($h['total_base'] == 0): ?>
+    <?php else: ?>
 
-                                <span style="color:gray;">
-                                    Sin inventario base definido
-                                </span>
+        <?php if ($h['total_faltantes'] > 0): ?>
 
-                            <?php else: ?>
+            <div style="color:red;">
+                <strong>Faltantes:</strong><br>
+                <?= $h['articulos_faltantes'] ?>
+            </div>
 
-                                <span style="color:green;">
-                                    Completo ✓
-                                </span>
+        <?php endif; ?>
 
-                            <?php endif; ?>
+        <?php if ($h['total_sobrantes'] > 0): ?>
 
-                        </td>
+            <div style="color:orange; margin-top:5px;">
+                <strong>Sobrantes:</strong><br>
+                <?= $h['articulos_sobrantes'] ?>
+            </div>
+
+        <?php endif; ?>
+
+        <?php if ($h['total_faltantes'] == 0 && $h['total_sobrantes'] == 0): ?>
+
+            <span style="color:green;">
+                Completo ✓
+            </span>
+
+        <?php endif; ?>
+
+    <?php endif; ?>
+
+</td>
 
                             <td>
                                 <a href="index.php?modulo=revision&buscar=<?= $h['numero'] ?>">
@@ -143,42 +159,50 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 
             $total = count($habitaciones);
 
-            $completas = count(array_filter(
-                $habitaciones,
-                fn($h) =>
-                    $h['total_base'] > 0 &&
-                    $h['total_faltantes'] == 0
-            ));
+        $completas = count(array_filter(
+            $habitaciones,
+            fn($h) => $h['estado_inventario'] === 'completo'
+        ));
 
-            $conFaltantes = count(array_filter(
-                $habitaciones,
-                fn($h) =>
-                    $h['total_faltantes'] > 0
-            ));
+        $conFaltantes = count(array_filter(
+            $habitaciones,
+            fn($h) => $h['estado_inventario'] === 'incompleto'
+        ));
 
-            $sinBase = count(array_filter(
-                $habitaciones,
-                fn($h) =>
-                    $h['total_base'] == 0
-            ));
+        $conSobrantes = count(array_filter(
+            $habitaciones,
+            fn($h) => $h['estado_inventario'] === 'sobrante'
+        ));
+
+        $sinBase = count(array_filter(
+            $habitaciones,
+            fn($h) => $h['total_base'] == 0
+        ));
+
+        $mixtas = count(array_filter(
+            $habitaciones,
+            fn($h) => $h['estado_inventario'] === 'mixto'
+        ));
 
     ?>
 
         <p>🏨 Total de habitaciones: <strong><?= $total ?></strong></p>
         <br>
-        <p style="color:green;">✓ Completas: <strong><?= $completas ?></strong></p>
+        <p style="color:green;">✅ Completas: <strong><?= $completas ?></strong></p>
         <br>
-        <p style="color:red;">✗ Con faltantes: <strong><?= $conFaltantes ?></strong></p>
+        <p style="color:red;">❌ Con faltantes: <strong><?= $conFaltantes ?></strong></p>
         <br>
-        <p style="color:gray;">⚠ Sin inventario base: <strong><?= $sinBase ?></strong></p>
+        <p style="color:orange;">⚠️ Con sobrantes: <strong><?= $conSobrantes ?></strong></p>
+        <br>
+        <p style="color:blue;">⛔ Mixtas: <strong><?= $mixtas ?></strong></p>
+        <br>
+        <p style="color:gray;">🚫 Sin inventario base: <strong><?= $sinBase ?></strong></p>
 
 
 <br><br>
 
 <div class="grafica-card">
-
     <div class="graficas-fila">
-
         <!-- DONA -->
         <div class="mini-grafica">
 
@@ -238,12 +262,13 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 
         <?php
         // Habitaciones con más faltantes primero
-        $criticas = array_filter(
-            $habitaciones,
-            fn($h) =>
-                $h['total_faltantes'] > 0 &&
-                $h['total_faltantes'] > 0
-        );
+$criticas = array_filter(
+    $habitaciones,
+    fn($h) => in_array(
+        $h['estado_inventario'],
+        ['incompleto', 'mixto']
+    )
+);
 
         usort(
             $criticas,
@@ -283,6 +308,8 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 $datosInventario = [
     $completas,
     $conFaltantes,
+    $conSobrantes,
+    $mixtas,
     $sinBase
 ];
 
@@ -422,6 +449,7 @@ const ctxInventario = document.getElementById(
     'graficaEstadoInventario'
 );
 
+
 new Chart(ctxInventario, {
 
     type: 'doughnut',
@@ -431,19 +459,23 @@ new Chart(ctxInventario, {
         labels: [
             'Completas',
             'Con faltantes',
+            'Con sobrantes',
+            'Mixtas',
             'Sin inventario base'
         ],
 
         datasets: [{
 
-            barThickness: 20,
+            barThickness: 30,
             data: datosInventario,
 
-            backgroundColor: [
-                '#3359eddd',
-                '#ee2424cf',
-                '#9E9E9E'
-            ],
+        backgroundColor: [
+            '#3399eddd', // completas
+            '#ee248ccf', // faltantes
+            '#e9b300',   // sobrantes
+            '#7b1fa2',   // mixtas
+            '#9E9E9E'    // sin base
+        ],
 
             borderWidth: 2
 
@@ -489,6 +521,20 @@ const habitacionesFaltantes =
         )
     );
 
+const habitacionesSobrantes =
+    datosHabitaciones.map(
+        p => Number(
+            p.habitaciones_con_sobrantes
+        )
+    );
+
+const habitacionesMixtas =
+    datosHabitaciones.map(
+        p => Number(
+            p.habitaciones_mixtas
+        )
+    );
+
 const ctxHabitaciones =
     document.getElementById(
         'graficaHabitacionesPiso'
@@ -510,9 +556,9 @@ new Chart(ctxHabitaciones, {
 
                 data: habitacionesCompletas,
 
-                backgroundColor: '#4caf4f93',
+                backgroundColor: '#1182d3a3',
 
-                borderColor: '#388E3C',
+                borderColor:'#2580ca', // completas
 
                 borderWidth: 1,
 
@@ -532,6 +578,36 @@ new Chart(ctxHabitaciones, {
                 borderWidth: 1,
 
                 barThickness: 22
+            },
+
+            {
+                label: 'Con sobrantes',
+
+                data: habitacionesSobrantes,
+
+                backgroundColor: '#f0be1bc8',
+
+                borderColor: '#d2a214',
+
+                borderWidth: 1,
+
+                barThickness: 22
+            },
+
+            {
+
+                label: 'Mixtas',
+
+                data: habitacionesMixtas,
+
+                backgroundColor: '#e11e7999',
+
+                borderColor: '#a21f76',
+
+                borderWidth: 1,
+
+                barThickness: 22
+
             }
 
         ]

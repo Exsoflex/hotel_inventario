@@ -127,7 +127,7 @@
     <?php endif; ?>
 
 </div>
-
+<?php require_once __DIR__ . "/../layout/footer.php"; ?>
 <!-- Modal confirmación eliminar -->
 <div class="modal-overlay" id="modalEliminar">
     <div class="modal-confirmacion">
@@ -144,11 +144,7 @@
         </div>
     </div>
 </div>
-
-<?php require_once __DIR__ . "/../layout/footer.php"; ?>
-
 <script>
-
 const botonesEliminar = document.querySelectorAll('.btn-eliminar');
 const modalEliminar   = document.getElementById('modalEliminar');
 const mensajeEliminar = document.getElementById('mensajeEliminar');
@@ -169,7 +165,6 @@ botonesEliminar.forEach(boton => {
 function cerrarModalEliminar() {
     modalEliminar.classList.remove('active');
 }
-
 </script>
 
 </body>

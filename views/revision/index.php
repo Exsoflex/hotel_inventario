@@ -71,6 +71,10 @@ value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
                 Con faltantes
             </option>
 
+            <option value="sobrante">
+                Con sobrantes
+            </option>
+
             </select>
  <!-- ====================== -->   
             <label style="margin-top:10px">
@@ -139,18 +143,47 @@ foreach ($faltantes as $f) {
 
 <?php foreach($habitacionesAgrupadas as $hab): ?>
 
+
+<!-- Estado de la habitacion -->
     <?php
 
-    $faltantesHabitacion = array_filter(
-        $hab['items'],
-        fn($item) => $item['faltantes'] > 0
-    );
+$tieneFaltantes = false;
+$tieneSobrantes = false;
 
-    $estaCompleta = count($faltantesHabitacion) == 0;
+foreach ($hab['items'] as $item) {
+
+    if ($item['faltantes'] > 0) {
+        $tieneFaltantes = true;
+    }
+
+    if ($item['sobrantes'] > 0) {
+        $tieneSobrantes = true;
+    }
+}
+
+if ($tieneFaltantes) {
+
+    $estadoHabitacion = 'faltante';
+    $textoEstado = 'Con faltantes';
+    $claseEstado = 'estado-faltante';
+
+} elseif ($tieneSobrantes) {
+
+    $estadoHabitacion = 'sobrante';
+    $textoEstado = 'Con sobrantes';
+    $claseEstado = 'estado-sobrante';
+
+} else {
+
+    $estadoHabitacion = 'completa';
+    $textoEstado = 'Completa ✓';
+    $claseEstado = 'estado-ok';
+
+}
     ?>
 
     <div class="habitacion-card"
-    data-estado="<?= $estaCompleta ? 'completa' : 'faltante' ?>"
+    data-estado="<?= $estadoHabitacion ?>"
     data-tipo="<?= strtolower($hab['tipo']) ?>"
     >
 
@@ -162,9 +195,9 @@ foreach ($faltantes as $f) {
                 <a href="index.php?modulo=inventario&buscar=<?= $hab['numero'] ?>" class="btn-ver-inventario">Ver inventario</a>
             </div>
 
-            <div class="<?= $estaCompleta ? 'estado-ok' : 'estado-faltante' ?>">
-                <?= $estaCompleta ? 'Completa ✓' : 'Con faltantes' ?>
-            </div>
+                <div class="<?= $claseEstado ?>">
+                    <?= $textoEstado ?>
+                </div>
 
         </div>
 
@@ -185,18 +218,25 @@ foreach ($faltantes as $f) {
                     </div>
                     <div>
 
-                        <?php if($item['faltantes'] > 0): ?>
-                            <span class="badge-faltante">
-                                Faltan <?= $item['faltantes'] ?>
+        <?php if($item['faltantes'] > 0): ?>
 
-                            </span>
-                        <?php else: ?>
-                            <span class="badge-ok">
+            <span class="badge-faltante">
+                Faltan <?= $item['faltantes'] ?>
+            </span>
 
-                                Completo
+        <?php elseif($item['sobrantes'] > 0): ?>
 
-                            </span>
-                        <?php endif; ?>
+            <span class="badge-sobrante">
+                Sobran <?= $item['sobrantes'] ?>
+            </span>
+
+        <?php else: ?>
+
+            <span class="badge-ok">
+                Completo
+            </span>
+
+        <?php endif; ?>
                     </div>
                 </div>
             <?php endforeach; ?>

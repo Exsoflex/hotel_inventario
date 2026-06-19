@@ -227,28 +227,21 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 
 <!-- /////////////////////////////////////////////////////// -->
 
-    <div class="modal-overlay" id="modalEliminar">
-
+<div class="modal-overlay" id="modalEliminar">
     <div class="modal-confirmacion">
-
         <div class="modal-icono">
             ⚠
         </div>
-
         <h2>Eliminar articulo</h2>
-
         <p id="mensajeEliminar">
             ¿Seguro que deseas eliminar este articulo?
         </p>
-
         <div class="modal-botones">
-
             <button 
             onclick="cerrarModalEliminar()"
             >
                 Cancelar
             </button>
-
             <a 
             href="#" 
             id="btnConfirmarEliminar"
@@ -256,11 +249,8 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
             >
                 Sí, eliminar
             </a>
-
         </div>
-
     </div>
-
 </div>
 
 <!-- /////////////////////////////////////////////////////// -->

@@ -1557,6 +1557,19 @@ a:hover::after {
     font-weight: 700;
 }
 
+.estado-sobrante{
+
+    background: #fff3cd;
+    color: #856404;
+   /* border: 1px solid #ffe69c;*/
+
+    padding: 10px 16px;
+    border-radius: 999px;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
 .habitacion-items {
 
     display: flex;
@@ -1623,6 +1636,20 @@ a:hover::after {
     font-size: 13px;
 
     font-weight: 700;
+}
+
+.badge-sobrante{
+
+    background:#fff3cd;
+    color:#856404;
+
+    padding:8px 14px;
+    border-radius:20px;
+
+    font-size:13px;
+    font-weight:700;
+
+    /*border:1px solid #ffe69c;*/
 }
 
 /* =============================== */

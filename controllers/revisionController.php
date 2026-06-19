@@ -39,65 +39,7 @@ public function exportar() {
     $tipo =
         $_GET['tipo'] ?? '';
 
-    $faltantesFiltrados = [];
-
-    foreach($faltantes as $f){
-
-        $estaCompleta =
-            $f['faltantes'] <= 0;
-
-        $estadoHabitacion =
-            $estaCompleta
-            ? 'completa'
-            : 'faltante';
-
-        $coincideBuscar =
-
-            empty($buscar)
-
-            ||
-
-            stripos(
-                $f['numero'],
-                $buscar
-            ) !== false
-
-            ||
-
-            stripos(
-                $f['articulo'],
-                $buscar
-            ) !== false;
-
-        $coincideEstado =
-
-            empty($estado)
-
-            ||
-
-            $estadoHabitacion === $estado;
-
-        $coincideTipo =
-
-            empty($tipo)
-
-            ||
-
-            strtolower($f['tipo']) === strtolower($tipo);
-
-        if(
-            $coincideBuscar &&
-            $coincideEstado &&
-            $coincideTipo
-        ){
-
-            $faltantesFiltrados[] = $f;
-
-        }
-    }
-
-    $faltantes = $faltantesFiltrados;
-
+    
     // ==============================
     // AGRUPAR HABITACIONES
     // ==============================
@@ -121,6 +63,94 @@ public function exportar() {
 
         $habitacionesAgrupadas[$numero]['items'][] = $f;
     }
+
+
+    // ==============================
+    // FILTRAR
+    // ==============================
+
+$habitacionesFiltradas = [];
+
+foreach($habitacionesAgrupadas as $numero => $hab){
+
+    $tieneFaltantes = false;
+    $tieneSobrantes = false;
+
+    foreach($hab['items'] as $item){
+
+        if($item['faltantes'] > 0){
+            $tieneFaltantes = true;
+        }
+        if($item['sobrantes'] > 0){
+            $tieneSobrantes = true;
+        }
+    }
+
+    if($tieneFaltantes){
+        $estadoHabitacion = 'faltante';
+    }elseif($tieneSobrantes){
+        $estadoHabitacion = 'sobrante';
+    }else{
+        $estadoHabitacion = 'completa';
+
+    }
+
+    // aquí siguen los filtros...
+
+    $coincideBuscar = empty($buscar);
+
+if(!$coincideBuscar){
+
+    if(stripos($hab['numero'], $buscar) !== false){
+
+        $coincideBuscar = true;
+
+    }else{
+
+        foreach($hab['items'] as $item){
+
+            if(stripos($item['articulo'], $buscar) !== false){
+
+                $coincideBuscar = true;
+                break;
+
+            }
+
+        }
+
+    }
+
+}
+
+    $coincideEstado =
+
+    empty($estado)
+
+    ||
+
+    $estadoHabitacion === $estado;
+
+$coincideTipo =
+
+    empty($tipo)
+
+    ||
+
+    strtolower($hab['tipo']) === strtolower($tipo);
+
+if(
+    $coincideBuscar &&
+    $coincideEstado &&
+    $coincideTipo
+){
+
+    $habitacionesFiltradas[$numero] = $hab;
+
+}
+
+}
+
+$habitacionesAgrupadas = $habitacionesFiltradas;
 
     ksort($habitacionesAgrupadas);
 
@@ -156,26 +186,53 @@ public function exportar() {
 
     foreach($habitacionesAgrupadas as $hab){
 
-        $faltantesHabitacion =
-            array_filter(
-                $hab['items'],
-                fn($item) =>
-                    $item['faltantes'] > 0
-            );
+$tieneFaltantes = false;
+$tieneSobrantes = false;
 
-        $estaCompleta =
-            count($faltantesHabitacion) == 0;
+foreach($hab['items'] as $item){
+
+    if($item['faltantes'] > 0){
+
+        $tieneFaltantes = true;
+
+    }
+
+    if($item['sobrantes'] > 0){
+
+        $tieneSobrantes = true;
+
+    }
+
+}
+
+if($tieneFaltantes){
+
+    $estadoTexto = 'Con faltantes';
+
+}elseif($tieneSobrantes){
+
+    $estadoTexto = 'Con sobrantes';
+
+}else{
+
+    $estadoTexto = 'Completa';
+
+}
 
         // ======================
         // TITULO HABITACION
         // ======================
-
         $sheet->setCellValue(
-            'A' . $fila,
+
+            'A'.$fila,
+
             'HABITACIÓN '
-            . $hab['numero']
-            . ' - '
-            . strtoupper($hab['tipo'])
+            .$hab['numero']
+            .' - '
+            .strtoupper($hab['tipo'])
+            .' - '
+            .$estadoTexto
+
         );
 
         $sheet->mergeCells(
@@ -231,7 +288,7 @@ public function exportar() {
 
         $sheet->setCellValue(
             'D' . $fila,
-            'Faltantes'
+            'Diferencia'
         );
 
         $sheet->setCellValue(
@@ -269,11 +326,46 @@ public function exportar() {
         // ITEMS
         // ======================
 
+
         foreach($hab['items'] as $item){
+
+if($item['faltantes'] > 0){
+
+    $estadoArticulo = 'Faltante';
+
+}elseif($item['sobrantes'] > 0){
+
+    $estadoArticulo = 'Sobrante';
+
+}else{
+
+    $estadoArticulo = 'Completo';
+
+}
+
+if($item['faltantes'] > 0){
+
+    $diferencia = '-' . $item['faltantes'];
+
+}elseif($item['sobrantes'] > 0){
+
+    $diferencia = '+' . $item['sobrantes'];
+
+}else{
+
+    $diferencia = 0;
+
+}
+
 
             $sheet->setCellValue(
                 'A' . $fila,
                 $item['articulo']
+            );
+
+            $sheet->setCellValue(
+                'E' . $fila,
+                $estadoArticulo
             );
 
             $sheet->setCellValue(
@@ -288,14 +380,7 @@ public function exportar() {
 
             $sheet->setCellValue(
                 'D' . $fila,
-                $item['faltantes']
-            );
-
-            $sheet->setCellValue(
-                'E' . $fila,
-                $item['faltantes'] > 0
-                    ? 'Faltante'
-                    : 'Completo'
+                $diferencia
             );
 
             $sheet->setCellValue(

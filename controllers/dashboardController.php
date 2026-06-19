@@ -33,7 +33,8 @@ class DashboardController {
             return str_contains(strtolower((string) $habitacion['numero']), $texto)
                 || str_contains(strtolower((string) $habitacion['tipo']), $texto)
                 || str_contains(strtolower((string) $habitacion['piso']), $texto)
-                || str_contains(strtolower((string) $habitacion['articulos_faltantes']), $texto);
+                || str_contains(strtolower((string) $habitacion['articulos_faltantes']), $texto)
+                || str_contains(strtolower((string) $habitacion['articulos_sobrantes']), $texto);
         }));
     }
 
@@ -59,34 +60,61 @@ class DashboardController {
         return array_values($faltantesPorPiso);
     }
 
-    private function calcularEstadisticasPisos($habitaciones) {
+private function calcularEstadisticasPisos($habitaciones) {
 
-        $estadisticasPisos = [];
+    $estadisticasPisos = [];
 
-        foreach ($habitaciones as $habitacion) {
-            $piso = $habitacion['piso'];
+    foreach ($habitaciones as $habitacion) {
 
-            if (!isset($estadisticasPisos[$piso])) {
-                $estadisticasPisos[$piso] = [
-                    'piso' => $piso,
-                    'habitaciones_completas' => 0,
-                    'habitaciones_con_faltantes' => 0,
-                ];
-            }
+        $piso = $habitacion['piso'];
 
-            if ((int) $habitacion['total_base'] > 0 && (int) $habitacion['total_faltantes'] === 0) {
-                $estadisticasPisos[$piso]['habitaciones_completas']++;
-            }
+        if (!isset($estadisticasPisos[$piso])) {
 
-            if ((int) $habitacion['total_faltantes'] > 0) {
-                $estadisticasPisos[$piso]['habitaciones_con_faltantes']++;
-            }
+            $estadisticasPisos[$piso] = [
+                'piso' => $piso,
+                'habitaciones_completas' => 0,
+                'habitaciones_con_faltantes' => 0,
+                'habitaciones_con_sobrantes' => 0,
+                'habitaciones_mixtas' => 0
+            ];
         }
 
-        ksort($estadisticasPisos);
+if ($habitacion['total_base'] == 0) {
 
-        return array_values($estadisticasPisos);
+    // No contar
+
+} elseif (
+    $habitacion['total_faltantes'] == 0 &&
+    $habitacion['total_sobrantes'] == 0
+) {
+
+    $estadisticasPisos[$piso]['habitaciones_completas']++;
+
+} elseif (
+    $habitacion['total_faltantes'] > 0 &&
+    $habitacion['total_sobrantes'] > 0
+) {
+
+    $estadisticasPisos[$piso]['habitaciones_mixtas']++;
+
+} elseif (
+    $habitacion['total_faltantes'] > 0
+) {
+
+    $estadisticasPisos[$piso]['habitaciones_con_faltantes']++;
+
+} elseif (
+    $habitacion['total_sobrantes'] > 0
+) {
+
+    $estadisticasPisos[$piso]['habitaciones_con_sobrantes']++;
+}
     }
+
+    ksort($estadisticasPisos);
+
+    return array_values($estadisticasPisos);
+}
 
     private function calcularEstadisticasArticulos($habitaciones) {
 
@@ -128,18 +156,23 @@ class DashboardController {
         return $articulos;
     }
 
-    public function index() {
+public function index() {
 
-        $dashboard = new Dashboard();
-        $buscar = $this->obtenerBusquedaDesdeRequest();
-        $habitaciones = $dashboard->obtenerResumen();
-        $estadisticas = $dashboard->obtenerEstadisticasArticulos();
-        $faltantesPorPiso = $dashboard->obtenerFaltantesPorPiso();
-        $estadisticasPisos = $dashboard->obtenerEstadisticasPisos();
+    $dashboard = new Dashboard();
 
-        require_once __DIR__ . "/../views/dashboard/index.php";
+    $buscar = $this->obtenerBusquedaDesdeRequest();
+    $habitaciones = $dashboard->obtenerResumen();
 
+    if ($buscar !== '') {
+        $habitaciones = $this->filtrarHabitaciones($habitaciones, $buscar);
     }
+
+    $estadisticas = $this->calcularEstadisticasArticulos($habitaciones);
+    $faltantesPorPiso = $this->calcularFaltantesPorPiso($habitaciones);
+    $estadisticasPisos = $this->calcularEstadisticasPisos($habitaciones);
+
+    require_once __DIR__ . "/../views/dashboard/index.php";
+}
 
 public function exportar() {
 
@@ -184,15 +217,15 @@ public function exportar() {
     // ENCABEZADO
     // ============================================================
     $sheet->setCellValue('A1', 'REPORTE DASHBOARD');
-    $sheet->mergeCells('A1:G1');
+    $sheet->mergeCells('A1:E1');
     $sheet->setCellValue('A2', 'Fecha de exportación: ' . date('d/m/Y - h:i:s A'));
-    $sheet->mergeCells('A2:G2');
+    $sheet->mergeCells('A2:E2');
 
-    $sheet->getStyle('A1:G1')->applyFromArray([
+    $sheet->getStyle('A1:E1')->applyFromArray([
         'font'      => ['bold' => true, 'size' => 16],
         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
     ]);
-    $sheet->getStyle('A2:G2')->applyFromArray([
+    $sheet->getStyle('A2:E2')->applyFromArray([
         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
     ]);
 
@@ -203,8 +236,8 @@ public function exportar() {
     foreach ($porPiso as $piso => $habitacionesPiso) {
 
         $sheet->setCellValue('A' . $fila, 'PISO ' . $piso);
-        $sheet->mergeCells('A' . $fila . ':D' . $fila);
-        $sheet->getStyle('A' . $fila . ':D' . $fila)->applyFromArray([
+        $sheet->mergeCells('A' . $fila . ':E' . $fila);
+        $sheet->getStyle('A' . $fila . ':E' . $fila)->applyFromArray([
             'font' => ['bold' => true, 'size' => 14],
             'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'B6D7A8']],
         ]);
@@ -212,9 +245,10 @@ public function exportar() {
 
         $sheet->setCellValue('A' . $fila, 'Habitación');
         $sheet->setCellValue('B' . $fila, 'Tipo');
-        $sheet->setCellValue('C' . $fila, 'Artículos faltantes');
-        $sheet->setCellValue('D' . $fila, 'Cantidad faltante');
-        $sheet->getStyle('A' . $fila . ':D' . $fila)->applyFromArray([
+        $sheet->setCellValue('C' . $fila, 'Estado');
+        $sheet->setCellValue('D' . $fila, 'Faltantes');
+        $sheet->setCellValue('E' . $fila, 'Sobrantes');
+        $sheet->getStyle('A' . $fila . ':E' . $fila)->applyFromArray([
             'font' => ['bold' => true],
             'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'D9EAD3']],
         ]);
@@ -234,31 +268,84 @@ public function exportar() {
                 }
             }
 
-            $sheet->setCellValue('A' . $fila, $h['numero']);
-            $sheet->setCellValue('B' . $fila, $h['tipo']);
-            $sheet->setCellValue('C' . $fila, empty($articulosFaltantes) ? 'Completo ✓' : implode(', ', $articulosFaltantes));
-            $sheet->setCellValue('D' . $fila, $h['total_faltantes']);
+        $sheet->setCellValue('A'.$fila, $h['numero']);
+        $sheet->setCellValue('B'.$fila, $h['tipo']);
+        $sheet->setCellValue('C'.$fila, ucfirst($h['estado_inventario']));
+
+        $sheet->setCellValue(
+            'D'.$fila,
+            empty($h['articulos_faltantes'])
+                ? '-'
+                : $h['articulos_faltantes']
+        );
+
+        $sheet->setCellValue(
+            'E'.$fila,
+            empty($h['articulos_sobrantes'])
+                ? '-'
+                : $h['articulos_sobrantes']
+        );
             $fila++;
         }
         $fila += 2;
     }
 
     // Bordes tabla principal
-    $sheet->getStyle('A1:D' . ($fila - 1))->applyFromArray([
-        'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
-    ]);
-    $sheet->getColumnDimension('C')->setWidth(45);
-    $sheet->getStyle('C')->getAlignment()->setWrapText(true);
-    foreach (['A', 'B', 'D'] as $col) {
-        $sheet->getColumnDimension($col)->setAutoSize(true);
-    }
+$sheet->getStyle('A1:E' . ($fila - 1))->applyFromArray([
+    'borders' => [
+        'allBorders' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+        ]
+    ],
+]);
+
+// Ajustar ancho de columnas
+$sheet->getColumnDimension('A')->setWidth(12);
+$sheet->getColumnDimension('B')->setWidth(18);
+$sheet->getColumnDimension('C')->setWidth(14);
+$sheet->getColumnDimension('D')->setWidth(32);
+$sheet->getColumnDimension('E')->setWidth(32);
+
+// Ajustar texto largo
+$sheet->getStyle('D:E')->getAlignment()->setWrapText(true);
 
     // ============================================================
     // RESUMEN Y HABTIACIONES CRÍTICAS (columnas F-G)
     // ============================================================
-    $completas    = count(array_filter($habitaciones, fn($h) => $h['total_base'] > 0 && $h['total_faltantes'] == 0));
-    $conFaltantes = count(array_filter($habitaciones, fn($h) => $h['total_faltantes'] > 0));
-    $sinBase      = count(array_filter($habitaciones, fn($h) => $h['total_base'] == 0));
+$completas = count(array_filter(
+    $habitaciones,
+    fn($h)=>
+        $h['total_base']>0 &&
+        $h['total_faltantes']==0 &&
+        $h['total_sobrantes']==0
+));
+
+$conFaltantes = count(array_filter(
+    $habitaciones,
+    fn($h)=>
+        $h['total_faltantes']>0 &&
+        $h['total_sobrantes']==0
+));
+
+$conSobrantes = count(array_filter(
+    $habitaciones,
+    fn($h)=>
+        $h['total_faltantes']==0 &&
+        $h['total_sobrantes']>0
+));
+
+$mixtas = count(array_filter(
+    $habitaciones,
+    fn($h)=>
+        $h['total_faltantes']>0 &&
+        $h['total_sobrantes']>0
+));
+
+$sinBase = count(array_filter(
+    $habitaciones,
+    fn($h)=>
+        $h['total_base']==0
+));
 
     $sheet->setCellValue('F4', 'RESUMEN');
     $sheet->mergeCells('F4:G4');
@@ -270,23 +357,54 @@ public function exportar() {
     $sheet->setCellValue('F5', 'Total habitaciones'); $sheet->setCellValue('G5', count($habitaciones));
     $sheet->setCellValue('F6', 'Completas');          $sheet->setCellValue('G6', $completas);
     $sheet->setCellValue('F7', 'Con faltantes');      $sheet->setCellValue('G7', $conFaltantes);
-    $sheet->setCellValue('F8', 'Sin inventario base'); $sheet->setCellValue('G8', $sinBase);
+    $sheet->setCellValue('F8', 'Con sobrantes');      $sheet->setCellValue('G8', $conSobrantes);
+    $sheet->setCellValue('F9', 'Mixtas');            $sheet->setCellValue('G9', $mixtas);
+    $sheet->setCellValue('F10', 'Sin inventario base'); $sheet->setCellValue('G10', $sinBase);
 
-    $criticas = array_filter($habitaciones, fn($h) => $h['total_faltantes'] > 0);
-    usort($criticas, fn($a, $b) => $b['total_faltantes'] - $a['total_faltantes']);
+$criticas = array_filter(
+    $habitaciones,
+    fn($h) =>
+        $h['total_faltantes'] > 0 ||
+        $h['total_sobrantes'] > 0
+);
+usort($criticas, function ($a, $b) {
+
+    $totalA = $a['total_faltantes'] + $a['total_sobrantes'];
+    $totalB = $b['total_faltantes'] + $b['total_sobrantes'];
+
+    return $totalB <=> $totalA;
+});
     $criticas = array_slice($criticas, 0, 5);
 
-    $sheet->setCellValue('F10', 'HABITACIONES CRÍTICAS');
-    $sheet->mergeCells('F10:G10');
-    $sheet->getStyle('F10:G10')->applyFromArray([
+    $sheet->setCellValue('F12', 'HABITACIONES CRÍTICAS');
+    $sheet->mergeCells('F12:G12');
+
+    $sheet->getStyle('F12:G12')->applyFromArray([
         'font' => ['bold' => true, 'size' => 14],
         'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'D9EAD3']],
     ]);
 
-    $filaCritica = 11;
+    $filaCritica = 13;
     foreach ($criticas as $c) {
-        $sheet->setCellValue('F' . $filaCritica, 'Habitación ' . $c['numero']);
-        $sheet->setCellValue('G' . $filaCritica, $c['total_faltantes'] . ' faltantes');
+$detalle = [];
+
+if ($c['total_faltantes'] > 0) {
+    $detalle[] = $c['total_faltantes'] . ' faltantes';
+}
+
+if ($c['total_sobrantes'] > 0) {
+    $detalle[] = $c['total_sobrantes'] . ' sobrantes';
+}
+
+$sheet->setCellValue(
+    'F'.$filaCritica,
+    'Hab. ' . $c['numero']
+);
+
+$sheet->setCellValue(
+    'G'.$filaCritica,
+    implode(' | ', $detalle)
+);
         $filaCritica++;
     }
 
@@ -298,14 +416,23 @@ public function exportar() {
     // DATOS GRÁFICA 1: ESTADO INVENTARIO (col I-J, filas 2-5)
     // Separado en su propia zona para no mezclar con artículos
     // ============================================================
-    $sheet->setCellValue('I1', 'Estado');
-    $sheet->setCellValue('J1', 'Cantidad');
-    $sheet->setCellValue('I2', 'Completas');      $sheet->setCellValue('J2', $completas);
-    $sheet->setCellValue('I3', 'Con faltantes');  $sheet->setCellValue('J3', $conFaltantes);
-    $sheet->setCellValue('I4', 'Sin base');       $sheet->setCellValue('J4', $sinBase);
+$sheet->setCellValue('I2', 'Completas');
+$sheet->setCellValue('J2', $completas);
 
-    $labelsEstado = [new DataSeriesValues('String', "'Worksheet'!\$I\$2:\$I\$4", null, 3)];
-    $valuesEstado = [new DataSeriesValues('Number', "'Worksheet'!\$J\$2:\$J\$4", null, 3)];
+$sheet->setCellValue('I3', 'Con faltantes');
+$sheet->setCellValue('J3', $conFaltantes);
+
+$sheet->setCellValue('I4', 'Con sobrantes');
+$sheet->setCellValue('J4', $conSobrantes);
+
+$sheet->setCellValue('I5', 'Mixtas');
+$sheet->setCellValue('J5', $mixtas);
+
+$sheet->setCellValue('I6', 'Sin inventario base');
+$sheet->setCellValue('J6', $sinBase);
+
+$labelsEstado = [new DataSeriesValues('String', "'Worksheet'!\$I\$2:\$I\$6", null, 5)];
+$valuesEstado = [new DataSeriesValues('Number', "'Worksheet'!\$J\$2:\$J\$6", null, 5)];
 
     $seriesEstado = new DataSeries(
         DataSeries::TYPE_DONUTCHART, null,
@@ -318,8 +445,8 @@ public function exportar() {
         new Legend(Legend::POSITION_RIGHT),
         new PlotArea(null, [$seriesEstado])
     );
-    $chart1->setTopLeftPosition('I6');
-    $chart1->setBottomRightPosition('N20');
+    $chart1->setTopLeftPosition('I8');
+    $chart1->setBottomRightPosition('N22');
     $sheet->addChart($chart1);
 
     // ============================================================
@@ -394,6 +521,8 @@ public function exportar() {
     $sheet->setCellValue('L' . $filaEP, 'Piso');
     $sheet->setCellValue('M' . $filaEP, 'Completas');
     $sheet->setCellValue('N' . $filaEP, 'Con faltantes');
+    $sheet->setCellValue('O' . $filaEP, 'Con sobrantes');
+    $sheet->setCellValue('P' . $filaEP, 'Mixtas');
     $filaEP++;
 
     $inicioEP = $filaEP;
@@ -401,6 +530,8 @@ public function exportar() {
         $sheet->setCellValue('L' . $filaEP, 'Piso ' . $ep['piso']);
         $sheet->setCellValue('M' . $filaEP, $ep['habitaciones_completas'] ?? 0);
         $sheet->setCellValue('N' . $filaEP, $ep['habitaciones_con_faltantes'] ?? 0);
+        $sheet->setCellValue('O' . $filaEP, $ep['habitaciones_con_sobrantes'] ?? 0);
+        $sheet->setCellValue('P' . $filaEP, $ep['habitaciones_mixtas'] ?? 0);
         $filaEP++;
     }
     $finEP = $filaEP - 1;
@@ -428,6 +559,20 @@ $seriesLabelsEP = [
         "'Worksheet'!\$N\$22",
         null,
         1
+    ),
+
+    new DataSeriesValues(
+        'String',
+        "'Worksheet'!\$O\$22",
+        null,
+        1
+    ),
+
+    new DataSeriesValues(
+        'String',
+        "'Worksheet'!\$P\$22",
+        null,
+        1
     )
 ];
 
@@ -435,19 +580,32 @@ $valuesEP = [
 
     new DataSeriesValues(
         'Number',
-        "'Worksheet'!\$M\$" . $inicioEP . ":\$M\$" . $finEP,
+        "'Worksheet'!\$M\$".$inicioEP.":\$M\$".$finEP,
         null,
         count($estadisticasPisos)
     ),
 
     new DataSeriesValues(
         'Number',
-        "'Worksheet'!\$N\$" . $inicioEP . ":\$N\$" . $finEP,
+        "'Worksheet'!\$N\$".$inicioEP.":\$N\$".$finEP,
+        null,
+        count($estadisticasPisos)
+    ),
+
+    new DataSeriesValues(
+        'Number',
+        "'Worksheet'!\$O\$".$inicioEP.":\$O\$".$finEP,
+        null,
+        count($estadisticasPisos)
+    ),
+
+    new DataSeriesValues(
+        'Number',
+        "'Worksheet'!\$P\$".$inicioEP.":\$P\$".$finEP,
         null,
         count($estadisticasPisos)
     )
 ];
-
 $seriesEP = new DataSeries(
 
     DataSeries::TYPE_BARCHART,
@@ -468,11 +626,11 @@ $seriesEP = new DataSeries(
         new Legend(Legend::POSITION_BOTTOM),
         new PlotArea(null, [$seriesEP])
     );
-    $chart4->setTopLeftPosition('O' . ($finEP + 2));
-    $chart4->setBottomRightPosition('U' . ($finEP + 18));
+    $chart4->setTopLeftPosition('O' . ($finEP + 4));
+    $chart4->setBottomRightPosition('U' . ($finEP + 20));
     $sheet->addChart($chart4);
 
-    $sheet->getStyle('I1:N100')->applyFromArray([
+    $sheet->getStyle('I1:P100')->applyFromArray([
 
     'font' => [
         'size' => 9
@@ -508,7 +666,7 @@ $seriesEP = new DataSeries(
     $writer->setIncludeCharts(true);
 
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="dashboard.xlsx"');
+    header('Content-Disposition: attachment;filename="Estadisticas.xlsx"');
     header('Cache-Control: max-age=0');
 
     $writer->save('php://output');

@@ -69,6 +69,14 @@ class HistorialCodigosController {
         $modelo = new HistorialCodigos();
         $modelo->eliminar($id);
 
+        $mov = new Movimientos();
+        $mov->registrar(
+            'historial_codigos',
+            'eliminar',
+            'Eliminó un código',
+            $id
+        );
+
         header("Location: index.php?modulo=historial_codigos&mensaje=eliminado");
         exit();
     }
