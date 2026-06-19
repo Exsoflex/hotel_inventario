@@ -358,16 +358,21 @@ function filtrar() {
 
     let texto = buscador.value.toLowerCase();
 
-    // recorrer cada piso
     document.querySelectorAll(".bloque-piso").forEach(function(bloque) {
 
         let filas = bloque.querySelectorAll("tbody tr");
 
         let hayVisibles = false;
 
+        let tituloPiso = bloque.querySelector("h2")
+            .textContent
+            .toLowerCase();
+
         filas.forEach(function(fila) {
 
-            let contenido = fila.textContent.toLowerCase();
+            let contenido = (
+                fila.textContent + " " + tituloPiso
+            ).toLowerCase();
 
             let coincide = contenido.includes(texto);
 
@@ -379,7 +384,6 @@ function filtrar() {
 
         });
 
-        // ocultar TODO el piso si no hay resultados
         bloque.style.display = hayVisibles ? "" : "none";
 
     });

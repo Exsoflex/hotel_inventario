@@ -73,7 +73,7 @@ class HistorialCodigosController {
         $mov->registrar(
             'historial_codigos',
             'eliminar',
-            'Eliminó un código',
+            'Eliminó una busqueda',
             $id
         );
 
