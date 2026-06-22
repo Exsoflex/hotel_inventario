@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="assets/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@100..1000&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/hotel_inventario/assets/img/HLH_logo.png?">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
     (function(){

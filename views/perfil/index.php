@@ -1,4 +1,3 @@
--- Active: 1771267609556@@127.0.0.1@3306@hotel_inventario
 <?php
 /** @var array{nombre: string, correo: string, rol: string} $perfil */
 /** @var array<int, array{modulo: string, accion: string, descripcion: string, fecha: string}> $movimientos */
