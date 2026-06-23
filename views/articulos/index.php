@@ -80,10 +80,17 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
             <?php if(
             in_array(
                 $_SESSION['usuario']['rol'],
-                ['admin', 'supervisor']
+                ['admin']
             )
             ): ?>
             <th>Eliminar</th>
+            <?php endif; ?>
+            <?php if(
+            in_array(
+                $_SESSION['usuario']['rol'],
+                ['admin', 'supervisor']
+            )
+            ): ?>
             <th>Editar</th>
             <?php endif; ?>
         </tr>
@@ -102,7 +109,7 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
                 <?php if(
                 in_array(
                     $_SESSION['usuario']['rol'],
-                    ['admin', 'supervisor']
+                    ['admin']
                 )
                 ): ?>
                 <td>
@@ -115,6 +122,13 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
                     Eliminar
                     </a>
                 </td>
+                <?php endif; ?>
+                <?php if(
+                in_array(
+                    $_SESSION['usuario']['rol'],
+                    ['admin', 'supervisor']
+                )
+                ): ?>
                 <td>
                     <a
                     class="btn-editar"
