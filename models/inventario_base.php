@@ -22,7 +22,9 @@ class Inventario_base {
         FROM inventario_base
         
         JOIN articulos
-            ON inventario_base.articulo_id = articulos.id";
+            ON inventario_base.articulo_id = articulos.id
+            
+        ORDER BY inventario_base.tipo_habitacion ASC";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();

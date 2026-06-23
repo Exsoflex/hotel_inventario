@@ -575,9 +575,9 @@ new Chart(ctxHabitaciones, {
 
                 data: habitacionesFaltantes,
 
-                backgroundColor: '#a836f4b3',
+                backgroundColor: '#e11e7999',
 
-                borderColor: '#ac28c6',
+                borderColor: '#a21f76',
 
                 borderWidth: 1,
 
@@ -604,9 +604,9 @@ new Chart(ctxHabitaciones, {
 
                 data: habitacionesMixtas,
 
-                backgroundColor: '#e11e7999',
+                backgroundColor: '#a836f4b3',
 
-                borderColor: '#a21f76',
+                borderColor: '#ac28c6',
 
                 borderWidth: 1,
 
