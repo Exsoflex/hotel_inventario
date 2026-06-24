@@ -14,7 +14,7 @@ class Usuarios {
 
     public function obtenerTodo(){
 
-        $sql = "SELECT * FROM usuarios ORDER BY nombre";
+        $sql = "SELECT * FROM usuarios ORDER BY rol ASC";
 
         $stmt = $this->conn->prepare($sql);
 
