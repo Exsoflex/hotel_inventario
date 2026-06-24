@@ -12,10 +12,18 @@ class Inventario {
 
     }
 
-    public function obtenerTodo() {
+    public function obtenerTodo(
+        $piso = null,
+        $buscar = '',
+        $estado = '',
+        $articulos = ''
+    ) {
 
         $sql = "SELECT 
             inventario.id,
+            inventario.habitacion_id,
+            inventario.articulo_id,
+            habitaciones.piso,
             habitaciones.numero,
             articulos.nombre,
             articulos.usa_codigo_barras,
@@ -28,9 +36,60 @@ class Inventario {
         JOIN habitaciones 
             ON inventario.habitacion_id = habitaciones.id
         JOIN articulos
-            ON inventario.articulo_id = articulos.id";
+            ON inventario.articulo_id = articulos.id
+        WHERE 1 = 1";
+
+        if ($piso !== null) {
+            $sql .= " AND habitaciones.piso = :piso";
+        }
+
+        if ($buscar !== '') {
+            $sql .= " AND (
+                habitaciones.numero LIKE :buscar
+                OR articulos.nombre LIKE :buscar
+                OR inventario.comentarios LIKE :buscar
+                OR inventario.codigo_barras LIKE :buscar
+            )";
+        }
+
+        if ($estado !== '') {
+            $sql .= " AND inventario.estado = :estado";
+        }
+
+        $articulosSeleccionados = array_filter(
+            array_map('trim', explode(',', $articulos))
+        );
+
+        if (!empty($articulosSeleccionados)) {
+            $placeholders = [];
+
+            foreach ($articulosSeleccionados as $indice => $articulo) {
+                $placeholders[] = ":articulo_$indice";
+            }
+
+            $sql .= " AND LOWER(articulos.nombre) IN (" . implode(',', $placeholders) . ")";
+        }
+
+        $sql .= " ORDER BY habitaciones.piso, habitaciones.numero, articulos.nombre";
 
         $stmt = $this->conn->prepare($sql);
+
+        if ($piso !== null) {
+            $stmt->bindValue(':piso', $piso, PDO::PARAM_INT);
+        }
+
+        if ($buscar !== '') {
+            $stmt->bindValue(':buscar', "%$buscar%");
+        }
+
+        if ($estado !== '') {
+            $stmt->bindValue(':estado', $estado);
+        }
+
+        foreach ($articulosSeleccionados as $indice => $articulo) {
+            $stmt->bindValue(":articulo_$indice", strtolower($articulo));
+        }
+
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -44,6 +103,18 @@ class Inventario {
         $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function obtenerPisos() {
+
+        $sql = "SELECT DISTINCT piso
+                FROM habitaciones
+                ORDER BY piso";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
     public function obtenerArticulos() {

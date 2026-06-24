@@ -191,6 +191,14 @@ switch($action) {
         $controller->exportar();
         break;
 
+    case 'ajax':
+        $controller->ajax();
+        break;
+
+    case 'api':
+        $controller->ajax();
+        break;
+
     default:
         $controller->index();
         break;

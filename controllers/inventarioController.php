@@ -17,6 +17,7 @@ private function obtenerFiltrosDesdeRequest() {
         'buscar' => trim($_REQUEST['buscar'] ?? ''),
         'estado' => trim($_REQUEST['estado'] ?? ($_REQUEST['estado_filtro'] ?? '')),
         'articulos' => trim($_REQUEST['articulos'] ?? ($_REQUEST['articulos_filtro'] ?? '')),
+        'piso' => isset($_REQUEST['piso']) ? (int) $_REQUEST['piso'] : 1,
     ];
 }
 
@@ -30,13 +31,35 @@ private function crearQueryInventario($mensaje = null, $filtros = []) {
         $query['mensaje'] = $mensaje;
     }
 
-    foreach (['buscar', 'estado', 'articulos'] as $filtro) {
+    foreach (['buscar', 'estado', 'articulos', 'piso'] as $filtro) {
         if (!empty($filtros[$filtro])) {
             $query[$filtro] = $filtros[$filtro];
         }
     }
 
     return http_build_query($query);
+}
+
+private function agruparPorHabitacion($inventarios) {
+
+    $agrupado = [];
+
+    foreach ($inventarios as $item) {
+
+        $numero = $item['numero'];
+
+        if (!isset($agrupado[$numero])) {
+            $agrupado[$numero] = [
+                'numero' => $item['numero'],
+                'piso' => $item['piso'],
+                'items' => []
+            ];
+        }
+
+        $agrupado[$numero]['items'][] = $item;
+    }
+
+    return array_values($agrupado);
 }
 
 public function index() {
@@ -46,8 +69,28 @@ public function index() {
     $inventarios = $inventario->obtenerTodo();
     $habitaciones = $inventario->obtenerHabitaciones();
     $articulos = $inventario->obtenerArticulos();
+    $pisos = $inventario->obtenerPisos();
+    $piso = $filtros['piso'];
 
     require_once __DIR__ . "/../views/inventario/index.php";
+}
+
+public function ajax() {
+
+    $inventario = new Inventario();
+    $filtros = $this->obtenerFiltrosDesdeRequest();
+    $piso = $filtros['buscar'] === '' ? $filtros['piso'] : null;
+
+    $inventarios = $inventario->obtenerTodo(
+        $piso,
+        $filtros['buscar'],
+        $filtros['estado'],
+        $filtros['articulos']
+    );
+
+    header('Content-Type: application/json');
+    echo json_encode($this->agruparPorHabitacion($inventarios));
+    exit;
 }
 
 public function agregar() {
@@ -234,50 +277,16 @@ public function editar() {
 
 public function exportar() {
 
-$buscar = $_GET['buscar'] ?? '';
-$estado = $_GET['estado'] ?? '';
-$articulos = $_GET['articulos'] ?? '';
-
 $inventario = new Inventario();
-$inventarios = $inventario->obtenerTodo();
+$filtros = $this->obtenerFiltrosDesdeRequest();
+$piso = $filtros['buscar'] === '' ? $filtros['piso'] : null;
 
-$inventariosFiltrados = [];
-
-$articulosSeleccionados = [];
-
-if(!empty($articulos)){
-    $articulosSeleccionados =
-        explode(',', strtolower($articulos));
-}
-
-foreach($inventarios as $i){
-
-    $coincideBuscar =
-        empty($buscar)
-        || stripos($i['nombre'], $buscar) !== false
-        || stripos($i['numero'], $buscar) !== false;
-
-    $coincideEstado =
-        empty($estado)
-        || $i['estado'] === $estado;
-
-    $coincideArticulo =
-        empty($articulosSeleccionados)
-        || in_array(
-            strtolower($i['nombre']),
-            $articulosSeleccionados
-        );
-
-    if(
-        $coincideBuscar &&
-        $coincideEstado &&
-        $coincideArticulo
-    ){
-        $inventariosFiltrados[] = $i;
-    }
-}
-
-$inventarios = $inventariosFiltrados;
+$inventarios = $inventario->obtenerTodo(
+    $piso,
+    $filtros['buscar'],
+    $filtros['estado'],
+    $filtros['articulos']
+);
 
 
 $inventarioAgrupado = [];
