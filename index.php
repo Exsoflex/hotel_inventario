@@ -192,11 +192,14 @@ switch($action) {
         break;
 
     case 'ajax':
-        $controller->ajax();
-        break;
-
     case 'api':
-        $controller->ajax();
+        if (method_exists($controller, 'ajax')) {
+            $controller->ajax();
+            break;
+        }
+
+        http_response_code(404);
+        exit();
         break;
 
     default:

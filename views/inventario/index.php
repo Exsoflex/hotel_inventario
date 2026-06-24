@@ -191,7 +191,6 @@ $articulosFiltrados = array_filter(
 <br>
 
 <!-- /////////////////////////////////////////////////////// -->
-<?php if (empty($_GET['buscar'])): ?>
 <div class="paginacion-pisos <?= empty($filtros['buscar']) ? '' : 'hidden' ?>">
 
 <?php foreach($pisos as $p): ?>
@@ -207,8 +206,7 @@ $articulosFiltrados = array_filter(
 
 </div>
 
-<br>
-<?php endif; ?>
+<br><br>
 <div id="inventarioContenedor">
 <!-- JS pinta las habitaciones y cards de inventario -->
 </div>

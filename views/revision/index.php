@@ -116,7 +116,7 @@ value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
 </div>
 
 <!-- ====================== --> 
-<?php if (empty($_GET['buscar'])): ?>
+<br>
 <div class="paginacion-pisos">
 
 <?php foreach($pisos as $p): ?>
@@ -132,10 +132,9 @@ value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
 
 </div>
 
-<br>
-<?php endif; ?>
-<!-- ====================== --> 
 <br><br>
+
+<!-- ====================== --> 
 <div class="revision-grid" id="revisionGrid">
 <!-- Aquí JS va a pintar las habitaciones -->
 </div>
