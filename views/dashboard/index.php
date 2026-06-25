@@ -233,7 +233,7 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 
 <div class="grafica-card">
 
-    <h2>Faltantes por piso</h2>
+    <h2>Artículos faltantes por piso</h2>
 
     <div class="contenedor-grafica">
         <canvas id="graficaFaltantesPiso"></canvas>
@@ -253,7 +253,6 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 
 </div>
 
-    
 <br><br>
 
 

@@ -97,7 +97,8 @@ class Inventario {
 
     public function obtenerHabitaciones() {
 
-        $sql = "SELECT * FROM habitaciones";
+        $sql = "SELECT * FROM habitaciones
+                ORDER BY piso, numero ASC";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
