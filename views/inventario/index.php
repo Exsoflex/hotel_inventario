@@ -269,7 +269,7 @@ $articulosFiltrados = array_filter(
             >
 
             <label>Habitación</label>
-            <select name="habitacion_id">
+            <select name="habitacion_id" required>
                 <option value="">Seleccione una habitación</option>
                 <?php foreach($habitaciones as $h): ?>
 
@@ -288,7 +288,7 @@ $articulosFiltrados = array_filter(
                 <?php endforeach; ?>
             </select>
             <label>Artículo</label>
-            <select name="articulo_id" id="articulo_id">
+            <select name="articulo_id" id="articulo_id" required>
 
                 <option value="">Seleccione un artículo</option>
                 <?php foreach($articulos as $a): ?>
@@ -333,7 +333,7 @@ $articulosFiltrados = array_filter(
 
             <label>Estado</label>
 
-        <select name="estado">
+        <select name="estado" required>
         <option value="">Seleccione un estado</option>
 
             <option value="bueno"

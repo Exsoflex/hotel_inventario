@@ -220,6 +220,7 @@
 
             <label>Rol</label>
             <select name="rol" required>
+                <option value="">Selecciona un rol</option>
 
                 <option value="admin"
                 <?= isset($usuarioEditar) && $usuarioEditar['rol'] === 'admin'

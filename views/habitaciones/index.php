@@ -260,7 +260,7 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 
                 <option 
                 value="disponible"
-                <?= isset($habitacionEditar) && $habitacionEditar['estado'] == 'sencilla' ? 'selected' : '' ?>
+                <?= isset($habitacionEditar) && $habitacionEditar['estado'] == 'disponible' ? 'selected' : '' ?>
                 >
                     Disponible
                 </option>
