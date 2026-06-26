@@ -105,25 +105,43 @@ public function agregar() {
         $articulo_id   = $_POST['articulo_id'];
         $cantidad      = $_POST['cantidad'];
         $estado        = $_POST['estado'];
-        $comentarios   = $_POST['comentarios'];
+        $comentarios   = trim($_POST['comentarios'] ?? '');
+
+        $habitacion_id = filter_var($habitacion_id, FILTER_VALIDATE_INT);
+        $articulo_id   = filter_var($articulo_id, FILTER_VALIDATE_INT);
+        $cantidadInt   = filter_var($cantidad, FILTER_VALIDATE_INT);
+
+        if ($habitacion_id === false || $articulo_id === false || $cantidadInt === false || $cantidadInt < 0 || empty($estado)) {
+
+            $errorFormulario = 'Llena todos los campos con valores válidos por favor';
+            $inventarios     = (new Inventario())->obtenerTodo();
+            $habitaciones    = (new Inventario())->obtenerHabitaciones();
+            $articulos       = (new Inventario())->obtenerArticulos();
+
+            require_once __DIR__ . "/../views/inventario/index.php";
+            return;
+        }
+        $cantidad = $cantidadInt;
 
         $inventario = new Inventario();
-        $codigo     = $_POST['codigo_barras'] ?? null;
+        $codigo     = $_POST['codigo_barras'] ?? '';
+        if ($codigo !== '') {
+            $codigo = trim($codigo);
+        }
         $articulo   = $inventario->obtenerArticuloPorId($articulo_id);
 
-        if (!$articulo['usa_codigo_barras']) {
-            $codigo = null;
-        }
-
-        if (empty($habitacion_id) || empty($articulo_id) || $cantidad === '' || empty($estado)) {
-
-            $errorFormulario = 'Llena todos los campos por favor';
+        if (!$articulo) {
+            $errorFormulario = 'El artículo seleccionado no es válido.';
             $inventarios     = $inventario->obtenerTodo();
             $habitaciones    = $inventario->obtenerHabitaciones();
             $articulos       = $inventario->obtenerArticulos();
 
             require_once __DIR__ . "/../views/inventario/index.php";
             return;
+        }
+
+        if (!$articulo['usa_codigo_barras']) {
+            $codigo = null;
         }
 
         $resultado = $inventario->agregarInventario(
@@ -173,6 +191,13 @@ public function eliminar() {
 
     $inventario         = new Inventario();
     $inventarioEliminar = $inventario->obtenerPorId($id);
+
+    if (!$inventarioEliminar) {
+        $query = $this->crearQueryInventario('error_no_encontrado', $filtros);
+        header("Location: index.php?$query");
+        exit();
+    }
+
     $habitacion_id      = $inventarioEliminar['habitacion_id'];
     $articulo_id        = $inventarioEliminar['articulo_id'];
 
@@ -206,6 +231,13 @@ public function editar() {
         $filtros      = $this->obtenerFiltrosDesdeRequest();
 
         $inventarioEditar = $modelInventario->obtenerPorId($id);
+
+        if (!$inventarioEditar) {
+            $query = $this->crearQueryInventario('error_no_encontrado', $filtros);
+            header("Location: index.php?$query");
+            exit();
+        }
+
         $inventarios      = $modelInventario->obtenerTodo();
         $habitaciones     = $modelInventario->obtenerHabitaciones();
         $articulos        = $modelInventario->obtenerArticulos();
@@ -219,16 +251,16 @@ public function editar() {
         $id           = $_POST['id'];
         $filtros      = $this->obtenerFiltrosDesdeRequest();
 
-        $habitacion_id = trim($_POST['habitacion_id']);
-        $articulo_id   = trim($_POST['articulo_id']);
-        $cantidad      = trim($_POST['cantidad']);
-        $estado        = trim($_POST['estado']);
-        $comentarios   = trim($_POST['comentarios']);
+        $habitacion_id = filter_var($_POST['habitacion_id'], FILTER_VALIDATE_INT);
+        $articulo_id   = filter_var($_POST['articulo_id'], FILTER_VALIDATE_INT);
+        $cantidadInt   = filter_var($_POST['cantidad'], FILTER_VALIDATE_INT);
+        $estado        = $_POST['estado'];
+        $comentarios   = trim($_POST['comentarios'] ?? '');
         $codigo        = trim($_POST['codigo_barras'] ?? '');
 
-        if (empty($habitacion_id) || empty($articulo_id) || $cantidad === '' || empty($estado)) {
+        if ($habitacion_id === false || $articulo_id === false || $cantidadInt === false || $cantidadInt < 0 || empty($estado)) {
 
-            $errorFormulario  = 'Llena todos los campos por favor';
+            $errorFormulario  = 'Llena todos los campos con valores válidos por favor';
             $inventarioEditar = $modelInventario->obtenerPorId($id);
             $inventarios      = $modelInventario->obtenerTodo();
             $habitaciones     = $modelInventario->obtenerHabitaciones();
@@ -237,8 +269,20 @@ public function editar() {
             require_once __DIR__ . "/../views/inventario/index.php";
             return;
         }
+        $cantidad = $cantidadInt;
 
         $articulo = $modelInventario->obtenerArticuloPorId($articulo_id);
+
+        if (!$articulo) {
+            $errorFormulario  = 'El artículo seleccionado no es válido.';
+            $inventarioEditar = $modelInventario->obtenerPorId($id);
+            $inventarios      = $modelInventario->obtenerTodo();
+            $habitaciones     = $modelInventario->obtenerHabitaciones();
+            $articulos        = $modelInventario->obtenerArticulos();
+
+            require_once __DIR__ . "/../views/inventario/index.php";
+            return;
+        }
 
         if (!$articulo['usa_codigo_barras']) {
             $codigo = null;
@@ -277,205 +321,207 @@ public function editar() {
 
 public function exportar() {
 
-$inventario = new Inventario();
-$filtros = $this->obtenerFiltrosDesdeRequest();
-$piso = $filtros['buscar'] === '' ? $filtros['piso'] : null;
+   /* verificarRol(['admin', 'supervisor', 'operador']);*/
 
-$inventarios = $inventario->obtenerTodo(
-    $piso,
-    $filtros['buscar'],
-    $filtros['estado'],
-    $filtros['articulos']
-);
+    $inventario = new Inventario();
+    $filtros = $this->obtenerFiltrosDesdeRequest();
+    $piso = $filtros['buscar'] === '' ? $filtros['piso'] : null;
+
+    $inventarios = $inventario->obtenerTodo(
+        $piso,
+        $filtros['buscar'],
+        $filtros['estado'],
+        $filtros['articulos']
+    );
 
 
-$inventarioAgrupado = [];
+    $inventarioAgrupado = [];
 
 foreach($inventarios as $i){
 
-    $inventarioAgrupado[$i['numero']][] = $i;
+        $inventarioAgrupado[$i['numero']][] = $i;
 
-}
-ksort($inventarioAgrupado);
+    }
+    ksort($inventarioAgrupado);
 
-$spreadsheet = new Spreadsheet();
-$sheet = $spreadsheet->getActiveSheet();
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
 
-$sheet->setCellValue(
-    'A1',
-    'REPORTE DE INVENTARIO'
-);
+    $sheet->setCellValue(
+        'A1',
+        'REPORTE DE INVENTARIO'
+    );
 
-$sheet->mergeCells('A1:E1');
+    $sheet->mergeCells('A1:E1');
 
-date_default_timezone_set('America/Matamoros');
+    date_default_timezone_set('America/Matamoros');
 
-$sheet->setCellValue(
-    'A2',
-    'Fecha de exportación: ' . date('d/m/Y - h:i:s A')
-);
+    $sheet->setCellValue(
+        'A2',
+        'Fecha de exportación: ' . date('d/m/Y - h:i:s A')
+    );
 
-$sheet->mergeCells('A2:E2');
+    $sheet->mergeCells('A2:E2');
 
-$fila = 4;
+    $fila = 4;
 
-foreach($inventarioAgrupado as $numero => $items){
+    foreach($inventarioAgrupado as $numero => $items){
 
-$sheet->setCellValue(
-    'A' . $fila,
-    'HABITACIÓN ' . $numero
-);
+        $sheet->setCellValue(
+            'A' . $fila,
+            'HABITACIÓN ' . $numero
+        );
 
-$sheet->mergeCells(
-    'A' . $fila . ':E' . $fila
-);
+        $sheet->mergeCells(
+            'A' . $fila . ':E' . $fila
+        );
 
-$sheet->getStyle(
-    'A' . $fila . ':E' . $fila
-)->applyFromArray([
+        $sheet->getStyle(
+            'A' . $fila . ':E' . $fila
+        )->applyFromArray([
 
-    'font' => [
-        'bold' => true,
-        'size' => 14
-    ],
+            'font' => [
+                'bold' => true,
+                'size' => 14
+            ],
 
-    'fill' => [
-        'fillType' => Fill::FILL_SOLID,
-        'startColor' => [
-            'rgb' => 'B6D7A8'
-        ]
-    ]
-]);
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => [
+                    'rgb' => 'B6D7A8'
+                ]
+            ]
+        ]);
 
-$fila++;
+        $fila++;
 
-$sheet->setCellValue('A' . $fila, 'Artículo');
-$sheet->setCellValue('B' . $fila, 'Cantidad');
-$sheet->setCellValue('C' . $fila, 'Estado');
-$sheet->setCellValue('D' . $fila, 'Comentarios');
-$sheet->setCellValue('E' . $fila, 'Código');
+        $sheet->setCellValue('A' . $fila, 'Artículo');
+        $sheet->setCellValue('B' . $fila, 'Cantidad');
+        $sheet->setCellValue('C' . $fila, 'Estado');
+        $sheet->setCellValue('D' . $fila, 'Comentarios');
+        $sheet->setCellValue('E' . $fila, 'Código');
 
-$sheet->getStyle(
-    'A' . $fila . ':E' . $fila
-)->applyFromArray([
+        $sheet->getStyle(
+            'A' . $fila . ':E' . $fila
+        )->applyFromArray([
 
-    'font' => [
-        'bold' => true
-    ],
+            'font' => [
+                'bold' => true
+            ],
 
-    'fill' => [
-        'fillType' => Fill::FILL_SOLID,
-        'startColor' => [
-            'rgb' => 'D9EAD3'
-        ]
-    ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => [
+                    'rgb' => 'D9EAD3'
+                ]
+            ],
 
-    'alignment' => [
-    'horizontal' => Alignment::HORIZONTAL_CENTER
-    ]
-]);
+            'alignment' => [
+            'horizontal' => Alignment::HORIZONTAL_CENTER
+            ]
+        ]);
 
-$fila++;
+        $fila++;
 
-foreach($items as $i){
+        foreach($items as $i){
 
-$sheet->setCellValue(
-    'A' . $fila,
-    $i['nombre']
-);
+        $sheet->setCellValue(
+            'A' . $fila,
+            $i['nombre']
+        );
 
-$sheet->setCellValue(
-    'B' . $fila,
-    $i['cantidad']
-);
+        $sheet->setCellValue(
+            'B' . $fila,
+            $i['cantidad']
+        );
 
-$sheet->setCellValue(
-    'C' . $fila,
-    $i['estado']
-);
+        $sheet->setCellValue(
+            'C' . $fila,
+            $i['estado']
+        );
 
-$sheet->setCellValue(
-    'D' . $fila,
-    $i['comentarios']
-);
+        $sheet->setCellValue(
+            'D' . $fila,
+            $i['comentarios']
+        );
 
-$sheet->setCellValue(
-    'E' . $fila,
-    $i['codigo_barras']
-);
+        $sheet->setCellValue(
+            'E' . $fila,
+            $i['codigo_barras']
+        );
 
-$fila++;
-}
-$fila += 2;
-}
+        $fila++;
+        }
+        $fila += 2;
+        }
 
 
-foreach(range('A', 'E') as $columna){
+    foreach(range('A', 'E') as $columna){
 
-    $sheet->getColumnDimension($columna)
-        ->setAutoSize(true);
-}
+        $sheet->getColumnDimension($columna)
+            ->setAutoSize(true);
+    }
 
-$sheet->getColumnDimension('D')
-    ->setWidth(40);
+    $sheet->getColumnDimension('D')
+        ->setWidth(40);
 
     $sheet->getStyle('D:D')
-    ->getAlignment()
-    ->setWrapText(true);
+        ->getAlignment()
+        ->setWrapText(true);
 
     $sheet->getStyle(
     'A1:E' . ($fila - 1)
 )->applyFromArray([
 
-    'borders' => [
-        'allBorders' => [
-            'borderStyle' =>
-                \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' =>
+                    \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+            ]
         ]
-    ]
-]);
+    ]);
 
-$sheet->getStyle('A1:E1')->applyFromArray([
-    'font' => [
-        'bold' => true,
-        'size' => 16
-    ],
-    'alignment' => [
-        'horizontal' => Alignment::HORIZONTAL_CENTER
-    ]
-]);
+    $sheet->getStyle('A1:E1')->applyFromArray([
+        'font' => [
+            'bold' => true,
+            'size' => 16
+        ],
+        'alignment' => [
+            'horizontal' => Alignment::HORIZONTAL_CENTER
+        ]
+    ]);
 
-$sheet->getStyle('A2:E2')->applyFromArray([
-    'alignment' => [
-        'horizontal' => Alignment::HORIZONTAL_CENTER
-    ]
-]);
+    $sheet->getStyle('A2:E2')->applyFromArray([
+        'alignment' => [
+            'horizontal' => Alignment::HORIZONTAL_CENTER
+        ]
+    ]);
 
-$writer = new Xlsx($spreadsheet);
+    $writer = new Xlsx($spreadsheet);
 
-$mov = new Movimientos();
+    $mov = new Movimientos();
 
-$mov->registrar(
-    'inventario',
-    'exportar',
-    'Exportó la lista de inventario a Excel',
-    null
-);
+    $mov->registrar(
+        'inventario',
+        'exportar',
+        'Exportó la lista de inventario a Excel',
+        null
+    );
 
-header(
-    'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-);
+    header(
+        'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
 
-header(
-    'Content-Disposition: attachment;filename="inventario.xlsx"'
-);
+    header(
+        'Content-Disposition: attachment;filename="inventario.xlsx"'
+    );
 
-header(
-    'Cache-Control: max-age=0'
-);
+    header(
+        'Cache-Control: max-age=0'
+    );
 
-$writer->save('php://output');
-exit;
+    $writer->save('php://output');
+    exit;
 }
 }
 

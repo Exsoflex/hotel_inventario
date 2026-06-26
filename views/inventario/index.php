@@ -44,6 +44,16 @@ $articulosFiltrados = array_filter(
 
 <?php if(isset($_GET['mensaje'])): ?>
 
+    <?php if($_GET['mensaje'] == 'error_no_encontrado'): ?>
+
+        <div class="alerta-error">
+
+            Registro no encontrado o ya eliminado
+
+        </div>
+
+    <?php else: ?>
+
     <div class="alerta-exito">
 
         <?php if($_GET['mensaje'] == 'agregado'): ?>
@@ -59,6 +69,8 @@ $articulosFiltrados = array_filter(
         <?php endif; ?>
 
     </div>
+
+    <?php endif; ?>
 
 <?php endif; ?>
 
