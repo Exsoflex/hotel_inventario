@@ -147,6 +147,6 @@ value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
 <?php require_once __DIR__ . "/../layout/footer.php"; ?>
 
 <!-- /////////////////////////////////////////////////////// -->
-<script src="/hotel_inventario/assets/js/index.js"></script>
+<script src="/hotel_inventario/assets/js/revision/index.js"></script>
 </body>
 </html>
