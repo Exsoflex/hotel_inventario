@@ -163,6 +163,9 @@
                 <p>
                     Completa la información del usuario
                 </p>
+                <p style="font-weight: 550; opacity: 40%;">
+                    ⚠ (Los usuarios creados no se podrán eliminar por cuestiones de seguridad e integridad de datos)
+                </p>
             </div>
 
             <button onclick="cerrarModal()">

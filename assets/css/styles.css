@@ -1597,8 +1597,8 @@ a:hover::after {
 
 .estado-sobrante{
 
-    background: #fff3cd;
-    color: #856404;
+    background:#ffd5492c;
+    color:#cb9d10;
    /* border: 1px solid #ffe69c;*/
 
     padding: 10px 16px;
@@ -1678,8 +1678,8 @@ a:hover::after {
 
 .badge-sobrante{
 
-    background:#fff3cd;
-    color:#856404;
+    background:#ffd5492c;
+    color:#cb9d10;
 
     padding:8px 14px;
     border-radius:20px;
