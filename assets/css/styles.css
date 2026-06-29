@@ -215,40 +215,69 @@ body::before {
         radial-gradient(circle at 85% 15%, var(--bg-ambient-2) 0%, transparent 26%),
         radial-gradient(circle at 50% 90%, var(--bg-ambient-3) 0%, transparent 30%),
         var(--bg-gradient);
-    background-size: 200% 200%, 200% 200%, 200% 200%, 260% 260%;
+    background-size: 200% 200%, 200% 200%, 200% 200%, 300% 300%;
     background-repeat: no-repeat;
-    background-position: 0% 0%, 100% 0%, 50% 100%, 50% 50%;
-    animation: fondoAnimado 22s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+    background-position: 0% 0%, 100% 0%, 50% 100%, 0% 0%;
+    animation: fondoAnimado 20s cubic-bezier(0.42, 0, 0.58, 1) infinite;
     transform: translateZ(0);
     will-change: background-position, background-size;
 }
 
 @keyframes fondoAnimado {
 
-    0%, 100% {
-        background-position: 0% 0%, 100% 0%, 50% 100%, 50% 50%;
-        background-size: 200% 200%, 200% 200%, 200% 200%, 260% 260%;
+    0% {
+        background-position: 0% 0%, 100% 0%, 50% 100%, 0% 0%;
+        background-size: 200% 200%, 200% 200%, 200% 200%, 300% 300%;
     }
 
     20% {
-        background-position: 45% 18%, 70% 8%, 58% 92%, 42% 32%;
-        background-size: 230% 230%, 220% 220%, 240% 240%, 290% 290%;
+        background-position: 25% 5%, 90% 10%, 55% 90%, 15% 20%;
+        background-size: 220% 220%, 210% 210%, 280% 280%, 350% 350%;
     }
 
     40% {
-        background-position: 80% 35%, 25% 72%, 5% 12%, 62% 58%;
-        background-size: 260% 260%, 235% 235%, 220% 220%, 310% 310%;
+        background-position: 60% 10%, 20% 85%, 40% 5%, 65% 30%;
+        background-size: 320% 320%, 200% 200%, 260% 260%, 420% 420%;
     }
 
     60% {
-        background-position: 22% 70%, 88% 95%, 48% 6%, 35% 72%;
-        background-size: 240% 240%, 215% 215%, 235% 235%, 300% 300%;
+        background-position: 90% 30%, 50% 5%, 15% 95%, 40% 50%;
+        background-size: 380% 380%, 180% 180%, 240% 240%, 450% 450%;
     }
 
     80% {
-        background-position: 12% 45%, 60% 20%, 70% 85%, 55% 40%;
-        background-size: 225% 225%, 205% 205%, 250% 250%, 285% 285%;
+        background-position: 30% 80%, 95% 90%, 48% 8%, 20% 70%;
+        background-size: 300% 300%, 210% 210%, 250% 250%, 400% 400%;
     }
+
+    100% {
+        background-position: 0% 0%, 100% 0%, 50% 100%, 0% 0%;
+        background-size: 200% 200%, 200% 200%, 200% 200%, 300% 300%;
+    }
+}
+
+/* Estilos para botones del perfil con mejor contraste */
+.perfil-form button,
+.perfil-form .btn-cancelar {
+    position: relative;
+    z-index: 1;
+}
+
+.perfil-form button::before,
+.perfil-form .btn-cancelar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgba(255,255,255,0.1);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.perfil-form button:hover::before,
+.perfil-form .btn-cancelar:hover::before {
+    opacity: 1;
 }
 
 .background-blobs {
@@ -966,6 +995,8 @@ a:hover::after {
     cursor: pointer;
 
     transition: 0.2s ease;
+
+    border: 1px solid var(--border-color);
 }
 
 .user-menu-btn:hover {
@@ -973,6 +1004,8 @@ a:hover::after {
     background: var(--bg-hover);
 
     transform: translateY(-2px);
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .user-avatar {
@@ -1000,9 +1033,14 @@ a:hover::after {
     flex-shrink: 0;
 
     background-size: 220% 220%;
+
     background-position: 0% 0%;
+
     animation: avatarGradientMove 10s ease-in-out infinite;
+
     box-shadow: 0 8px 24px rgba(0,0,0,0.16);
+    
+    border: 2px solid rgba(255,255,255,0.8);
 }
 
 @keyframes avatarGradientMove {
@@ -1681,6 +1719,17 @@ a:hover::after {
     border-radius: 18px;
 
     font-weight: 700;
+    
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.btn-agregar:hover {
+
+    transform: translateY(-2px);
+
+    background: #1f2937;
+
+    box-shadow: 0 12px 25px rgba(0,0,0,0.12);
 }
 
 .inventario-grid {
@@ -2307,6 +2356,17 @@ input.filtro-articulo{
     font-weight: 700;
 
     transition: 0.2s;
+    
+    border: 1px solid var(--border-color);
+}
+
+.btn-cancelar:hover {
+
+    background: var(--bg-hover);
+
+    transform: translateY(-2px);
+
+    box-shadow: none;
 }
 
 .btn-confirmar {
@@ -2838,6 +2898,24 @@ body.sidebar-mobile-open {
 [data-theme="dark"] .btn-ver-inventario {
     background: var(--accent-gradient);
     color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+[data-theme="dark"] .btn-agregar:hover,
+[data-theme="dark"] .btn-ver-inventario:hover {
+    box-shadow: 
+        0 12px 25px rgba(147, 36, 92, 0.35),
+        inset 0 0 0 1px rgba(255,255,255,0.1);
+}
+
+[data-theme="dark"] .btn-cancelar {
+    background: var(--bg-surface-alt);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .btn-cancelar:hover {
+    background: var(--bg-hover);
 }
 
 [data-theme="dark"] .btn-mini {
@@ -3140,6 +3218,8 @@ body.sidebar-mobile-open {
     border-radius: 24px;
     padding: 20px;
     box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .perfil-color-selector {
@@ -3161,6 +3241,9 @@ body.sidebar-mobile-open {
     position: relative;
     overflow: hidden;
     padding: 0;
+    
+    /* Mejor visibilidad con fondos animados */
+    isolation: isolate;
 }
 
 .perfil-color-option::before {
@@ -3169,6 +3252,8 @@ body.sidebar-mobile-open {
     inset: 2px;
     border-radius: 50%;
     border: 1px solid rgba(255,255,255,0.3);
+    background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+    pointer-events: none;
 }
 
 .perfil-color-option:hover {
@@ -3181,10 +3266,43 @@ body.sidebar-mobile-open {
     box-shadow: 0 0 0 3px rgba(255,255,255,0.7), 0 12px 24px rgba(0,0,0,0.18);
 }
 
+.perfil-cabecera .user-avatar {
+    width: 64px;
+    height: 64px;
+    font-size: 26px;
+    flex-shrink: 0;
+    border: 3px solid rgba(255,255,255,0.9);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(255,255,255,0.3);
+}
+
+[data-theme="dark"] .perfil-cabecera .user-avatar {
+    border: 3px solid rgba(255,255,255,0.25);
+}
+
+.perfil-layout {
+    align-items: flex-start;
+}
+
+.perfil-form {
+    display: flex;
+    flex-direction: column;
+    width: 420px;
+    flex-shrink: 0;
+    padding-bottom: 115px;
+}
+
+.container.perfil-movimientos {
+    flex: 1;
+    min-width: 0;
+}
+
 .perfil-movimientos-tabla {
-    max-height: 300px;
+    max-height: 280px;
     overflow-y: auto;
-    border-radius: 12px;
+}
+
+.perfil-movimientos-tabla table {
+    margin-bottom: 0;
 }
 
 /* Responsive: apilar en pantallas chicas */

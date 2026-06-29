@@ -95,6 +95,11 @@ window.addEventListener("resize", () => {
 </script>
 
 
+<script>
+// La animación CSS se reinicia naturalmente en navegación tradicional
+// El keyframe está diseñado para que 0% y 100% sean idénticos (reinicio suave)
+</script>
+
 <!--/////////////////// USER SIDE BAR  //////////////////////////-->
 
 <script>

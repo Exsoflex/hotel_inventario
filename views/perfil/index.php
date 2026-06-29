@@ -96,7 +96,7 @@
                 </button>
             </div>
 
-            <div style="display:flex; gap:12px; margin-top:10px;">
+            <div style="display:flex; gap:12px; margin-top:18px;">
                 <button type="submit" class="btn-agregar">
                     Guardar cambios
                 </button>
