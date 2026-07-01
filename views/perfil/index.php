@@ -120,16 +120,14 @@
             <p style="margin:0 0 12px; color:#777;">Elige una paleta que se aplique al fondo de la aplicación, incluso si cambias de tema.</p>
 
             <div class="perfil-color-selector" role="group" aria-label="Seleccionar color de fondo">
-                <button type="button" class="perfil-color-option active" data-preset="sunset" aria-label="Naranja y morado" style="--preset-gradient: linear-gradient(120deg, #ffb06b 0%, #e86a8a 42%, #a648c8 78%, #7b4cf8 100%);"></button>
-                <button type="button" class="perfil-color-option" data-preset="aurora" aria-label="Naranja, rosa y azul" style="--preset-gradient: linear-gradient(120deg, #ff8f6b 0%, #ff5e7a 36%, #7b5cff 72%, #3b8cff 100%);"></button>
-                <button type="button" class="perfil-color-option" data-preset="ocean" aria-label="Azul y morado" style="--preset-gradient: linear-gradient(120deg, #2ec5f4 0%, #4d69ff 42%, #7a3ef2 78%, #b94cf5 100%);"></button>
-                <button type="button" class="perfil-color-option" data-preset="berry" aria-label="Rosa y morado" style="--preset-gradient: linear-gradient(120deg, #ff7ba2 0%, #c44bff 46%, #6f4bff 100%);"></button>
-                <button type="button" class="perfil-color-option" data-preset="mint" aria-label="Verde y azul" style="--preset-gradient: linear-gradient(120deg, #58d6c4 0%, #4aa6ff 42%, #7e56ff 100%);"></button>
+                <button type="button" class="perfil-color-option active" data-preset="default-light" aria-label="Clásico claro" style="--preset-gradient: linear-gradient(120deg, #f3e7d8 0%, #e5c6dc 40%, #a185ef 72%, #5a66f4 100%);"></button>
+                <button type="button" class="perfil-color-option" data-preset="default-dark" aria-label="Clásico oscuro" style="--preset-gradient: linear-gradient(125deg, #391c51 0%, #433c8b 28%, #55aab7 52%, #3d4b8a 78%, #38337d 100%);"></button>
+                <button type="button" class="perfil-color-option" data-preset="sunset" aria-label="Atardecer" style="--preset-gradient: linear-gradient(120deg, #ffb06b 0%, #e86a8a 42%, #a648c8 78%, #7b4cf8 100%);"></button>
+                <button type="button" class="perfil-color-option" data-preset="ocean" aria-label="Océano" style="--preset-gradient: linear-gradient(120deg, #2ec5f4 0%, #4d69ff 42%, #55aab7 100%);"></button>
+                <button type="button" class="perfil-color-option" data-preset="mint" aria-label="Menta" style="--preset-gradient: linear-gradient(120deg, #58d6c4 0%, #4aa6ff 42%, #7e56ff 100%);"></button>
                 <button type="button" class="perfil-color-option" data-preset="violet" aria-label="Violeta" style="--preset-gradient: linear-gradient(120deg, #9f7bff 0%, #6d4efc 48%, #4b5dff 100%);"></button>
-                <button type="button" class="perfil-color-option" data-preset="ember" aria-label="Coral y dorado" style="--preset-gradient: linear-gradient(120deg, #ff8a5c 0%, #ff6b6b 45%, #ffc857 100%);"></button>
-                <button type="button" class="perfil-color-option" data-preset="seafoam" aria-label="Turquesa y lavanda" style="--preset-gradient: linear-gradient(120deg, #42d7c8 0%, #5b7cff 45%, #9c7cff 100%);"></button>
-                <button type="button" class="perfil-color-option" data-preset="lilac" aria-label="Lila intenso" style="--preset-gradient: linear-gradient(120deg, #c084fc 0%, #8b5cf6 45%, #4f46e5 100%);"></button>
-                <button type="button" class="perfil-color-option" data-preset="scarlet" aria-label="Rojo y carmín" style="--preset-gradient: linear-gradient(120deg, #ff6b6b 0%, #ef4444 45%, #7c2d12 100%);"></button>
+                <button type="button" class="perfil-color-option" data-preset="ember" aria-label="Fuego" style="--preset-gradient: linear-gradient(120deg, #ff8a5c 0%, #ff6b6b 45%, #ffc857 100%);"></button>
+                <button type="button" class="perfil-color-option" data-preset="scarlet" aria-label="Carmesí" style="--preset-gradient: linear-gradient(120deg, #ff6b6b 0%, #ef4444 45%, #f97316 100%);"></button>
             </div>
         </div>
 
@@ -220,9 +218,15 @@ const presetButtons = document.querySelectorAll('.perfil-color-option');
 const savedPreset = localStorage.getItem('bgPreset');
 
 function applyBackgroundPreset(preset) {
-    if (preset) {
+    if (preset && preset !== 'default-light' && preset !== 'default-dark') {
         document.documentElement.setAttribute('data-bg-preset', preset);
         localStorage.setItem('bgPreset', preset);
+    } else if (preset === 'default-light') {
+        document.documentElement.setAttribute('data-bg-preset', 'default-light');
+        localStorage.setItem('bgPreset', 'default-light');
+    } else if (preset === 'default-dark') {
+        document.documentElement.setAttribute('data-bg-preset', 'default-dark');
+        localStorage.setItem('bgPreset', 'default-dark');
     } else {
         document.documentElement.removeAttribute('data-bg-preset');
         localStorage.removeItem('bgPreset');
@@ -233,6 +237,10 @@ function applyBackgroundPreset(preset) {
     });
 }
 
+// Aplicar el preset guardado o el predeterminado según el tema actual
+const currentTheme = document.documentElement.getAttribute('data-theme');
+const defaultPreset = currentTheme === 'dark' ? 'default-dark' : 'default-light';
+
 presetButtons.forEach((button) => {
     button.addEventListener('click', () => {
         applyBackgroundPreset(button.dataset.preset);
@@ -242,7 +250,7 @@ presetButtons.forEach((button) => {
 if (savedPreset) {
     applyBackgroundPreset(savedPreset);
 } else {
-    applyBackgroundPreset('sunset');
+    applyBackgroundPreset(defaultPreset);
 }
 </script>
 

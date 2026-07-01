@@ -111,28 +111,30 @@
     --avatar-gradient: linear-gradient(135deg, #ffb06b 0%, #e86a8a 45%, #a648c8 100%);
 }
 
-:root[data-bg-preset="aurora"] {
-    --bg-gradient: linear-gradient(120deg, #ff8f6b 0%, #ff5e7a 36%, #7b5cff 72%, #3b8cff 100%);
-    --bg-ambient-1: rgba(255, 143, 107, 0.24);
-    --bg-ambient-2: rgba(123, 92, 255, 0.2);
-    --bg-ambient-3: rgba(59, 140, 255, 0.18);
-    --avatar-gradient: linear-gradient(135deg, #ff8f6b 0%, #ff5e7a 45%, #3b8cff 100%);
+:root[data-bg-preset="default-light"] {
+    --bg-gradient: linear-gradient(120deg, #f3e7d8 0%, #e5c6dc 40%, #a185ef 72%, #5a66f4 100%);
+    --bg-ambient-1: rgba(243, 231, 216, 0.20);
+    --bg-ambient-2: rgba(229, 198, 220, 0.16);
+    --bg-ambient-3: rgba(115, 93, 239, 0.14);
+    --avatar-gradient: linear-gradient(135deg, #f3e7d8 0%, #e5c6dc 45%, #a185ef 100%);
 }
+
+:root[data-bg-preset="default-dark"] {
+    --bg-gradient: linear-gradient(125deg, #391c51 0%, #433c8b 28%, #55aab7 52%, #3d4b8a 78%, #38337d 100%);
+    --bg-ambient-1: rgba(255, 139, 97, 0.14);
+    --bg-ambient-2: rgba(111, 76, 255, 0.16);
+    --bg-ambient-3: rgba(76, 201, 240, 0.12);
+    --avatar-gradient: linear-gradient(135deg, #7b5cff 0%, #4a7cff 50%, #55aab7 100%);
+}
+
+
 
 :root[data-bg-preset="ocean"] {
-    --bg-gradient: linear-gradient(120deg, #2ec5f4 0%, #4d69ff 42%, #7a3ef2 78%, #b94cf5 100%);
+    --bg-gradient: linear-gradient(120deg, #2ec5f4 0%, #4d69ff 42%, #55aab7 100%);
     --bg-ambient-1: rgba(46, 197, 244, 0.24);
     --bg-ambient-2: rgba(77, 105, 255, 0.2);
-    --bg-ambient-3: rgba(185, 76, 245, 0.18);
-    --avatar-gradient: linear-gradient(135deg, #2ec5f4 0%, #4d69ff 45%, #7a3ef2 100%);
-}
-
-:root[data-bg-preset="berry"] {
-    --bg-gradient: linear-gradient(120deg, #ff7ba2 0%, #c44bff 46%, #6f4bff 100%);
-    --bg-ambient-1: rgba(255, 123, 162, 0.24);
-    --bg-ambient-2: rgba(196, 75, 255, 0.2);
-    --bg-ambient-3: rgba(111, 75, 255, 0.18);
-    --avatar-gradient: linear-gradient(135deg, #ff7ba2 0%, #c44bff 45%, #6f4bff 100%);
+    --bg-ambient-3: rgba(85, 170, 183, 0.18);
+    --avatar-gradient: linear-gradient(135deg, #2ec5f4 0%, #4d69ff 45%, #55aab7 100%);
 }
 
 :root[data-bg-preset="mint"] {
@@ -159,28 +161,14 @@
     --avatar-gradient: linear-gradient(135deg, #ff8a5c 0%, #ff6b6b 45%, #ffc857 100%);
 }
 
-:root[data-bg-preset="seafoam"] {
-    --bg-gradient: linear-gradient(120deg, #42d7c8 0%, #5b7cff 45%, #9c7cff 100%);
-    --bg-ambient-1: rgba(66, 215, 200, 0.24);
-    --bg-ambient-2: rgba(91, 124, 255, 0.2);
-    --bg-ambient-3: rgba(156, 124, 255, 0.18);
-    --avatar-gradient: linear-gradient(135deg, #42d7c8 0%, #5b7cff 45%, #9c7cff 100%);
-}
 
-:root[data-bg-preset="lilac"] {
-    --bg-gradient: linear-gradient(120deg, #c084fc 0%, #8b5cf6 45%, #4f46e5 100%);
-    --bg-ambient-1: rgba(192, 132, 252, 0.24);
-    --bg-ambient-2: rgba(139, 92, 246, 0.2);
-    --bg-ambient-3: rgba(79, 70, 229, 0.18);
-    --avatar-gradient: linear-gradient(135deg, #c084fc 0%, #8b5cf6 45%, #4f46e5 100%);
-}
 
 :root[data-bg-preset="scarlet"] {
-    --bg-gradient: linear-gradient(120deg, #ff6b6b 0%, #ef4444 45%, #7c2d12 100%);
+    --bg-gradient: linear-gradient(120deg, #ff6b6b 0%, #ef4444 45%, #f97316 100%);
     --bg-ambient-1: rgba(255, 107, 107, 0.24);
     --bg-ambient-2: rgba(239, 68, 68, 0.2);
-    --bg-ambient-3: rgba(124, 45, 18, 0.18);
-    --avatar-gradient: linear-gradient(135deg, #ff6b6b 0%, #ef4444 45%, #7c2d12 100%);
+    --bg-ambient-3: rgba(249, 115, 22, 0.18);
+    --avatar-gradient: linear-gradient(135deg, #ff6b6b 0%, #ef4444 45%, #f97316 100%);
 }
 
 /* ===== BODY ===== */
@@ -227,32 +215,27 @@ body::before {
 
     0% {
         background-position: 0% 0%, 100% 0%, 50% 100%, 0% 0%;
-        background-size: 200% 200%, 200% 200%, 200% 200%, 300% 300%;
+        background-size: 200% 200%, 200% 200%, 200% 200%, 280% 280%;
     }
 
-    20% {
-        background-position: 25% 5%, 90% 10%, 55% 90%, 15% 20%;
-        background-size: 220% 220%, 210% 210%, 280% 280%, 350% 350%;
+    30% {
+        background-position: 20% 5%, 85% 10%, 55% 85%, 15% 20%;
+        background-size: 240% 240%, 220% 220%, 240% 240%, 320% 320%;
     }
 
-    40% {
-        background-position: 60% 10%, 20% 85%, 40% 5%, 65% 30%;
-        background-size: 320% 320%, 200% 200%, 260% 260%, 420% 420%;
+    50% {
+        background-position: 60% 10%, 30% 85%, 40% 5%, 65% 30%;
+        background-size: 280% 280%, 200% 200%, 220% 220%, 360% 360%;
     }
 
-    60% {
-        background-position: 90% 30%, 50% 5%, 15% 95%, 40% 50%;
-        background-size: 380% 380%, 180% 180%, 240% 240%, 450% 450%;
-    }
-
-    80% {
+    70% {
         background-position: 30% 80%, 95% 90%, 48% 8%, 20% 70%;
-        background-size: 300% 300%, 210% 210%, 250% 250%, 400% 400%;
+        background-size: 260% 260%, 210% 210%, 230% 230%, 320% 320%;
     }
 
     100% {
         background-position: 0% 0%, 100% 0%, 50% 100%, 0% 0%;
-        background-size: 200% 200%, 200% 200%, 200% 200%, 300% 300%;
+        background-size: 200% 200%, 200% 200%, 200% 200%, 280% 280%;
     }
 }
 
@@ -3227,6 +3210,8 @@ body.sidebar-mobile-open {
     flex-wrap: wrap;
     gap: 12px;
     margin: 12px 0 6px;
+    max-height: 120px;
+    overflow-y: auto;
 }
 
 .perfil-color-option {
