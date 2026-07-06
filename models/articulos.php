@@ -12,7 +12,8 @@ class Articulos {
 
     public function obtenerTodo() {
 
-        $sql = "SELECT * FROM articulos";
+        $sql = "SELECT * FROM articulos
+        ORDER BY nombre ASC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
 
