@@ -42,22 +42,27 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
         ?>
 
         <div class="dashboard-buscador">
+            <div class="buscador-wrapper">
             <input 
-            type="text" 
-            id="buscador" 
-            placeholder="Buscar por habitación o articulo..."
-            autocomplete="off"
-            value="<?= htmlspecialchars($buscar) ?>"
-            >
+                type="text" 
+                id="buscador" 
+                placeholder="Buscar por habitación o articulo..."
+                autocomplete="off"
+                value="<?= htmlspecialchars($buscar) ?>"
+                >
+                <button type="button" id="btnLimpiarBusqueda" class="btn-limpiar-buscador" title="Limpiar búsqueda">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
 
-        <a
-            href="index.php?modulo=dashboard&accion=exportar&buscar=<?= urlencode($buscar) ?>"
-            data-base-url="index.php?modulo=dashboard&accion=exportar"
-            id="btnExportarDashboard"
-            class="menu-btn"
-            >
-            <i data-lucide="download"></i>
-        </a>
+            <a
+                href="index.php?modulo=dashboard&accion=exportar&buscar=<?= urlencode($buscar) ?>"
+                data-base-url="index.php?modulo=dashboard&accion=exportar"
+                id="btnExportarDashboard"
+                class="menu-btn"
+                >
+                <i data-lucide="download"></i>
+            </a>
         </div>
 
 <br>
@@ -323,6 +328,7 @@ $datosInventario = [
 
 const buscador = document.getElementById('buscador');
 const btnExportarDashboard = document.getElementById('btnExportarDashboard');
+const btnLimpiarBusqueda = document.getElementById('btnLimpiarBusqueda');
 
 function crearUrlConBusqueda(baseUrl) {
 
@@ -386,11 +392,27 @@ function filtrar() {
         bloque.style.display = hayVisibles ? "" : "none";
 
     });
-
+    
+    if (btnLimpiarBusqueda) {
+        btnLimpiarBusqueda.classList.toggle('hidden', !buscador.value);
+    }
 }
 
 buscador.addEventListener('input', filtrar);
-document.addEventListener('DOMContentLoaded', filtrar);
+document.addEventListener('DOMContentLoaded', function() {
+    filtrar();
+    if (btnLimpiarBusqueda) {
+        btnLimpiarBusqueda.classList.toggle('hidden', !buscador.value);
+    }
+});
+
+if (btnLimpiarBusqueda) {
+    btnLimpiarBusqueda.addEventListener('click', function() {
+        buscador.value = '';
+        filtrar();
+    });
+}
+
 </script>
 
 <script>

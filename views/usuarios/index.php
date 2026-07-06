@@ -33,11 +33,16 @@
 
     <div class="inventario-topbar">
 
+        <div class="buscador-wrapper">
         <input 
-        type="text" 
-        id="buscador" 
-        placeholder="Buscar usuarios..."
-        >
+            type="text" 
+            id="buscador" 
+            placeholder="Buscar usuarios..."
+            >
+            <button type="button" id="btnLimpiarBusqueda" class="btn-limpiar-buscador" title="Limpiar búsqueda">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
         <?php if(
         in_array(
             $_SESSION['usuario']['rol'],
@@ -301,7 +306,9 @@
 <script>
 
 const buscador = document.getElementById('buscador');
-buscador.addEventListener('keyup', function() {
+const btnLimpiarBusqueda = document.getElementById('btnLimpiarBusqueda');
+
+buscador.addEventListener('input', function() {
 
     let texto = buscador.value.toLowerCase();
     let filas = document.querySelectorAll("table tbody tr");
@@ -316,6 +323,23 @@ buscador.addEventListener('keyup', function() {
             fila.style.display = "none";
         }
     });
+    
+    if (btnLimpiarBusqueda) {
+        btnLimpiarBusqueda.classList.toggle('hidden', !buscador.value);
+    }
+});
+
+if (btnLimpiarBusqueda) {
+    btnLimpiarBusqueda.addEventListener('click', function() {
+        buscador.value = '';
+        buscador.dispatchEvent(new Event('input'));
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (btnLimpiarBusqueda) {
+        btnLimpiarBusqueda.classList.toggle('hidden', !buscador.value);
+    }
 });
 
 </script>

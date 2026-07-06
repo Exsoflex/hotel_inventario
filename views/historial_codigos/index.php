@@ -47,13 +47,19 @@
         method="POST"
         class="inventario-topbar"
     >
-        <input
-            type="text"
-            name="codigo"
-            placeholder="Escribe o escanea un código de barras..."
-            autofocus
-            required
-        >
+        <div class="buscador-wrapper historial-codigo-buscador">
+            <input
+                type="text"
+                name="codigo"
+                id="codigo"
+                placeholder="Escribe un código de barras..."
+                autofocus
+                required
+            >
+            <button type="button" id="btnLimpiarBusqueda" class="btn-limpiar-buscador" title="Limpiar búsqueda">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
         <button type="submit" class="btn-agregar">
             Buscar
         </button>
@@ -164,6 +170,23 @@ botonesEliminar.forEach(boton => {
 
 function cerrarModalEliminar() {
     modalEliminar.classList.remove('active');
+}
+
+const inputCodigo = document.getElementById('codigo');
+const btnLimpiarBusqueda = document.getElementById('btnLimpiarBusqueda');
+
+if (inputCodigo && btnLimpiarBusqueda) {
+    btnLimpiarBusqueda.classList.toggle('hidden', !inputCodigo.value);
+    
+    inputCodigo.addEventListener('input', function() {
+        btnLimpiarBusqueda.classList.toggle('hidden', !this.value);
+    });
+    
+    btnLimpiarBusqueda.addEventListener('click', function() {
+        inputCodigo.value = '';
+        btnLimpiarBusqueda.classList.add('hidden');
+        inputCodigo.focus();
+    });
 }
 </script>
 

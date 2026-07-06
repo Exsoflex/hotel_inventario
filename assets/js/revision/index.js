@@ -7,6 +7,7 @@ const paginacionPisos = document.querySelector('.paginacion-pisos');
 const btnFiltros = document.getElementById('btnFiltros');
 const menuFiltros = document.getElementById('menuFiltros');
 const btnLimpiarFiltros = document.getElementById('btnLimpiarFiltros');
+const btnLimpiarBusqueda = document.getElementById('btnLimpiarBusqueda');
 
 if (revisionGrid && buscador && filtroEstado && filtroTipo) {
     let requestActual = null;
@@ -87,6 +88,12 @@ if (revisionGrid && buscador && filtroEstado && filtroTipo) {
             const pisoLink = Number(url.searchParams.get('piso'));
             link.classList.toggle('activo', pisoLink === Number(window.pisoActual));
         });
+    }
+
+    function actualizarVisibilidadBotonLimpiar() {
+        if (btnLimpiarBusqueda) {
+            btnLimpiarBusqueda.classList.toggle('hidden', !buscador?.value);
+        }
     }
 
     function actualizarUrl() {
@@ -225,7 +232,10 @@ if (revisionGrid && buscador && filtroEstado && filtroTipo) {
         });
     }
 
-    buscador.addEventListener('input', cargarRevisionConEspera);
+    buscador.addEventListener('input', function() {
+        cargarRevisionConEspera();
+        actualizarVisibilidadBotonLimpiar();
+    });
     filtroEstado.addEventListener('change', cargarRevision);
     filtroTipo.addEventListener('change', cargarRevision);
 
@@ -266,7 +276,18 @@ if (revisionGrid && buscador && filtroEstado && filtroTipo) {
         });
     }
 
+    if (btnLimpiarBusqueda) {
+        btnLimpiarBusqueda.addEventListener('click', function() {
+            buscador.value = '';
+            filtroEstado.value = '';
+            filtroTipo.value = '';
+            menuFiltros?.classList.remove('active');
+            cargarRevision();
+        });
+    }
+
     cargarRevision();
+    actualizarVisibilidadBotonLimpiar();
 }
 
 function exportarExcelRevision() {

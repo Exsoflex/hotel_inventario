@@ -87,13 +87,18 @@ $articulosFiltrados = array_filter(
 
 <div class="inventario-topbar">
 
-    <input 
-        type="text" 
-        id="buscador" 
-        placeholder="Buscar..."
-        value="<?= htmlspecialchars($filtros['buscar']) ?>"
-    >
-
+<div class="buscador-wrapper">
+        <input 
+            type="text" 
+            id="buscador" 
+            placeholder="Buscar..."
+            value="<?= htmlspecialchars($filtros['buscar']) ?>"
+        >
+        <button type="button" id="btnLimpiarBusqueda" class="btn-limpiar-buscador" title="Limpiar búsqueda">
+            <i data-lucide="x"></i>
+        </button>
+    </div>
+    
     <button 
     class="btn-filtros"
     onclick="exportarExcel()">

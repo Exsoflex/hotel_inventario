@@ -15,6 +15,7 @@ const btnArticulos = document.getElementById('btnArticulos');
 const listaArticulos = document.getElementById('listaArticulos');
 const btnTodos = document.getElementById('seleccionarTodos');
 const btnLimpiar = document.getElementById('limpiarArticulos');
+const btnLimpiarBusqueda = document.getElementById('btnLimpiarBusqueda');
 const modalEliminar = document.getElementById('modalEliminar');
 const mensajeEliminar = document.getElementById('mensajeEliminar');
 const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
@@ -106,6 +107,12 @@ function actualizarPaginacion() {
         const pisoLink = Number(url.searchParams.get('piso'));
         link.classList.toggle('activo', pisoLink === Number(window.inventarioPisoActual));
     });
+}
+
+function actualizarVisibilidadBotonLimpiar() {
+    if (btnLimpiarBusqueda) {
+        btnLimpiarBusqueda.classList.toggle('hidden', !buscador?.value);
+    }
 }
 
 function actualizarUrl() {
@@ -296,7 +303,10 @@ window.cerrarModalEliminar = cerrarModalEliminar;
 window.exportarExcel = exportarExcel;
 
 if (buscador && filtroEstado && inventarioContenedor) {
-    buscador.addEventListener('input', cargarInventarioConEspera);
+    buscador.addEventListener('input', function() {
+        cargarInventarioConEspera();
+        actualizarVisibilidadBotonLimpiar();
+    });
     filtroEstado.addEventListener('change', cargarInventario);
 
     filtrosArticulo.forEach(check => {
@@ -358,6 +368,20 @@ if (buscador && filtroEstado && inventarioContenedor) {
         });
     }
 
+    if (btnLimpiarBusqueda) {
+        btnLimpiarBusqueda.addEventListener('click', function() {
+            buscador.value = '';
+            filtrosArticulo.forEach(check => {
+                check.checked = false;
+            });
+            if (filtroEstado) {
+                filtroEstado.value = '';
+            }
+            menuFiltros?.classList.remove('active');
+            cargarInventario();
+        });
+    }
+
     if (inventarioContenedor && modalEliminar && mensajeEliminar && btnConfirmarEliminar) {
         inventarioContenedor.addEventListener('click', function(e) {
             const boton = e.target.closest('.btn-eliminar');
@@ -394,4 +418,5 @@ if (buscador && filtroEstado && inventarioContenedor) {
 
     sincronizarFiltros();
     cargarInventario();
+    actualizarVisibilidadBotonLimpiar();
 }

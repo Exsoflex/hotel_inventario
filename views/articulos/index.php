@@ -35,13 +35,18 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 
     <div class="inventario-topbar">
 
+        <div class="buscador-wrapper">
         <input 
-        type="text" 
-        id="buscador" 
-        placeholder="Buscar articulos..."
-        value="<?= htmlspecialchars($buscar) ?>"
-        >
-
+            type="text" 
+            id="buscador" 
+            placeholder="Buscar articulos..."
+            value="<?= htmlspecialchars($buscar) ?>"
+            >
+            <button type="button" id="btnLimpiarBusqueda" class="btn-limpiar-buscador" title="Limpiar búsqueda">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        
         <a
         href="index.php?modulo=articulos&accion=exportar&buscar=<?= urlencode($buscar) ?>"
         data-base-url="index.php?modulo=articulos&accion=exportar"
@@ -274,6 +279,7 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 const buscador = document.getElementById('buscador');
 const formBuscar = document.getElementById('form_buscar');
 const btnExportar = document.getElementById('btnExportar');
+const btnLimpiarBusqueda = document.getElementById('btnLimpiarBusqueda');
 
 function crearUrlConBusqueda(baseUrl) {
 
@@ -325,13 +331,32 @@ function filtrarTabla() {
     });
 }
 
+function actualizarVisibilidadBotonLimpiar() {
+    if (btnLimpiarBusqueda) {
+        btnLimpiarBusqueda.classList.toggle('hidden', !buscador?.value);
+    }
+}
+
 function actualizarBusqueda() {
 
     sincronizarBusqueda();
     filtrarTabla();
+    actualizarVisibilidadBotonLimpiar();
 }
 
-buscador.addEventListener('keyup', actualizarBusqueda);
+if (buscador) {
+    buscador.addEventListener('input', function() {
+        actualizarBusqueda();
+    });
+    
+    if (btnLimpiarBusqueda) {
+        btnLimpiarBusqueda.addEventListener('click', function() {
+            buscador.value = '';
+            actualizarBusqueda();
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', actualizarBusqueda);
 
 </script>

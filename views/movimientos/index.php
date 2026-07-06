@@ -27,11 +27,16 @@
 <div class="container">
 
     <div class="inventario-topbar">
-        <input 
-            type="text" 
-            id="buscador" 
-            placeholder="Buscar por usuario, módulo, acción..."
-        >
+        <div class="buscador-wrapper">
+            <input 
+                type="text" 
+                id="buscador" 
+                placeholder="Buscar por usuario, módulo, acción..."
+            >
+            <button type="button" id="btnLimpiarBusqueda" class="btn-limpiar-buscador" title="Limpiar búsqueda">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
     </div>
 
     <br>
@@ -133,8 +138,9 @@
 <script>
 
 const buscador = document.getElementById('buscador');
+const btnLimpiarBusqueda = document.getElementById('btnLimpiarBusqueda');
 
-buscador.addEventListener('keyup', function() {
+buscador.addEventListener('input', function() {
 
     let texto = buscador.value.toLowerCase();
     let filas = document.querySelectorAll("table tbody tr");
@@ -146,6 +152,23 @@ buscador.addEventListener('keyup', function() {
 
         fila.style.display = contenido.includes(texto) ? "" : "none";
     });
+    
+    if (btnLimpiarBusqueda) {
+        btnLimpiarBusqueda.classList.toggle('hidden', !buscador.value);
+    }
+});
+
+if (btnLimpiarBusqueda) {
+    btnLimpiarBusqueda.addEventListener('click', function() {
+        buscador.value = '';
+        buscador.dispatchEvent(new Event('input'));
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (btnLimpiarBusqueda) {
+        btnLimpiarBusqueda.classList.toggle('hidden', !buscador.value);
+    }
 });
 
 </script>

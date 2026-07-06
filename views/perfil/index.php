@@ -131,15 +131,20 @@
             </div>
         </div>
 
-        <div class="perfil-actividad-card">
+<div class="perfil-actividad-card">
             <h2 style="margin-bottom:16px;">Mi actividad reciente</h2>
 
+            <div class="buscador-wrapper">
             <input
                 type="text"
                 id="buscadorMovimientos"
                 placeholder="Buscar en mis movimientos..."
-                style="margin-bottom:16px;"
-            >
+                style="margin-bottom:0px;"
+                >
+                <button type="button" id="btnLimpiarBusqueda" class="btn-limpiar-buscador" title="Limpiar búsqueda">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
 
             <div class="perfil-movimientos-tabla">
                 <table>
@@ -206,12 +211,26 @@ btnMostrarPassword.addEventListener('click', function () {
 });
 
 // Buscador de movimientos
-document.getElementById('buscadorMovimientos').addEventListener('keyup', function () {
-    const texto = this.value.toLowerCase();
-    document.querySelectorAll('#tablaMovimientos tr').forEach(function (fila) {
-        fila.style.display = fila.textContent.toLowerCase().includes(texto) ? '' : 'none';
+const buscadorMovimientos = document.getElementById('buscadorMovimientos');
+const btnLimpiarBusqueda = document.getElementById('btnLimpiarBusqueda');
+
+if (buscadorMovimientos && btnLimpiarBusqueda) {
+    buscadorMovimientos.addEventListener('input', function () {
+        const texto = this.value.toLowerCase();
+        document.querySelectorAll('#tablaMovimientos tr').forEach(function (fila) {
+            fila.style.display = fila.textContent.toLowerCase().includes(texto) ? '' : 'none';
+        });
+        btnLimpiarBusqueda.classList.toggle('hidden', !this.value);
     });
-});
+
+    btnLimpiarBusqueda.addEventListener('click', function() {
+        buscadorMovimientos.value = '';
+        buscadorMovimientos.dispatchEvent(new Event('input'));
+    });
+
+    // Inicializar visibilidad
+    btnLimpiarBusqueda.classList.toggle('hidden', !buscadorMovimientos.value);
+}
 
 // Selector de color de fondo
 const presetButtons = document.querySelectorAll('.perfil-color-option');
