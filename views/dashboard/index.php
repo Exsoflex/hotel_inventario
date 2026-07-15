@@ -199,7 +199,7 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
         <br>
         <p style="color:orange;">⚠️ Con sobrantes: <strong><?= $conSobrantes ?></strong></p>
         <br>
-        <p style="color:blue;">⛔ Mixtas: <strong><?= $mixtas ?></strong></p>
+        <p style="color:blue;">⛔ Mixtas (Faltantes y Sobrantes): <strong><?= $mixtas ?></strong></p>
         <br>
         <p style="color:gray;">🚫 Sin inventario base: <strong><?= $sinBase ?></strong></p>
 

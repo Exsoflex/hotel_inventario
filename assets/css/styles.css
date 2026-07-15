@@ -2707,6 +2707,11 @@ input.filtro-articulo{
     color: #089773;
 }
 
+.badge-buscar {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
 /* ===== BADGES ROL ===== */
 
 .estado-admin {

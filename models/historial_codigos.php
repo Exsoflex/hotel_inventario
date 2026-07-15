@@ -78,7 +78,7 @@ public function obtenerTodo($usuario_id = null) {
         $sql .= " WHERE hc.usuario_id = :usuario_id";
     }
 
-    $sql .= " ORDER BY hc.fecha_hora DESC";
+    $sql .= " ORDER BY hc.fecha_hora DESC LIMIT 50";
 
     $stmt = $this->conn->prepare($sql);
 

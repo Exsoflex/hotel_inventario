@@ -52,7 +52,7 @@
                 type="text"
                 name="codigo"
                 id="codigo"
-                placeholder="Escribe un código de barras..."
+                placeholder="Escribe un código..."
                 autofocus
                 required
             >

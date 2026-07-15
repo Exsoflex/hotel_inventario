@@ -50,6 +50,15 @@ class HistorialCodigosController {
         $usuario_id = $_SESSION['usuario']['id'];
         $modelo->registrar($usuario_id, $resultado['id']);
 
+        // Registrar movimiento de búsqueda
+        $mov = new Movimientos();
+        $mov->registrar(
+            'historial_codigos',
+            'buscar',
+            'Consultó el artículo: ' . $resultado['articulo'] . ' (Código: ' . $codigo . ')',
+            $resultado['id']
+        );
+
         // Redirigir a inventario con el código en la barra de búsqueda
         header("Location: index.php?modulo=inventario&buscar=" . urlencode($codigo));
         exit();
