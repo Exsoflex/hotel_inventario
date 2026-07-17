@@ -105,7 +105,7 @@ class HabitacionesController {
     public function eliminar() {
 
         verificarRol(
-        ['admin', 'supervisor']
+        ['admin']
         );
 
         $id = $_GET['id'];

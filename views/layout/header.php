@@ -54,7 +54,7 @@
             <i data-lucide="menu"></i>
         </button>
         <a href="index.php?modulo=dashboard">
-            <img src="assets/img/HLH_logo.png"
+            <img src="assets/img/HH_logo.png"
                  alt="logo"
                  class="topbar-logo">
         </a>
