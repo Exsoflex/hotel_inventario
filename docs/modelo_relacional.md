@@ -10,6 +10,9 @@
 >
 > Los diagramas usan sintaxis Mermaid (se renderizan en GitHub / VSCode con la
 > extension "Markdown Preview Mermaid Support").
+>
+> La numeracion de figuras y tablas (9.3.x) es continua entre los documentos
+> "Modelo Relacional" y "Diccionario de Datos".
 
 ---
 
@@ -102,6 +105,8 @@ erDiagram
     inventario     ||..o| inventario_backup : "respaldo (misma estructura)"
 ```
 
+<p align="center"><em>Figura 9.3.1. Diagrama Entidad-Relacion (ERD) completo de la base de datos.</em></p>
+
 ### Notas de diseno
 - **Relacion por texto:** `habitaciones.tipo` <-> `inventario_base.tipo_habitacion`
   (linea punteada). Unico vinculo debil del modelo; recomendable normalizar a
@@ -141,6 +146,8 @@ flowchart TD
     VEP --> DASH
 ```
 
+<p align="center"><em>Figura 9.3.2. Flujo de datos de la capa de vistas analiticas hacia el modulo Dashboard.</em></p>
+
 | Vista | Deriva de | Calcula |
 |---|---|---|
 | `vista_faltantes` | 4 tablas base | faltantes/sobrantes por habitacion+articulo |
@@ -148,6 +155,8 @@ flowchart TD
 | `vista_estadisticas_articulos` | vista_faltantes | faltantes agrupados por articulo |
 | `vista_estadisticas_pisos` | vista_dashboard | conteos por piso |
 | `faltantes_por_habitacion` | tablas base | vista auxiliar de faltantes |
+
+<p align="center"><em>Tabla 9.3.3. Resumen de las vistas analiticas y su origen de datos.</em></p>
 
 ---
 
@@ -180,6 +189,8 @@ flowchart LR
     C -->|render / JSON| V
 ```
 
+<p align="center"><em>Figura 9.3.4. Arquitectura MVC y flujo general de peticiones del sistema.</em></p>
+
 ---
 
 ## 4. Flujo de datos por operacion
@@ -203,6 +214,8 @@ sequenceDiagram
     DB-->>U: confirmacion + detalle
 ```
 
+<p align="center"><em>Figura 9.3.5. Diagrama de secuencia del escaneo de codigo de barras.</em></p>
+
 ### 4.2 Revision de inventario (faltantes/sobrantes)
 
 ```mermaid
@@ -216,6 +229,8 @@ flowchart TD
     CALC -->|iguales| OK[completo]
 ```
 
+<p align="center"><em>Figura 9.3.6. Flujo de calculo de faltantes y sobrantes en la revision de inventario.</em></p>
+
 ### 4.3 Auditoria (cualquier escritura)
 
 ```mermaid
@@ -224,6 +239,8 @@ flowchart LR
     REG --> INS[(INSERT movimientos<br/>usuario_id, modulo, accion,<br/>registro_id, descripcion)]
     INS --> AUD[Modulo Movimientos<br/>lista auditoria con JOIN usuarios]
 ```
+
+<p align="center"><em>Figura 9.3.7. Flujo de registro de auditoria ante cualquier operacion de escritura.</em></p>
 
 ---
 
@@ -254,6 +271,8 @@ flowchart TB
     end
 ```
 
+<p align="center"><em>Figura 9.3.8. Mapa de los JOINs realmente ejecutados por cada modulo.</em></p>
+
 | Modulo | Tablas / Vistas | JOINs principales |
 |---|---|---|
 | Auth / Perfil | usuarios, movimientos | - |
@@ -266,3 +285,5 @@ flowchart TB
 | Historial Codigos | historial_codigos, usuarios, inventario, articulos, habitaciones | hc -> usuarios, hc -> inventario -> articulos + habitaciones |
 | Movimientos | movimientos, usuarios | movimientos.usuario_id = usuarios.id |
 | Dashboard | vista_dashboard, vista_estadisticas_articulos, vista_estadisticas_pisos | (via vistas sobre vista_faltantes) |
+
+<p align="center"><em>Tabla 9.3.9. Mapa de tablas, vistas y JOINs principales utilizados por cada modulo.</em></p>

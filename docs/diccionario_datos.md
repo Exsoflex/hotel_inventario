@@ -3,6 +3,9 @@
 > Documentacion formal de la estructura de la base de datos del sistema
 > Hotel Inventario, alojada en MariaDB/MySQL a traves de XAMPP.
 > Motor: InnoDB. Codificacion: utf8mb4 / utf8mb4_general_ci.
+>
+> La numeracion de tablas (9.3.x) es continua respecto al documento
+> "Modelo Relacional" (que abarca de la 9.3.1 a la 9.3.9).
 
 ---
 
@@ -145,6 +148,8 @@ responsabilidad en las operaciones de auditoria.
 | `activo` | TINYINT(1) | NO | - | 1 | Estado de la cuenta: 1 = activa, 0 = deshabilitada. |
 | `ultimo_login` | TIMESTAMP | SI | - | NULL | Fecha y hora del ultimo inicio de sesion exitoso. |
 
+<p align="center"><em>Tabla 9.3.10. Diccionario de datos de la tabla usuarios.</em></p>
+
 **Indices:** PK (`id`) - UNIQUE `unique_nombre` (`nombre`) - UNIQUE `unique_correo` (`correo`).
 
 ---
@@ -163,6 +168,8 @@ individual y su `tipo` determina la plantilla de inventario que le corresponde.
 | `piso` | INT(11) | SI | - | NULL | Piso en el que se ubica la habitacion. |
 | `estado` | ENUM('disponible','ocupada','limpieza','mantenimiento','bloqueada') | SI | Indice | 'disponible' | Estado operativo actual de la habitacion. |
 
+<p align="center"><em>Tabla 9.3.11. Diccionario de datos de la tabla habitaciones.</em></p>
+
 **Indices:** PK (`id`) - UNIQUE `unique_numero` (`numero`) - KEY `idx_estado` (`estado`).
 
 ---
@@ -178,6 +185,8 @@ tanto en la plantilla base como en el inventario real de las habitaciones.
 | `nombre` | VARCHAR(100) | SI | UK | NULL | Nombre del articulo (ej. 'television', 'silla'). Unico. |
 | `descripcion` | TEXT | SI | - | NULL | Descripcion detallada o especificaciones del articulo. |
 | `usa_codigo_barras` | TINYINT(1) | NO | - | 0 | Indica si el articulo se rastrea por codigo de barras: 1 = si, 0 = no. |
+
+<p align="center"><em>Tabla 9.3.12. Diccionario de datos de la tabla articulos.</em></p>
 
 **Indices:** PK (`id`) - UNIQUE `unique_articulos` (`nombre`).
 
@@ -197,6 +206,8 @@ para determinar faltantes y sobrantes.
 | `tipo_habitacion` | VARCHAR(50) | NO | UK (compuesta) | - | Tipo de habitacion al que aplica. Relacion logica con habitaciones.tipo. |
 | `articulo_id` | INT(11) | NO | FK / UK (compuesta) | - | Referencia al articulo (articulos.id) que compone la plantilla. |
 | `cantidad` | INT(11) | NO | - | 1 | Cantidad esperada del articulo para ese tipo de habitacion. |
+
+<p align="center"><em>Tabla 9.3.13. Diccionario de datos de la tabla inventario_base.</em></p>
 
 **Indices:** PK (`id`) - UNIQUE `unique_tipo_articulo` (`tipo_habitacion`, `articulo_id`) - KEY `articulo_id` - KEY `idx_tipo_articulo`.
 **Relaciones:** `articulo_id` -> `articulos.id`. La restriccion unica compuesta impide duplicar un mismo articulo dentro de un mismo tipo de habitacion.
@@ -219,6 +230,8 @@ condicion.
 | `comentarios` | TEXT | SI | - | NULL | Observaciones especificas del registro (ej. 'Silla chica'). |
 | `codigo_barras` | VARCHAR(50) | SI | - | NULL | Codigo de barras individual del articulo, cuando aplica. |
 
+<p align="center"><em>Tabla 9.3.14. Diccionario de datos de la tabla inventario.</em></p>
+
 **Indices:** PK (`id`) - UNIQUE `uq_habitacion_articulo` (`habitacion_id`, `articulo_id`) - KEY `articulo_id` - KEY `idx_habitacion_articulo`.
 **Relaciones:** `habitacion_id` -> `habitaciones.id`; `articulo_id` -> `articulos.id`. La restriccion unica compuesta garantiza que un articulo no se registre dos veces en la misma habitacion.
 
@@ -240,6 +253,8 @@ ni posee restricciones de unicidad.
 | `comentarios` | TEXT | SI | - | NULL | Copia de las observaciones del registro. |
 | `codigo_barras` | VARCHAR(50) | SI | - | NULL | Copia del codigo de barras del registro. |
 
+<p align="center"><em>Tabla 9.3.15. Diccionario de datos de la tabla inventario_backup.</em></p>
+
 **Indices:** ninguno (tabla plana de respaldo).
 
 ---
@@ -258,6 +273,8 @@ exacto de la operacion.
 | `usuario_id` | INT(11) | NO | FK | - | Referencia al usuario (usuarios.id) que ejecuto el escaneo. |
 | `inventario_id` | INT(11) | NO | FK | - | Referencia al registro de inventario (inventario.id) consultado. |
 | `fecha_hora` | TIMESTAMP | NO | - | current_timestamp() | Fecha y hora en que se realizo la consulta. |
+
+<p align="center"><em>Tabla 9.3.16. Diccionario de datos de la tabla historial_codigos.</em></p>
 
 **Indices:** PK (`id`) - KEY `usuario_id` - KEY `inventario_id`.
 **Relaciones:** `usuario_id` -> `usuarios.id`; `inventario_id` -> `inventario.id`.
@@ -279,6 +296,8 @@ rastreo y responsabilidad.
 | `registro_id` | INT(11) | SI | - (polimorfico) | NULL | Identificador del registro afectado. Referencia polimorfica: apunta a distintas tablas segun modulo, por lo que no es FK. |
 | `descripcion` | TEXT | NO | - | - | Descripcion legible de la accion realizada. |
 | `fecha` | TIMESTAMP | NO | - | current_timestamp() | Fecha y hora en que se registro el movimiento. |
+
+<p align="center"><em>Tabla 9.3.17. Diccionario de datos de la tabla movimientos.</em></p>
 
 **Indices:** PK (`id`) - KEY `usuario_id`.
 **Relaciones:** `usuario_id` -> `usuarios.id`.
@@ -312,6 +331,8 @@ Excluye habitaciones en estado 'bloqueada'.
 | `sobrantes` | DECIMAL | GREATEST(real - base, 0). Unidades sobrantes. |
 | `estado_articulo` | ENUM | Estado de conservacion del articulo real. |
 
+<p align="center"><em>Tabla 9.3.18. Diccionario de datos de la vista vista_faltantes.</em></p>
+
 ---
 
 ### 10. Vista `vista_dashboard`
@@ -333,6 +354,8 @@ tablero de control y del reporte exportable.
 | `articulos_faltantes` | TEXT | Lista concatenada de articulos faltantes con su cantidad. |
 | `articulos_sobrantes` | TEXT | Lista concatenada de articulos sobrantes con su cantidad. |
 
+<p align="center"><em>Tabla 9.3.19. Diccionario de datos de la vista vista_dashboard.</em></p>
+
 ---
 
 ### 11. Vista `vista_estadisticas_articulos`
@@ -345,6 +368,8 @@ mayor deficit en el hotel.
 | `articulo` | VARCHAR(100) | Nombre del articulo. |
 | `total_faltantes` | DECIMAL | Suma total de unidades faltantes del articulo. |
 | `habitaciones_afectadas` | BIGINT | Numero de habitaciones distintas con faltante de ese articulo. |
+
+<p align="center"><em>Tabla 9.3.20. Diccionario de datos de la vista vista_estadisticas_articulos.</em></p>
 
 ---
 
@@ -359,3 +384,5 @@ entre plantas del hotel.
 | `total_habitaciones` | BIGINT | Total de habitaciones consideradas en el piso. |
 | `habitaciones_con_faltantes` | DECIMAL | Cantidad de habitaciones con al menos un faltante. |
 | `habitaciones_completas` | DECIMAL | Cantidad de habitaciones sin faltantes. |
+
+<p align="center"><em>Tabla 9.3.21. Diccionario de datos de la vista vista_estadisticas_pisos.</em></p>

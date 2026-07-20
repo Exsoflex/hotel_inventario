@@ -107,7 +107,7 @@ class InventariobaseController {
 
     public function eliminar() {
 
-        verificarRol(['admin', 'supervisor']);
+        verificarRol(['admin']);
 
         $id = $_GET['id'];
         $buscar = $this->obtenerBusquedaDesdeRequest();
