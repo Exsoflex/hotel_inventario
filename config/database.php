@@ -12,8 +12,8 @@ class Database {
 
     private $host = "localhost";
     private $db_name = "hotel_inventario";
-    private $username = "inventario_app";
-    private $password = "ContraseñaSegura";
+    private $username = "root";
+    private $password = "root123";
 
     public $conn;
 

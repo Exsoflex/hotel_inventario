@@ -2,6 +2,8 @@
 
 require_once __DIR__ . "/../models/revision.php";
 require_once __DIR__ . '/../vendor/autoload.php'; 
+require_once __DIR__ . "/../models/movimientos.php";
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet; 
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx; 
 use PhpOffice\PhpSpreadsheet\Style\Fill; 
@@ -484,6 +486,15 @@ public function ajax() {
         // ==============================
 
         $writer = new Xlsx($spreadsheet);
+
+    // Registrar movimiento
+    $mov = new Movimientos();
+    $mov->registrar(
+        'revision',
+        'exportar',
+        'Exportó la tabla de revision a Excel',
+        null
+    );
 
         header(
             'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

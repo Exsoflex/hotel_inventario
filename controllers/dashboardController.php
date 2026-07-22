@@ -2,6 +2,8 @@
 
 require_once __DIR__ . "/../models/dashboard.php";
 require_once __DIR__ . '/../vendor/autoload.php'; 
+require_once __DIR__ . "/../models/movimientos.php";
+require_once __DIR__ . '/../config/auth.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet; 
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx; 
 use PhpOffice\PhpSpreadsheet\Style\Fill; 
@@ -664,6 +666,15 @@ $seriesEP = new DataSeries(
 
     $writer = new Xlsx($spreadsheet);
     $writer->setIncludeCharts(true);
+    
+    // Registrar movimiento
+    $mov = new Movimientos();
+    $mov->registrar(
+        'dashboard',
+        'exportar',
+        'Exportó la pagina de Inicio a Excel',
+        null
+    );
 
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment;filename="Estadisticas.xlsx"');
