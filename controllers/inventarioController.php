@@ -117,6 +117,8 @@ public function agregar() {
             $inventarios     = (new Inventario())->obtenerTodo();
             $habitaciones    = (new Inventario())->obtenerHabitaciones();
             $articulos       = (new Inventario())->obtenerArticulos();
+            $pisos           = (new Inventario())->obtenerPisos();
+            $piso            = $filtros['piso'];
 
             require_once __DIR__ . "/../views/inventario/index.php";
             return;
@@ -135,6 +137,8 @@ public function agregar() {
             $inventarios     = $inventario->obtenerTodo();
             $habitaciones    = $inventario->obtenerHabitaciones();
             $articulos       = $inventario->obtenerArticulos();
+            $pisos           = $inventario->obtenerPisos();
+            $piso            = $filtros['piso'];
 
             require_once __DIR__ . "/../views/inventario/index.php";
             return;
@@ -176,6 +180,8 @@ public function agregar() {
             $inventarios  = $inventario->obtenerTodo();
             $habitaciones = $inventario->obtenerHabitaciones();
             $articulos    = $inventario->obtenerArticulos();
+            $pisos        = $inventario->obtenerPisos();
+            $piso         = $filtros['piso'];
 
             require_once __DIR__ . "/../views/inventario/index.php";
         }
@@ -241,6 +247,8 @@ public function editar() {
         $inventarios      = $modelInventario->obtenerTodo();
         $habitaciones     = $modelInventario->obtenerHabitaciones();
         $articulos        = $modelInventario->obtenerArticulos();
+        $pisos            = $modelInventario->obtenerPisos();
+        $piso             = $filtros['piso'];
 
         require_once __DIR__ . "/../views/inventario/index.php";
         return;
@@ -265,6 +273,8 @@ public function editar() {
             $inventarios      = $modelInventario->obtenerTodo();
             $habitaciones     = $modelInventario->obtenerHabitaciones();
             $articulos        = $modelInventario->obtenerArticulos();
+            $pisos            = $modelInventario->obtenerPisos();
+            $piso             = $filtros['piso'];
 
             require_once __DIR__ . "/../views/inventario/index.php";
             return;
@@ -279,6 +289,8 @@ public function editar() {
             $inventarios      = $modelInventario->obtenerTodo();
             $habitaciones     = $modelInventario->obtenerHabitaciones();
             $articulos        = $modelInventario->obtenerArticulos();
+            $pisos            = $modelInventario->obtenerPisos();
+            $piso             = $filtros['piso'];
 
             require_once __DIR__ . "/../views/inventario/index.php";
             return;
@@ -313,6 +325,8 @@ public function editar() {
             $inventarios      = $modelInventario->obtenerTodo();
             $habitaciones     = $modelInventario->obtenerHabitaciones();
             $articulos        = $modelInventario->obtenerArticulos();
+            $pisos            = $modelInventario->obtenerPisos();
+            $piso             = $filtros['piso'];
 
             require_once __DIR__ . "/../views/inventario/index.php";
         }
