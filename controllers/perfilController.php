@@ -39,7 +39,9 @@ class PerfilController {
             }
 
             $usuario   = new Usuarios();
-            $resultado = $usuario->editarPerfil($id, $nombre, $correo, $password);
+            $resultado = !empty($password)
+                ? $usuario->editarPerfil($id, $nombre, $correo, $password)
+                : $usuario->editarPerfil($id, $nombre, $correo);
 
             if ($resultado['exito']) {
 

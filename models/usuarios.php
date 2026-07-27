@@ -156,22 +156,34 @@ class Usuarios {
         }
 
 
-        public function editarPerfil($id, $nombre, $correo, $password) {
-        $password = password_hash(
-            $password,
-            PASSWORD_DEFAULT
-        );
+        public function editarPerfil($id, $nombre, $correo, $password = null) {
+        if (!empty($password)) {
+            $passwordHash = password_hash(
+                $password,
+                PASSWORD_DEFAULT
+            );
 
-        $sql = "UPDATE usuarios
-                SET nombre = :nombre, correo = :correo, password = :password
-                WHERE id = :id";
+            $sql = "UPDATE usuarios
+                    SET nombre = :nombre, correo = :correo, password = :password
+                    WHERE id = :id";
 
-        $stmt = $this->conn->prepare($sql);
+            $stmt = $this->conn->prepare($sql);
 
-        $stmt->bindParam(":id", $id);
-        $stmt->bindParam(":nombre", $nombre);
-        $stmt->bindParam(":correo", $correo);
-        $stmt->bindParam(":password", $password);
+            $stmt->bindParam(":id", $id);
+            $stmt->bindParam(":nombre", $nombre);
+            $stmt->bindParam(":correo", $correo);
+            $stmt->bindParam(":password", $passwordHash);
+        } else {
+            $sql = "UPDATE usuarios
+                    SET nombre = :nombre, correo = :correo
+                    WHERE id = :id";
+
+            $stmt = $this->conn->prepare($sql);
+
+            $stmt->bindParam(":id", $id);
+            $stmt->bindParam(":nombre", $nombre);
+            $stmt->bindParam(":correo", $correo);
+        }
 
         try {
             $stmt->execute();
