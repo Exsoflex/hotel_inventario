@@ -48,7 +48,12 @@ class HistorialCodigosController {
 
         // Registrar en historial
         $usuario_id = $_SESSION['usuario']['id'];
-        $modelo->registrar($usuario_id, $resultado['id']);
+        $registroHistorial = $modelo->registrar($usuario_id, $resultado['id']);
+
+        if (!$registroHistorial['exito']) {
+            header("Location: index.php?modulo=historial_codigos&error=registro");
+            exit();
+        }
 
         // Registrar movimiento de búsqueda
         $mov = new Movimientos();
@@ -76,6 +81,16 @@ class HistorialCodigosController {
         }
 
         $modelo = new HistorialCodigos();
+        $registro = $modelo->obtenerPorId($id);
+
+        if (!$registro || (
+            $_SESSION['usuario']['rol'] === 'supervisor'
+            && (int)$registro['usuario_id'] !== (int)$_SESSION['usuario']['id']
+        )) {
+            header("Location: index.php?modulo=historial_codigos");
+            exit();
+        }
+
         $modelo->eliminar($id);
 
         $mov = new Movimientos();

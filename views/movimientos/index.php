@@ -27,16 +27,22 @@
 <div class="container">
 
     <div class="inventario-topbar">
-        <div class="buscador-wrapper">
+        <form method="GET" action="index.php" class="buscador-wrapper">
+            <input type="hidden" name="modulo" value="movimientos">
             <input 
-                type="text" 
-                id="buscador" 
+                type="search"
+                name="buscar"
+                id="buscador"
                 placeholder="Buscar por usuario, módulo, acción..."
+                value="<?= htmlspecialchars($buscar ?? '') ?>"
             >
-            <button type="button" id="btnLimpiarBusqueda" class="btn-limpiar-buscador" title="Limpiar búsqueda">
-                <i data-lucide="x"></i>
+            <button type="submit" class="btn-limpiar-buscador" title="Buscar">
+                <i data-lucide="search"></i>
             </button>
-        </div>
+            <a href="index.php?modulo=movimientos" id="btnLimpiarBusqueda" class="btn-limpiar-buscador" title="Limpiar búsqueda">
+                <i data-lucide="x"></i>
+            </a>
+        </form>
     </div>
 
     <br>
@@ -102,7 +108,7 @@
 <?php if($pagina > 1): ?>
 
     
-    <a href="index.php?modulo=movimientos&pagina=<?= $pagina - 1 ?>">
+    <a href="index.php?modulo=movimientos&buscar=<?= urlencode($buscar ?? '') ?>&pagina=<?= $pagina - 1 ?>">
         ← Anterior
     </a>
 
@@ -111,7 +117,7 @@
 <?php for($i = 1; $i <= $totalPaginas; $i++): ?>
 
     <a
-    href="index.php?modulo=movimientos&pagina=<?= $i ?>"
+    href="index.php?modulo=movimientos&buscar=<?= urlencode($buscar ?? '') ?>&pagina=<?= $i ?>"
     class="<?= $i == $pagina ? 'pagina-activa' : '' ?>"
     >
         <?= $i ?>
@@ -121,7 +127,7 @@
 
 <?php if($pagina < $totalPaginas): ?>
 
-    <a href="index.php?modulo=movimientos&pagina=<?= $pagina + 1 ?>">
+    <a href="index.php?modulo=movimientos&buscar=<?= urlencode($buscar ?? '') ?>&pagina=<?= $pagina + 1 ?>">
        Siguiente →
     </a>
 
@@ -140,36 +146,9 @@
 const buscador = document.getElementById('buscador');
 const btnLimpiarBusqueda = document.getElementById('btnLimpiarBusqueda');
 
-buscador.addEventListener('input', function() {
-
-    let texto = buscador.value.toLowerCase();
-    let filas = document.querySelectorAll("table tbody tr");
-
-    filas.forEach(function(fila) {
-
-        let celdas = fila.querySelectorAll("td:not([hidden])");
-        let contenido = Array.from(celdas).map(td => td.textContent).join(' ').toLowerCase();
-
-        fila.style.display = contenido.includes(texto) ? "" : "none";
-    });
-    
-    if (btnLimpiarBusqueda) {
-        btnLimpiarBusqueda.classList.toggle('hidden', !buscador.value);
-    }
-});
-
-if (btnLimpiarBusqueda) {
-    btnLimpiarBusqueda.addEventListener('click', function() {
-        buscador.value = '';
-        buscador.dispatchEvent(new Event('input'));
-    });
+if (buscador && btnLimpiarBusqueda) {
+    btnLimpiarBusqueda.classList.toggle('hidden', !buscador.value);
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    if (btnLimpiarBusqueda) {
-        btnLimpiarBusqueda.classList.toggle('hidden', !buscador.value);
-    }
-});
 
 </script>
 

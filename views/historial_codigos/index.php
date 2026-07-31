@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="icon" type="image/png" href="/hotel_inventario/assets/img/HLH_logo.png?">
+    <link rel="icon" type="image/png" href="/hotel_inventario/assets/img/HLH_logo.png?v=2">
     <title>Historial de códigos</title>
 </head>
 
@@ -35,6 +35,8 @@
             <strong><?= htmlspecialchars($_GET['codigo'] ?? '') ?></strong>.
         <?php elseif ($_GET['error'] === 'vacio'): ?>
             ⚠ Escribe un código antes de buscar.
+        <?php elseif ($_GET['error'] === 'registro'): ?>
+            ⚠ Se encontró el artículo, pero no se pudo guardar la búsqueda en el historial.
         <?php endif; ?>
     </div>
 <?php endif; ?>
@@ -70,7 +72,7 @@
     <!-- Tabla de historial -->
     <?php if (empty($historial)): ?>
 
-        <p>No hay registros en el historial todavía.</p>
+        <p>No hay búsquedas de códigos registradas con esta cuenta todavía.</p>
 
     <?php else: ?>
 

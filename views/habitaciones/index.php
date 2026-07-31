@@ -4,6 +4,7 @@
 /** @var string|null $errorFormulario */
 /** @var string $buscar */
 $buscar = $buscar ?? ($_GET['buscar'] ?? '');
+$formHabitacion = $habitacionEditar ?? $_POST ?? [];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -214,7 +215,7 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
             <input 
             type="hidden" 
             name="id"
-            value="<?= $habitacionEditar['id'] ?? '' ?>"
+            value="<?= htmlspecialchars($formHabitacion['id'] ?? '') ?>"
             >
 
             <label>Piso de la habitación</label>
@@ -225,7 +226,7 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
             required
             min="1"
             max="4"
-            value="<?= $habitacionEditar['piso'] ?? '' ?>"
+            value="<?= htmlspecialchars($formHabitacion['piso'] ?? '') ?>"
             >
 
             <label>Número de habitación</label>
@@ -235,7 +236,7 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
             name="numero"
             required
             min="100"
-            value="<?= $habitacionEditar['numero'] ?? '' ?>"
+            value="<?= htmlspecialchars($formHabitacion['numero'] ?? '') ?>"
             >
 
             <label>Tipo de habitación</label>
@@ -248,21 +249,21 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 
                 <option 
                 value="sencilla"
-                <?= isset($habitacionEditar) && $habitacionEditar['tipo'] == 'sencilla' ? 'selected' : '' ?>
+                <?= ($formHabitacion['tipo'] ?? '') === 'sencilla' ? 'selected' : '' ?>
                 >
                     Sencilla
                 </option>
 
                 <option 
                 value="doble"
-                <?= isset($habitacionEditar) && $habitacionEditar['tipo'] == 'doble' ? 'selected' : '' ?>
+                <?= ($formHabitacion['tipo'] ?? '') === 'doble' ? 'selected' : '' ?>
                 >
                     Doble
                 </option>
 
                 <option 
                 value="superior"
-                <?= isset($habitacionEditar) && $habitacionEditar['tipo'] == 'superior' ? 'selected' : '' ?>
+                <?= ($formHabitacion['tipo'] ?? '') === 'superior' ? 'selected' : '' ?>
                 >
                     Superior
                 </option>
@@ -279,35 +280,35 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
 
                 <option 
                 value="disponible"
-                <?= isset($habitacionEditar) && $habitacionEditar['estado'] == 'disponible' ? 'selected' : '' ?>
+                <?= ($formHabitacion['estado'] ?? '') === 'disponible' ? 'selected' : '' ?>
                 >
                     Disponible
                 </option>
 
                 <option 
                 value="ocupada"
-                <?= isset($habitacionEditar) && $habitacionEditar['estado'] == 'ocupada' ? 'selected' : '' ?>
+                <?= ($formHabitacion['estado'] ?? '') === 'ocupada' ? 'selected' : '' ?>
                 >
                     Ocupada
                 </option>
 
                 <option 
                 value="limpieza"
-                <?= isset($habitacionEditar) && $habitacionEditar['estado'] == 'limpieza' ? 'selected' : '' ?>
+                <?= ($formHabitacion['estado'] ?? '') === 'limpieza' ? 'selected' : '' ?>
                 >
                     Limpieza
                 </option>
 
                 <option 
                 value="mantenimiento"
-                <?= isset($habitacionEditar) && $habitacionEditar['estado'] == 'mantenimiento' ? 'selected' : '' ?>
+                <?= ($formHabitacion['estado'] ?? '') === 'mantenimiento' ? 'selected' : '' ?>
                 >
                     Mantenimiento
                 </option>
 
                 <option 
                 value="bloqueada"
-                <?= isset($habitacionEditar) && $habitacionEditar['estado'] == 'bloqueada' ? 'selected' : '' ?>
+                <?= ($formHabitacion['estado'] ?? '') === 'bloqueada' ? 'selected' : '' ?>
                 >
                     Bloqueada
                 </option>
@@ -319,7 +320,7 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
             <input 
             type="text"
             name="descripcion"
-            value="<?= $habitacionEditar['descripcion'] ?? '' ?>"
+            value="<?= htmlspecialchars($formHabitacion['descripcion'] ?? '') ?>"
             >
 
             <div class="modal-buttons">

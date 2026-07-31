@@ -293,7 +293,8 @@ function cerrarModalEliminar() {
 
 function exportarExcel() {
     window.location.href = crearUrlConFiltros(
-        'index.php?modulo=inventario&accion=exportar'
+        'index.php?modulo=inventario&accion=exportar',
+        false
     );
 }
 

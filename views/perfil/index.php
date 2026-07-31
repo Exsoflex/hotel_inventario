@@ -1,6 +1,7 @@
 <?php
 /** @var array{nombre: string, correo: string, rol: string} $perfil */
 /** @var array<int, array{modulo: string, accion: string, descripcion: string, fecha: string}> $movimientos */
+$formPerfil = array_merge($perfil, $_POST ?? []);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -64,7 +65,7 @@
                 type="text"
                 name="nombre"
                 required
-                value="<?= htmlspecialchars($perfil['nombre']) ?>"
+                value="<?= htmlspecialchars($formPerfil['nombre']) ?>"
             >
 
             <label>Correo</label>
@@ -72,7 +73,7 @@
                 type="email"
                 name="correo"
                 required
-                value="<?= htmlspecialchars($perfil['correo']) ?>"
+                value="<?= htmlspecialchars($formPerfil['correo']) ?>"
             >
 
             <label style="color:#aaa;">Rol</label>

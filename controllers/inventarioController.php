@@ -339,7 +339,10 @@ public function exportar() {
 
     $inventario = new Inventario();
     $filtros = $this->obtenerFiltrosDesdeRequest();
-    $piso = $filtros['buscar'] === '' ? $filtros['piso'] : null;
+
+    // El piso corresponde a la página visible en pantalla, no a un filtro
+    // de exportación. El reporte siempre debe incluir todas las habitaciones.
+    $piso = null;
 
     $inventarios = $inventario->obtenerTodo(
         $piso,

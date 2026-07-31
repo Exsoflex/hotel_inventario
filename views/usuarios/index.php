@@ -2,6 +2,9 @@
 /** @var array<int, array<string, mixed>> $usuarios */
 /** @var array<string, mixed>|null $usuarioEditar */
 /** @var string|null $errorFormulario */
+$formUsuario = $usuarioEditar ?? $_POST ?? [];
+$esCuentaPropia = isset($usuarioEditar)
+    && (int)$usuarioEditar['id'] === (int)$_SESSION['usuario']['id'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,6 +29,10 @@
     <h1>Lista de usuarios</h1> 
     <p>Administración de usuarios</p> 
 </div>
+
+<?php if (($_GET['error'] ?? '') === 'ultimo_admin'): ?>
+    <div class="alerta-error">⚠ Debe permanecer al menos un administrador activo.</div>
+<?php endif; ?>
 
 <!-- /////////////////////////////////////////////////////// -->
 
@@ -80,13 +87,13 @@
 
 <?php foreach($usuarios as $u): ?>
 
-<tr id="usuario-<?= $u['id'] ?>">
+<tr id="usuario-<?= (int)$u['id'] ?>">
 
     <td hidden><?= $u['id'] ?></td>
 
-    <td><?= $u['nombre'] ?></td>
+    <td><?= htmlspecialchars($u['nombre']) ?></td>
 
-    <td><?= $u['correo'] ?></td>
+    <td><?= htmlspecialchars($u['correo']) ?></td>
 
     <td><?= ucfirst($u['rol']) ?></td>
 
@@ -124,7 +131,9 @@
 
         <?php if($u['activo']): ?>
 
-            <a href="index.php?modulo=usuarios&accion=desactivar&id=<?= $u['id'] ?>">
+            <a href="#" class="btn-desactivar"
+                data-url="index.php?modulo=usuarios&accion=desactivar&id=<?= (int)$u['id'] ?>"
+                data-usuario="<?= htmlspecialchars($u['nombre']) ?>">
                 Desactivar
             </a>
 
@@ -193,7 +202,7 @@
             <input
                 type="hidden"
                 name="id"
-                value="<?= $usuarioEditar['id'] ?? '' ?>"
+                value="<?= htmlspecialchars($formUsuario['id'] ?? '') ?>"
             >
 
             <label>Nombre del usuario</label>
@@ -202,7 +211,7 @@
             type="text"
             name="nombre"
             required
-            value="<?= $usuarioEditar['nombre'] ?? '' ?>"
+            value="<?= htmlspecialchars($formUsuario['nombre'] ?? '') ?>"
             >
 
             <label>Correo</label>
@@ -211,7 +220,7 @@
             type="email"
             name="correo"
             required
-            value="<?= $usuarioEditar['correo'] ?? '' ?>"
+            value="<?= htmlspecialchars($formUsuario['correo'] ?? '') ?>"
             >
 
             <?php if(!isset($usuarioEditar)): ?>
@@ -227,11 +236,14 @@
             <?php endif; ?>
 
             <label>Rol</label>
-            <select name="rol" required>
+            <?php if ($esCuentaPropia): ?>
+                <input type="hidden" name="rol" value="<?= htmlspecialchars($formUsuario['rol']) ?>">
+            <?php endif; ?>
+            <select name="rol" required <?= $esCuentaPropia ? 'disabled' : '' ?>>
                 <option value="">Selecciona un rol</option>
 
                 <option value="admin"
-                <?= isset($usuarioEditar) && $usuarioEditar['rol'] === 'admin'
+                <?= ($formUsuario['rol'] ?? '') === 'admin'
                     ? 'selected'
                     : ''
                 ?>>
@@ -239,7 +251,7 @@
                 </option>
 
                 <option value="supervisor"
-                <?= isset($usuarioEditar) && $usuarioEditar['rol'] === 'supervisor'
+                <?= ($formUsuario['rol'] ?? '') === 'supervisor'
                     ? 'selected'
                     : ''
                 ?>>
@@ -247,7 +259,7 @@
                 </option>
 
                 <option value="operador"
-                <?= isset($usuarioEditar) && $usuarioEditar['rol'] === 'operador'
+                <?= ($formUsuario['rol'] ?? '') === 'operador'
                     ? 'selected'
                     : ''
                 ?>>
@@ -257,10 +269,13 @@
             </select>
 
             <label>Estado</label>
-            <select name="activo">
+            <?php if ($esCuentaPropia): ?>
+                <input type="hidden" name="activo" value="<?= (int)$formUsuario['activo'] ?>">
+            <?php endif; ?>
+            <select name="activo" <?= $esCuentaPropia ? 'disabled' : '' ?>>
 
                 <option value="1"
-                <?= !isset($usuarioEditar) || $usuarioEditar['activo']
+                <?= !isset($usuarioEditar) || !empty($formUsuario['activo'])
                     ? 'selected'
                     : ''
                 ?>>
@@ -268,7 +283,7 @@
                 </option>
 
                 <option value="0"
-                <?= isset($usuarioEditar) && !$usuarioEditar['activo']
+                <?= isset($usuarioEditar) && empty($formUsuario['activo'])
                     ? 'selected'
                     : ''
                 ?>>
@@ -276,6 +291,10 @@
                 </option>
 
             </select>
+
+            <?php if ($esCuentaPropia): ?>
+                <p style="color:#777; font-size:13px;">Tu rol y estado solo pueden ser modificados por otro administrador.</p>
+            <?php endif; ?>
 
             <div class="modal-buttons">
 
@@ -298,6 +317,18 @@
 
     </div>
 
+</div>
+
+<div class="modal-overlay" id="modalDesactivar">
+    <div class="modal-confirmacion">
+        <div class="modal-icono">⚠</div>
+        <h2>Desactivar usuario</h2>
+        <p id="mensajeDesactivar">¿Seguro que deseas desactivar este usuario?</p>
+        <div class="modal-botones">
+            <button type="button" onclick="cerrarModalDesactivar()">Cancelar</button>
+            <a href="#" id="btnConfirmarDesactivar" class="btn-confirmar">Sí, desactivar</a>
+        </div>
+    </div>
 </div>
 
 
@@ -342,6 +373,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+</script>
+
+<script>
+const modalDesactivar = document.getElementById('modalDesactivar');
+const mensajeDesactivar = document.getElementById('mensajeDesactivar');
+const btnConfirmarDesactivar = document.getElementById('btnConfirmarDesactivar');
+
+document.querySelectorAll('.btn-desactivar').forEach(boton => {
+    boton.addEventListener('click', function(event) {
+        event.preventDefault();
+        mensajeDesactivar.textContent = `¿Seguro que deseas desactivar a "${this.dataset.usuario}"?`;
+        btnConfirmarDesactivar.href = this.dataset.url;
+        modalDesactivar.classList.add('active');
+    });
+});
+
+function cerrarModalDesactivar() {
+    modalDesactivar.classList.remove('active');
+}
 </script>
 
 <!--//////////-- Modal Articulo --//////////-->

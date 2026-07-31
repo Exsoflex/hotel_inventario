@@ -142,6 +142,12 @@ class Usuarios {
         $stmt->execute();
     }
 
+    public function contarAdministradoresActivos() {
+
+        $sql = "SELECT COUNT(*) FROM usuarios WHERE rol = 'admin' AND activo = 1";
+        return (int)$this->conn->query($sql)->fetchColumn();
+    }
+
   /* ---------------------------------------------------- */
 
     public function obtenerNombreUsuario($id) {

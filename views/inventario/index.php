@@ -16,6 +16,7 @@ $filtros = $filtros ?? [
 $articulosFiltrados = array_filter(
     array_map('strtolower', array_map('trim', explode(',', $filtros['articulos'])))
 );
+$formInventario = $inventarioEditar ?? $_POST ?? [];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,7 +26,7 @@ $articulosFiltrados = array_filter(
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="icon" type="image/png" href="/hotel_inventario/assets/img/HLH_logo.png?">
+    <link rel="icon" type="image/png" href="/hotel_inventario/assets/img/HLH_logo.png?v=2">
     <title>Inventario</title>
 </head>
 
@@ -282,7 +283,7 @@ $articulosFiltrados = array_filter(
             <input
             type="hidden"
             name="id"
-            value="<?= $inventarioEditar['id'] ?? '' ?>"
+            value="<?= htmlspecialchars($formInventario['id'] ?? '') ?>"
             >
 
             <label>Habitación</label>
@@ -293,8 +294,7 @@ $articulosFiltrados = array_filter(
                     <option
                     value="<?= $h['id'] ?>"
 
-                    <?= isset($inventarioEditar)
-                        && $inventarioEditar['habitacion_id'] == $h['id']
+                    <?= ($formInventario['habitacion_id'] ?? '') == $h['id']
                         ? 'selected'
                         : ''
                     ?>
@@ -313,8 +313,7 @@ $articulosFiltrados = array_filter(
                 <option
                 value="<?= $a['id'] ?>"
                 data-codigo="<?= $a['usa_codigo_barras'] ?>"
-                <?= isset($inventarioEditar)
-                    && $inventarioEditar['articulo_id'] == $a['id']
+                <?= ($formInventario['articulo_id'] ?? '') == $a['id']
                     ? 'selected'
                     : ''
                 ?>
@@ -333,7 +332,7 @@ $articulosFiltrados = array_filter(
             name="cantidad"
             min="0"
             required
-            value="<?= $inventarioEditar['cantidad'] ?? '' ?>"
+            value="<?= htmlspecialchars($formInventario['cantidad'] ?? '') ?>"
             >
 
             <div id="contenedorCodigo">
@@ -343,7 +342,7 @@ $articulosFiltrados = array_filter(
                 <input
                 type="text"
                 name="codigo_barras"
-                value="<?= $inventarioEditar['codigo_barras'] ?? '' ?>"
+                value="<?= htmlspecialchars($formInventario['codigo_barras'] ?? '') ?>"
                 >
 
             </div>
@@ -354,8 +353,7 @@ $articulosFiltrados = array_filter(
         <option value="">Seleccione un estado</option>
 
             <option value="bueno"
-            <?= isset($inventarioEditar)
-                && $inventarioEditar['estado'] === 'bueno'
+            <?= ($formInventario['estado'] ?? '') === 'bueno'
                 ? 'selected'
                 : ''
             ?>>
@@ -363,8 +361,7 @@ $articulosFiltrados = array_filter(
             </option>
 
             <option value="dañado"
-            <?= isset($inventarioEditar)
-                && $inventarioEditar['estado'] === 'dañado'
+            <?= ($formInventario['estado'] ?? '') === 'dañado'
                 ? 'selected'
                 : ''
             ?>>
@@ -372,8 +369,7 @@ $articulosFiltrados = array_filter(
             </option>
 
             <option value="en_reparacion"
-            <?= isset($inventarioEditar)
-                && $inventarioEditar['estado'] === 'en_reparacion'
+            <?= ($formInventario['estado'] ?? '') === 'en_reparacion'
                 ? 'selected'
                 : ''
             ?>>
@@ -381,8 +377,7 @@ $articulosFiltrados = array_filter(
             </option>
 
             <option value="perdido"
-            <?= isset($inventarioEditar)
-                && $inventarioEditar['estado'] === 'perdido'
+            <?= ($formInventario['estado'] ?? '') === 'perdido'
                 ? 'selected'
                 : ''
             ?>>
@@ -395,7 +390,7 @@ $articulosFiltrados = array_filter(
             <input
             type="text"
             name="comentarios"
-            value="<?= $inventarioEditar['comentarios'] ?? '' ?>"
+            value="<?= htmlspecialchars($formInventario['comentarios'] ?? '') ?>"
             >
 
             <div class="modal-buttons">

@@ -44,8 +44,8 @@ class HistorialCodigos {
                     (:usuario_id, :inventario_id)";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':usuario_id', $usuario_id);
-        $stmt->bindParam(':inventario_id', $inventario_id);
+        $stmt->bindValue(':usuario_id', (int)$usuario_id, PDO::PARAM_INT);
+        $stmt->bindValue(':inventario_id', (int)$inventario_id, PDO::PARAM_INT);
 
         try {
             $stmt->execute();
@@ -90,6 +90,16 @@ public function obtenerTodo($usuario_id = null) {
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+    public function obtenerPorId($id) {
+
+        $sql = 'SELECT id, usuario_id FROM historial_codigos WHERE id = :id';
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     // Eliminar registro del historial
     public function eliminar($id) {

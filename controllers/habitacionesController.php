@@ -54,9 +54,10 @@ class HabitacionesController {
             $estado = trim($_POST['estado']);
 
               if (
-                empty($piso) ||
-                empty($numero) || 
-                empty($tipo)
+                !filter_var($piso, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 4]]) ||
+                !filter_var($numero, FILTER_VALIDATE_INT, ['options' => ['min_range' => 100]]) ||
+                !in_array($tipo, ['sencilla', 'doble', 'superior'], true) ||
+                !in_array($estado, ['disponible', 'ocupada', 'limpieza', 'mantenimiento', 'bloqueada'], true)
                 ) {
                 $errorFormulario = 'Llena todos los campos por favor';
                 $modelhabitacion = new Habitacion();
@@ -165,9 +166,10 @@ class HabitacionesController {
 
               if (
                 empty($id) ||
-                empty($piso) ||
-                empty($numero) || 
-                empty($tipo)
+                !filter_var($piso, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 4]]) ||
+                !filter_var($numero, FILTER_VALIDATE_INT, ['options' => ['min_range' => 100]]) ||
+                !in_array($tipo, ['sencilla', 'doble', 'superior'], true) ||
+                !in_array($estado, ['disponible', 'ocupada', 'limpieza', 'mantenimiento', 'bloqueada'], true)
               )  {
                 $errorFormulario = 'Llena todos los campos por favor';
                 $habitacionEditar = $modelhabitacion->obtenerPorId($id);

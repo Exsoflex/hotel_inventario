@@ -124,8 +124,38 @@ class UsuariosController {
 
             $nombre = trim($_POST['nombre']);
             $correo = trim($_POST['correo']);
-            $rol = $_POST['rol'];
-            $activo = $_POST['activo'];
+            $rol = $_POST['rol'] ?? '';
+            $activo = $_POST['activo'] ?? '';
+
+            $usuarioActualizado = $usuario->obtenerPorId($id);
+
+            if (!$usuarioActualizado) {
+                header("Location: index.php?modulo=usuarios");
+                exit();
+            }
+
+            if ((int)$id === (int)$_SESSION['usuario']['id']) {
+                // Evita que un administrador pierda accidentalmente su acceso.
+                $rol = $usuarioActualizado['rol'];
+                $activo = $usuarioActualizado['activo'];
+            }
+
+            $dejaDeSerAdminActivo = $usuarioActualizado['rol'] === 'admin'
+                && (int)$usuarioActualizado['activo'] === 1
+                && ($rol !== 'admin' || (int)$activo !== 1);
+
+            if ($dejaDeSerAdminActivo && $usuario->contarAdministradoresActivos() <= 1) {
+                $errorFormulario = 'Debe permanecer al menos un administrador activo.';
+                $usuarioEditar = array_merge($usuarioActualizado, [
+                    'nombre' => $nombre,
+                    'correo' => $correo,
+                    'rol' => $rol,
+                    'activo' => $activo,
+                ]);
+                $usuarios = $usuario->obtenerTodo();
+                require_once __DIR__ . "/../views/usuarios/index.php";
+                return;
+            }
 
             if (
                 empty($nombre) ||
@@ -163,7 +193,12 @@ class UsuariosController {
                     ? "Ya existe un usuario con ese nombre o correo."
                     : "Ocurrió un error al guardar. Intenta de nuevo.";
 
-                $usuarioEditar = $usuario->obtenerPorId($id);
+                $usuarioEditar = array_merge($usuario->obtenerPorId($id), [
+                    'nombre' => $nombre,
+                    'correo' => $correo,
+                    'rol' => $rol,
+                    'activo' => $activo,
+                ]);
                 $usuarios = $usuario->obtenerTodo();
                 require_once __DIR__ . "/../views/usuarios/index.php";
             }
@@ -208,6 +243,22 @@ class UsuariosController {
         }
 
         $usuario = new Usuarios();
+
+        $usuarioDesactivar = $usuario->obtenerPorId($id);
+
+        if (!$usuarioDesactivar) {
+            header("Location: index.php?modulo=usuarios");
+            exit();
+        }
+
+        if ($usuarioDesactivar['rol'] === 'admin'
+            && (int)$usuarioDesactivar['activo'] === 1
+            && $usuario->contarAdministradoresActivos() <= 1
+        ) {
+            header("Location: index.php?modulo=usuarios&error=ultimo_admin");
+            exit();
+        }
+
         $usuario->cambiarEstado($id, 0);
 
         $nombre = $usuario->obtenerNombreUsuario($id);

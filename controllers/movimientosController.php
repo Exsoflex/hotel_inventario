@@ -12,45 +12,28 @@ public function index() {
     $rol = $_SESSION['usuario']['rol'];
     $usuario_id = $_SESSION['usuario']['id'];
 
-    $pagina = isset($_GET['pagina'])
-        ? (int)$_GET['pagina']
-        : 1;
+    $pagina = max(1, (int)($_GET['pagina'] ?? 1));
+    $buscar = trim($_GET['buscar'] ?? '');
 
     $porPagina = 20;
 
-    $offset = ($pagina - 1) * $porPagina;
-
     if ($rol === 'admin') {
-
-        $movimientos =
-            $mov->obtenerTodo(
-                $porPagina,
-                $offset
-            );
-
-        $totalRegistros =
-            $mov->contarTodos();
+        $totalRegistros = $mov->contarTodos(null, $buscar);
 
     } else {
-
-        $movimientos =
-            $mov->obtenerTodo(
-                $porPagina,
-                $offset,
-                $usuario_id
-            );
-
-        $totalRegistros =
-            $mov->contarTodos(
-                $usuario_id
-            );
+        $totalRegistros = $mov->contarTodos($usuario_id, $buscar);
     }
 
-    $totalPaginas =
-        ceil(
-            $totalRegistros /
-            $porPagina
-        );
+    $totalPaginas = max(1, (int)ceil($totalRegistros / $porPagina));
+    $pagina = min($pagina, $totalPaginas);
+    $offset = ($pagina - 1) * $porPagina;
+
+    $movimientos = $mov->obtenerTodo(
+        $porPagina,
+        $offset,
+        $rol === 'admin' ? null : $usuario_id,
+        $buscar
+    );
 
     require_once __DIR__
         . "/../views/movimientos/index.php";

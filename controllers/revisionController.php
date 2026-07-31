@@ -43,6 +43,8 @@ public function index() {
         : 1;
 
     $buscar = trim($_GET['buscar'] ?? '');
+    $estado = trim($_GET['estado'] ?? '');
+    $tipo = trim($_GET['tipo'] ?? '');
 
     // vista normal
     $pisos = $revision->obtenerPisos();

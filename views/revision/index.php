@@ -9,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="icon" type="image/png" href="/hotel_inventario/assets/img/HLH_logo.png?">
+    <link rel="icon" type="image/png" href="/hotel_inventario/assets/img/HLH_logo.png?v=2">
     <script> window.pisoActual = <?= (int)$piso ?>; </script>
 
     <title>Revision</title>
@@ -66,19 +66,19 @@ value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
 
             <select id="filtroEstado">
 
-            <option value="">
+            <option value="" <?= $estado === '' ? 'selected' : '' ?>>
                 Todas
             </option>
 
-            <option value="completa">
+            <option value="completa" <?= $estado === 'completa' ? 'selected' : '' ?>>
                 Completas
             </option>
 
-            <option value="faltante">
+            <option value="faltante" <?= $estado === 'faltante' ? 'selected' : '' ?>>
                 Con faltantes
             </option>
 
-            <option value="sobrante">
+            <option value="sobrante" <?= $estado === 'sobrante' ? 'selected' : '' ?>>
                 Con sobrantes
             </option>
 
@@ -90,19 +90,19 @@ value="<?= htmlspecialchars($_GET['buscar'] ?? '') ?>">
 
             <select id="filtroTipo">
 
-                <option value="">
+                <option value="" <?= $tipo === '' ? 'selected' : '' ?>>
                     Todas
                 </option>
 
-                <option value="sencilla">
+                <option value="sencilla" <?= $tipo === 'sencilla' ? 'selected' : '' ?>>
                     Sencilla
                 </option>
 
-                <option value="doble">
+                <option value="doble" <?= $tipo === 'doble' ? 'selected' : '' ?>>
                     Doble
                 </option>
 
-                <option value="superior">
+                <option value="superior" <?= $tipo === 'superior' ? 'selected' : '' ?>>
                     Superior
                 </option>
 

@@ -5,6 +5,7 @@
 /** @var string|null $errorFormulario */
 /** @var string $buscar */
 $buscar = $buscar ?? ($_GET['buscar'] ?? '');
+$formInventarioBase = $inventario_baseEditar ?? $_POST ?? [];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -206,7 +207,7 @@ id="modalInventarioBase"
             <input 
             type="hidden" 
             name="id" 
-            value="<?= $inventario_baseEditar['id'] ?? '' ?>"
+            value="<?= htmlspecialchars($formInventarioBase['id'] ?? '') ?>"
             >
 
             <label>Tipo de habitación</label>
@@ -217,8 +218,7 @@ id="modalInventarioBase"
 
                 <option 
                     value="sencilla"
-                    <?= isset($inventario_baseEditar) &&
-                    $inventario_baseEditar['tipo_habitacion'] == 'sencilla'
+                    <?= ($formInventarioBase['tipo'] ?? $formInventarioBase['tipo_habitacion'] ?? '') === 'sencilla'
                     ? 'selected' : '' ?>
                 >
                     Sencilla
@@ -226,8 +226,7 @@ id="modalInventarioBase"
 
                 <option 
                     value="doble"
-                    <?= isset($inventario_baseEditar) &&
-                    $inventario_baseEditar['tipo_habitacion'] == 'doble'
+                    <?= ($formInventarioBase['tipo'] ?? $formInventarioBase['tipo_habitacion'] ?? '') === 'doble'
                     ? 'selected' : '' ?>
                 >
                     Doble
@@ -235,8 +234,7 @@ id="modalInventarioBase"
 
                 <option 
                     value="superior"
-                    <?= isset($inventario_baseEditar) &&
-                    $inventario_baseEditar['tipo_habitacion'] == 'superior'
+                    <?= ($formInventarioBase['tipo'] ?? $formInventarioBase['tipo_habitacion'] ?? '') === 'superior'
                     ? 'selected' : '' ?>
                 >
                     Superior
@@ -254,8 +252,7 @@ id="modalInventarioBase"
 
                     <option 
                         value="<?= $a['id'] ?>"
-                        <?= isset($inventario_baseEditar) &&
-                        $inventario_baseEditar['articulo_id'] == $a['id']
+                        <?= ($formInventarioBase['articulo_id'] ?? '') == $a['id']
                         ? 'selected' : '' ?>
                     >
                         <?= $a['nombre'] ?>
@@ -272,7 +269,7 @@ id="modalInventarioBase"
             name="cantidad" 
             required
             min="0"
-            value="<?= $inventario_baseEditar['cantidad'] ?? '' ?>"
+            value="<?= htmlspecialchars($formInventarioBase['cantidad'] ?? '') ?>"
             >
 
             <div class="modal-buttons">

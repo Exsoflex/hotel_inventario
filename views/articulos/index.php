@@ -4,6 +4,7 @@
 /** @var string|null $errorFormulario */
 /** @var string $buscar */
 $buscar = $buscar ?? ($_GET['buscar'] ?? '');
+$formArticulo = $articuloEditar ?? $_POST ?? [];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -201,7 +202,7 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
             <input
                 type="hidden"
                 name="id"
-                value="<?= $articuloEditar['id'] ?? '' ?>"
+                value="<?= htmlspecialchars($formArticulo['id'] ?? '') ?>"
             >
 
             <label>Nombre del artículo</label>
@@ -210,7 +211,7 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
                 type="text" 
                 name="nombre" 
                 required
-                value="<?= $articuloEditar['nombre'] ?? '' ?>"
+                value="<?= htmlspecialchars($formArticulo['nombre'] ?? '') ?>"
             >
 
             <label>Descripción</label>
@@ -218,7 +219,7 @@ $buscar = $buscar ?? ($_GET['buscar'] ?? '');
             <input 
                 type="text" 
                 name="descripcion" 
-                value="<?= $articuloEditar['descripcion'] ?? '' ?>"
+                value="<?= htmlspecialchars($formArticulo['descripcion'] ?? '') ?>"
             >
 
             <div class="modal-buttons">

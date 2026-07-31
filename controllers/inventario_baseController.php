@@ -55,10 +55,14 @@ class InventariobaseController {
             $tipo        = $_POST['tipo'];
             $articulo_id = $_POST['articulo_id'];
             $cantidad    = $_POST['cantidad'];
+            $cantidadValida = filter_var($cantidad, FILTER_VALIDATE_INT);
 
             $inventario_base = new Inventario_base();
 
-            if (empty($tipo) || empty($articulo_id) || $cantidad === '') {
+            if (!in_array($tipo, ['sencilla', 'doble', 'superior'], true)
+                || !filter_var($articulo_id, FILTER_VALIDATE_INT)
+                || $cantidadValida === false || $cantidadValida < 0
+            ) {
                 $errorFormulario = 'Llena todos los campos por favor';
                 $inventarios_base = $inventario_base->obtenerTodo();
                 $articulos = $inventario_base->obtenerArticulos();
@@ -69,7 +73,7 @@ class InventariobaseController {
             $resultado = $inventario_base->agregarInventario_base(
                 $tipo,
                 $articulo_id,
-                $cantidad
+                $cantidadValida
             );
 
             if ($resultado['exito']) {
@@ -157,8 +161,12 @@ class InventariobaseController {
             $tipo        = trim($_POST['tipo']);
             $articulo_id = trim($_POST['articulo_id']);
             $cantidad    = trim($_POST['cantidad']);
+            $cantidadValida = filter_var($cantidad, FILTER_VALIDATE_INT);
 
-            if (empty($id) || empty($tipo) || empty($articulo_id) || $cantidad === '') {
+            if (empty($id) || !in_array($tipo, ['sencilla', 'doble', 'superior'], true)
+                || !filter_var($articulo_id, FILTER_VALIDATE_INT)
+                || $cantidadValida === false || $cantidadValida < 0
+            ) {
                 $errorFormulario = 'Llena todos los campos por favor';
                 $inventario_baseEditar = $modelInventario_base->obtenerPorId($id);
                 $inventarios_base = $modelInventario_base->obtenerTodo();
@@ -172,7 +180,7 @@ class InventariobaseController {
             $id,
             $tipo,
             $articulo_id,
-            $cantidad
+            $cantidadValida
         );
 
             if ($resultado['exito']) {
@@ -185,7 +193,7 @@ class InventariobaseController {
                 $mov->registrar(
                     'inventario_base',
                     'editar',
-                    "Editó \"$nombreArticulo\" en inventario base de habitación $tipo: cantidad $cantidad",
+                    "Editó \"$nombreArticulo\" en inventario base de habitación $tipo: cantidad $cantidadValida",
                     $id
                 );
 

@@ -45,7 +45,8 @@ class Movimientos {
     public function obtenerTodo(
         $limite,
         $offset,
-        $usuario_id = null
+        $usuario_id = null,
+        $buscar = ''
     ) {
 
         $sql = "SELECT
@@ -60,9 +61,18 @@ class Movimientos {
         JOIN usuarios u
             ON m.usuario_id = u.id";
 
+        $condiciones = [];
+
         if ($usuario_id !== null) {
-            $sql .= "
-                WHERE m.usuario_id = :usuario_id";
+            $condiciones[] = 'm.usuario_id = :usuario_id';
+        }
+
+        if ($buscar !== '') {
+            $condiciones[] = '(u.nombre LIKE :buscar OR u.rol LIKE :buscar OR m.modulo LIKE :buscar OR m.accion LIKE :buscar OR m.descripcion LIKE :buscar)';
+        }
+
+        if (!empty($condiciones)) {
+            $sql .= ' WHERE ' . implode(' AND ', $condiciones);
         }
 
         $sql .= "
@@ -79,6 +89,11 @@ class Movimientos {
                 $usuario_id,
                 PDO::PARAM_INT
             );
+        }
+
+        if ($buscar !== '') {
+            $buscarLike = '%' . $buscar . '%';
+            $stmt->bindParam(':buscar', $buscarLike);
         }
 
         $stmt->bindParam(
@@ -124,14 +139,24 @@ class Movimientos {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function contarTodos($usuario_id = null) {
+    public function contarTodos($usuario_id = null, $buscar = '') {
 
         $sql = "SELECT COUNT(*) as total
-                FROM movimientos";
+                FROM movimientos m
+                JOIN usuarios u ON m.usuario_id = u.id";
+
+        $condiciones = [];
 
         if ($usuario_id !== null) {
-            $sql .= "
-                WHERE usuario_id = :usuario_id";
+            $condiciones[] = 'm.usuario_id = :usuario_id';
+        }
+
+        if ($buscar !== '') {
+            $condiciones[] = '(u.nombre LIKE :buscar OR u.rol LIKE :buscar OR m.modulo LIKE :buscar OR m.accion LIKE :buscar OR m.descripcion LIKE :buscar)';
+        }
+
+        if (!empty($condiciones)) {
+            $sql .= ' WHERE ' . implode(' AND ', $condiciones);
         }
         
         $stmt = $this->conn->prepare($sql);
@@ -143,6 +168,11 @@ class Movimientos {
                 $usuario_id,
                 PDO::PARAM_INT
             );
+        }
+
+        if ($buscar !== '') {
+            $buscarLike = '%' . $buscar . '%';
+            $stmt->bindParam(':buscar', $buscarLike);
         }
 
         $stmt->execute();
