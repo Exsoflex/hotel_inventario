@@ -672,7 +672,7 @@ $seriesEP = new DataSeries(
     $mov->registrar(
         'dashboard',
         'exportar',
-        'Exportó la pagina de Inicio a Excel',
+        'Exportó la página de Inicio a Excel',
         null
     );
 

@@ -314,14 +314,14 @@ if ($resultado['exito']) {
              $numHab = $modelInventario->obtenerNumeroHabitacion($habitacion_id);
              $nomArticulo = $modelInventario->obtenerNombreArticulo($articulo_id);
 
-             $mov->registrar(
-                 'inventario',
-                 'editar',
-                 "Editó inventario de \"$nomArticulo\" en habitación \"$numHab\"",
-                 $id
-             );
+$mov->registrar(
+                  'inventario',
+                  'editar',
+                  "Editó inventario de \"$nomArticulo\" en habitación \"$numHab\"",
+                  $id
+              );
 
-             $numHab = $modelInventario->obtenerNumeroHabitacion($habitacion_id);
+              $query = $this->crearQueryInventario('editado', $filtros);
              $filtros['buscar'] = $numHab;
              $query = $this->crearQueryInventario('editado', $filtros);
 

@@ -17,4 +17,4 @@ echo "PhpSpreadsheet instalado correctamente";*/
 //Remplaza 777 por tu contraseña
 
 $password = 777;
-echo password_hash("$password", PASSWORD_DEFAULT);
+echo password_hash($password, PASSWORD_DEFAULT);

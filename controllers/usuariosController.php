@@ -180,10 +180,12 @@ class UsuariosController {
             if ($resultado['exito']) {
 
                 $mov = new Movimientos();
+                $estadoTexto = $activo == 1 ? 'Activo' : 'Inactivo';
+
                 $mov->registrar(
                     'usuarios',
                     'editar',
-                    "Editó el usuario \"$nombre\" con el rol de \"$rol\" y estado \"($activo == 1 ? 'Activo' : 'Inactivo')\"",
+                    "Editó el usuario \"$nombre\" con el rol de \"$rol\" y estado \"$estadoTexto\"",
                     $id
                 );
                 header("Location: index.php?modulo=usuarios#usuario-$id");
@@ -221,7 +223,7 @@ class UsuariosController {
                 $mov->registrar(
                     'usuarios',
                     'editar',
-                    "Se activo el usuario \"$nombre\"",
+                    "Se activó el usuario \"$nombre\"",
                     $id
                 );
         
@@ -267,7 +269,7 @@ class UsuariosController {
                 $mov->registrar(
                     'usuarios',
                     'editar',
-                    "Se desactivo el usuario \"$nombre\"",
+                    "Se desactivó el usuario \"$nombre\"",
                     $id
                 );
         
