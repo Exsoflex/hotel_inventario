@@ -191,6 +191,22 @@ switch($action) {
         $controller->exportar();
         break;
 
+    case 'historial':
+        $controller->historial();
+        break;
+
+    case 'agregarHistorial':
+        $controller->agregarHistorial();
+        break;
+
+    case 'editarHistorial':
+        $controller->editarHistorial();
+        break;
+
+    case 'eliminarHistorial':
+        $controller->eliminarHistorial();
+        break;
+
     case 'ajax':
     case 'api':
         if (method_exists($controller, 'ajax')) {

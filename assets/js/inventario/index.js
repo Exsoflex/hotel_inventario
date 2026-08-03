@@ -21,13 +21,22 @@ const mensajeEliminar = document.getElementById('mensajeEliminar');
 const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
 const selectArticulo = document.querySelector('select[name="articulo_id"]');
 const contenedorCodigo = document.getElementById('contenedorCodigo');
-
+const historialLink = document.getElementById('historialLink');
+const modalHistorial = document.getElementById('modalHistorial');
+const historialBody = document.getElementById('historialBody');
+const historialFecha = document.getElementById('historialFecha');
+const historialNota = document.getElementById('historialNota');
+const btnAgregarHistorial = document.getElementById('btnAgregarHistorial');
+const btnCancelarHistorial = document.getElementById('btnCancelarHistorial');
+let historialInventarioId = null;
+let historialEditandoId = null;
 let requestActual = null;
 let timerBusqueda = null;
 
 if (inventarioModulo) {
     window.inventarioPisoActual = Number(inventarioModulo.dataset.pisoActual) || 1;
     window.inventarioPuedeGestionar = inventarioModulo.dataset.puedeGestionar === '1';
+    window.inventarioRol = inventarioModulo.dataset.rol || 'operador';
     window.inventarioAbrirModalInicial = inventarioModulo.dataset.abrirModalInicial === '1';
     window.inventarioEditando = inventarioModulo.dataset.editando === '1';
 }
@@ -241,6 +250,18 @@ function renderCardInventario(item) {
         `
         : '';
 
+    const historialHtml = `
+        <div class="inventario-historial">
+            <button
+                type="button"
+                class="btn-historial"
+                data-inventario-id="${escaparHtml(item.id)}"
+            >
+                Historial
+            </button>
+        </div>
+    `;
+
     return `
         <div
             class="inventario-card"
@@ -267,6 +288,7 @@ function renderCardInventario(item) {
                     ${escaparHtml(item.comentarios || 'Sin comentarios')}
                 </p>
             </div>
+            ${historialHtml}
             ${accionesHtml}
         </div>
     `;
@@ -289,6 +311,7 @@ function cerrarModal() {
 
 function cerrarModalEliminar() {
     modalEliminar?.classList.remove('active');
+    btnConfirmarEliminar.onclick = null;
 }
 
 function exportarExcel() {
@@ -298,10 +321,286 @@ function exportarExcel() {
     );
 }
 
+function abrirModalHistorial(inventarioId) {
+    historialInventarioId = inventarioId;
+    historialEditandoId = null;
+    historialFecha.value = '';
+    historialNota.value = '';
+    btnAgregarHistorial.textContent = 'Agregar';
+    cargarHistorial();
+    modalHistorial?.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    actualizarFormularioHistorial();
+}
+
+function actualizarFormularioHistorial() {
+    const formulario = document.querySelector('.historial-form');
+    if (!formulario) {
+        return;
+    }
+
+    if (window.inventarioRol === 'operador') {
+        formulario.style.display = 'none';
+    } else {
+        formulario.style.display = 'block';
+    }
+}
+
+function cerrarModalHistorial() {
+    modalHistorial?.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    historialEditandoId = null;
+    historialFecha.value = '';
+    historialNota.value = '';
+    btnAgregarHistorial.textContent = 'Agregar';
+}
+
+async function cargarHistorial() {
+    if (!historialBody || !historialInventarioId) {
+        return;
+    }
+
+    try {
+        const res = await fetch(
+            `index.php?modulo=inventario&accion=historial&inventario_id=${historialInventarioId}`,
+            { headers: { 'Accept': 'application/json' } }
+        );
+
+        if (!res.ok) {
+            throw new Error('No se pudo cargar el historial.');
+        }
+
+        const entries = await res.json();
+        renderHistorial(entries);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+function renderHistorial(entries) {
+    if (!historialBody) {
+        return;
+    }
+
+    if (!Array.isArray(entries) || entries.length === 0) {
+        historialBody.innerHTML = `
+            <tr>
+                <td colspan="3" style="text-align: center; padding: 20px;">
+                    Sin registros de historial
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    const esAdmin = window.inventarioRol === 'admin';
+    const esSupervisor = window.inventarioRol === 'supervisor';
+    const puedeEditar = esAdmin || esSupervisor;
+    const puedeEliminar = esAdmin;
+    const muestraAcciones = puedeEditar || puedeEliminar;
+
+    const thead = document.querySelector('.historial-tabla thead');
+    if (thead) {
+        const thAcciones = thead.querySelector('th:last-child');
+        if (thAcciones) {
+            thAcciones.style.display = muestraAcciones ? '' : 'none';
+        }
+    }
+
+    historialBody.innerHTML = entries.map(entry => {
+        let accionesHtml = '';
+
+        if (muestraAcciones) {
+            accionesHtml = '<td>';
+
+            if (puedeEditar) {
+                accionesHtml += `
+                    <button
+                        type="button"
+                        class="btn-editar-historial"
+                        data-id="${escaparHtml(entry.id)}"
+                        data-fecha="${escaparHtml(entry.fecha)}"
+                        data-nota="${escaparHtml(entry.nota)}"
+                    >
+                        Editar
+                    </button>
+                `;
+            }
+
+            if (puedeEliminar) {
+                accionesHtml += `
+                    <button
+                        type="button"
+                        class="btn-eliminar-historial"
+                        data-id="${escaparHtml(entry.id)}"
+                    >
+                        Eliminar
+                    </button>
+                `;
+            }
+
+            accionesHtml += '</td>';
+        } else {
+            accionesHtml = '<td></td>';
+        }
+
+        return `
+            <tr>
+                <td>${escaparHtml(entry.fecha)}</td>
+                <td>${escaparHtml(entry.nota)}</td>
+                ${accionesHtml}
+            </tr>
+        `;
+    }).join('');
+}
+
+async function agregarHistorial() {
+    if (!historialInventarioId) {
+        return;
+    }
+
+    const fecha = historialFecha.value;
+    const nota = historialNota.value.trim();
+
+    if (!fecha || !nota) {
+        return;
+    }
+
+    try {
+        const res = await fetch('index.php?modulo=inventario&accion=agregarHistorial', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `inventario_id=${historialInventarioId}&fecha=${encodeURIComponent(fecha)}&nota=${encodeURIComponent(nota)}`
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+            console.error(data.error);
+            return;
+        }
+
+        cargarHistorial();
+        historialFecha.value = '';
+        historialNota.value = '';
+        btnAgregarHistorial.textContent = 'Agregar';
+        historialEditandoId = null;
+
+        const mov = new Movimientos;
+        mov.registrar(
+            'historial_articulos',
+            'crear',
+            `Agregó un registro al historial del inventario ID ${historialInventarioId}`,
+            data.id
+        );
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function editarHistorialEntry(id) {
+    if (!id) {
+        return;
+    }
+
+    historialEditandoId = id;
+    btnAgregarHistorial.textContent = 'Guardar';
+}
+
+async function guardarHistorialEditado() {
+    if (!historialEditandoId || !historialInventarioId) {
+        return;
+    }
+
+    const fecha = historialFecha.value;
+    const nota = historialNota.value.trim();
+
+    if (!fecha || !nota) {
+        return;
+    }
+
+    try {
+        const res = await fetch('index.php?modulo=inventario&accion=editarHistorial', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `id=${historialEditandoId}&fecha=${encodeURIComponent(fecha)}&nota=${encodeURIComponent(nota)}`
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+            console.error(data.error);
+            return;
+        }
+
+        cargarHistorial();
+        historialFecha.value = '';
+        historialNota.value = '';
+        btnAgregarHistorial.textContent = 'Agregar';
+        historialEditandoId = null;
+
+        const mov = new Movimientos;
+        mov.registrar(
+            'historial_articulos',
+            'editar',
+            `Editó el registro de historial ID ${historialEditandoId}`,
+            historialEditandoId
+        );
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function eliminarHistorialEntry(id) {
+    if (!id) {
+        return;
+    }
+
+    if (!modalEliminar || !mensajeEliminar || !btnConfirmarEliminar) {
+        return;
+    }
+
+    mensajeEliminar.textContent =
+        `¿Seguro que deseas eliminar este registro de historial?`;
+
+    modalEliminar.classList.add('active');
+
+    btnConfirmarEliminar.onclick = async function(e) {
+        e.preventDefault();
+        modalEliminar.classList.remove('active');
+        btnConfirmarEliminar.onclick = null;
+
+        try {
+            const res = await fetch('index.php?modulo=inventario&accion=eliminarHistorial', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `id=${id}`
+            });
+
+            const data = await res.json();
+
+            if (data.error) {
+                console.error(data.error);
+                return;
+            }
+
+            cargarHistorial();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+}
+
 window.abrirModal = abrirModal;
 window.cerrarModal = cerrarModal;
 window.cerrarModalEliminar = cerrarModalEliminar;
 window.exportarExcel = exportarExcel;
+window.abrirModalHistorial = abrirModalHistorial;
+window.cerrarModalHistorial = cerrarModalHistorial;
+window.agregarHistorial = agregarHistorial;
+window.editarHistorialEntry = editarHistorialEntry;
+window.guardarHistorialEditado = guardarHistorialEditado;
+window.eliminarHistorialEntry = eliminarHistorialEntry;
 
 if (buscador && filtroEstado && inventarioContenedor) {
     buscador.addEventListener('input', function() {
@@ -411,6 +710,69 @@ if (buscador && filtroEstado && inventarioContenedor) {
 
         selectArticulo.addEventListener('change', actualizarCampoCodigo);
         actualizarCampoCodigo();
+    }
+
+    if (historialLink && modalHistorial) {
+        historialLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            const inventarioId = parseInt(historialLink.dataset.inventarioId);
+            if (inventarioId > 0) {
+                abrirModalHistorial(inventarioId);
+            }
+        });
+    }
+
+    if (inventarioContenedor) {
+        inventarioContenedor.addEventListener('click', function(e) {
+            const btnHistorial = e.target.closest('.btn-historial');
+            if (!btnHistorial) {
+                return;
+            }
+            e.preventDefault();
+            const inventarioId = parseInt(btnHistorial.dataset.inventarioId);
+            if (inventarioId > 0) {
+                abrirModalHistorial(inventarioId);
+            }
+        });
+    }
+
+    if (btnAgregarHistorial) {
+        btnAgregarHistorial.addEventListener('click', function() {
+            if (historialEditandoId) {
+                guardarHistorialEditado();
+            } else {
+                agregarHistorial();
+            }
+        });
+    }
+
+    if (btnCancelarHistorial) {
+        btnCancelarHistorial.addEventListener('click', cerrarModalHistorial);
+    }
+
+    if (historialBody) {
+        historialBody.addEventListener('click', function(e) {
+            const btnEditar = e.target.closest('.btn-editar-historial');
+            const btnEliminar = e.target.closest('.btn-eliminar-historial');
+
+            if (btnEditar) {
+                const id = parseInt(btnEditar.dataset.id);
+                const fecha = btnEditar.dataset.fecha;
+                const nota = btnEditar.dataset.nota;
+
+                historialEditandoId = id;
+                historialFecha.value = fecha;
+                historialNota.value = nota;
+                btnAgregarHistorial.textContent = 'Guardar';
+                return;
+            }
+
+            if (btnEliminar) {
+                const id = parseInt(btnEliminar.dataset.id);
+                eliminarHistorialEntry(id);
+                return;
+            }
+        });
     }
 
     if (window.inventarioAbrirModalInicial) {

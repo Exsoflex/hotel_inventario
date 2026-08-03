@@ -1927,12 +1927,22 @@ a:hover::after {
 }
 
 /* ====== PERDIDO ============= */
-
 .estado-perdido {
 
     background: #f3f4f6;
 
     color: #4b5563;
+
+}
+
+/* ===== NUEVO ===== */
+
+.estado-nuevo {
+
+    background: #d4eaf7;
+
+    color: #1a6fa0;
+
 }
 
 /* ====== VER INVENTARIO ====== */
@@ -2285,7 +2295,6 @@ input.filtro-articulo{
 
     margin-bottom: 25px;
 }
-
 .modal-buttons {
 
     display: flex;
@@ -2293,6 +2302,351 @@ input.filtro-articulo{
     gap: 15px;
 
     margin-top: 20px;
+
+}
+
+/* =============================== */
+/* ===== HISTORIAL MODAL ===== */
+/* ============================= */
+
+.modal-historial {
+
+    width: 700px;
+
+    max-height: 85vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+.modal-historial .modal-header {
+
+    flex-shrink: 0;
+
+}
+
+.modal-historial .modal-body {
+
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 0 30px 30px;
+
+}
+
+.historial-tabla-wrapper {
+
+    overflow-x: auto;
+
+    margin-bottom: 20px;
+
+}
+
+.historial-tabla {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 14px;
+
+}
+
+.historial-tabla th,
+.historial-tabla td {
+
+    padding: 10px 12px;
+
+    text-align: left;
+
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+
+}
+
+.historial-tabla th {
+
+    background: var(--bg-surface-alt, #f3f4f6);
+
+    font-weight: 700;
+
+    font-size: 13px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+
+}
+
+.historial-tabla td {
+
+    color: var(--text-secondary, #4b5563);
+
+}
+
+.historial-tabla .btn-editar-historial,
+.historial-tabla .btn-eliminar-historial {
+
+    padding: 6px 14px;
+
+    border-radius: 14px;
+
+    border: none;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    margin-right: 6px;
+
+    transition: opacity 0.15s ease;
+
+}
+
+.historial-tabla .btn-editar-historial:hover,
+.historial-tabla .btn-eliminar-historial:hover {
+
+    opacity: 0.8;
+
+}
+
+.historial-tabla .btn-editar-historial {
+
+    background: #e0e7ff;
+
+    color: #3730a3;
+
+}
+
+.historial-tabla .btn-eliminar-historial {
+
+    background: #fff0f0;
+
+    color: #d11f1f;
+
+}
+
+.historial-form {
+
+    border-top: 1px solid var(--border-color, #e5e7eb);
+
+    padding-top: 20px;
+
+}
+
+.historial-form-row {
+
+    margin-bottom: 12px;
+
+}
+
+.historial-form-row label {
+
+    display: block;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    margin-bottom: 4px;
+
+    color: var(--text-secondary, #4b5563);
+
+}
+
+.historial-form-row input[type="date"],
+.historial-form-row input[type="text"] {
+
+    width: 100%;
+
+    padding: 8px 12px;
+
+    border: 1px solid var(--border-color, #d1d5db);
+
+    border-radius: 8px;
+
+    font-size: 14px;
+
+    background: var(--bg-input, #fff);
+
+    color: var(--text-primary, #111827);
+
+}
+
+.historial-form-buttons {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 15px;
+
+}
+
+.historial-form-buttons button {
+
+    padding: 8px 18px;
+
+    border-radius: 8px;
+
+    border: none;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+#btnAgregarHistorial {
+
+    background: #1a6fa0;
+
+    color: #fff;
+
+}
+
+#btnCancelarHistorial {
+
+    background: #f3f4f6;
+
+    color: #4b5563;
+
+}
+
+.historial-link {
+
+    display: inline-block;
+
+    margin-top: 8px;
+
+    margin-bottom: 12px;
+
+    color: #1a6fa0;
+
+    font-weight: 600;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    text-decoration: underline;
+
+    text-underline-offset: 3px;
+
+}
+
+.historial-link:hover {
+
+    color: #155a8a;
+
+}
+
+/* ===== HISTORIAL BUTTON ON CARDS ===== */
+
+.inventario-historial {
+
+    margin-top: 10px;
+
+    margin-bottom: 5px;
+
+}
+
+.btn-historial {
+
+    display: inline-block;
+
+    padding: 6px 16px;
+
+    border-radius: 14px;
+
+    border: 1px solid #1a6fa0;
+
+    background: transparent;
+
+    color: #1a6fa0;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.15s ease;
+
+}
+
+.btn-historial:hover {
+
+    background: #1a6fa0;
+
+    color: #fff;
+
+}
+
+/* ===== HISTORIAL MODAL BUTTONS ===== */
+
+#btnAgregarHistorial {
+
+    background: #1a6fa0;
+
+    color: #fff;
+
+    border: none;
+
+    padding: 10px 20px;
+
+    border-radius: 14px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background 0.15s ease;
+
+}
+
+#btnAgregarHistorial:hover {
+
+    background: #155a8a;
+
+}
+
+#btnCancelarHistorial {
+
+    background: #f3f4f6;
+
+    color: #4b5563;
+
+    border: none;
+
+    padding: 10px 20px;
+
+    border-radius: 14px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background 0.15s ease;
+
+}
+
+#btnCancelarHistorial:hover {
+
+    background: #e5e7eb;
+
 }
 
 /* =============================== */
@@ -2925,6 +3279,94 @@ body.sidebar-mobile-open {
 
 [data-theme="dark"] .estado-perdido {
     background: rgba(75, 85, 99, 0.35);
+}
+
+[data-theme="dark"] .estado-nuevo {
+    background: rgba(26, 111, 160, 0.2);
+}
+
+[data-theme="dark"] .modal-historial {
+    background: var(--bg-surface, #1f2937);
+}
+
+[data-theme="dark"] .historial-tabla th {
+    background: var(--bg-surface-alt, #374151);
+    color: var(--text-primary, #f3f4f6);
+}
+
+[data-theme="dark"] .historial-tabla td {
+    color: var(--text-secondary, #d1d5db);
+    border-bottom-color: var(--border-color, #4b5563);
+}
+
+[data-theme="dark"] .historial-tabla .btn-editar-historial {
+    background: rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+}
+
+[data-theme="dark"] .historial-tabla .btn-eliminar-historial {
+    background: rgba(209, 31, 31, 0.2);
+    color: #fca5a5;
+}
+
+[data-theme="dark"] .historial-form {
+    border-top-color: var(--border-color, #4b5563);
+}
+
+[data-theme="dark"] .historial-form-row label {
+    color: var(--text-secondary, #d1d5db);
+}
+
+[data-theme="dark"] .historial-form-row input[type="date"],
+[data-theme="dark"] .historial-form-row input[type="text"] {
+    background: var(--bg-input, #374151);
+    color: var(--text-primary, #f3f4f6);
+    border-color: var(--border-color, #4b5563);
+}
+
+[data-theme="dark"] #btnCancelarHistorial {
+    background: var(--bg-surface-alt, #374151);
+    color: var(--text-secondary, #d1d5db);
+}
+
+[data-theme="dark"] .historial-link {
+    color: #60a5fa;
+}
+
+[data-theme="dark"] .historial-link:hover {
+    color: #93c5fd;
+}
+
+[data-theme="dark"] .btn-historial {
+    border-color: #60a5fa;
+    color: #60a5fa;
+}
+
+[data-theme="dark"] .btn-historial:hover {
+    background: #60a5fa;
+    color: #1f2937;
+}
+
+[data-theme="dark"] #btnAgregarHistorial {
+    background: #1a6fa0;
+    color: #fff;
+}
+
+[data-theme="dark"] #btnAgregarHistorial:hover {
+    background: #155a8a;
+}
+
+[data-theme="dark"] #btnCancelarHistorial {
+    background: var(--bg-surface-alt, #374151);
+    color: var(--text-secondary, #d1d5db);
+}
+
+[data-theme="dark"] #btnCancelarHistorial:hover {
+    background: var(--border-color, #4b5563);
+}
+
+[data-theme="dark"] #btnCancelarHistorial:hover {
+    background: var(--border-color, #4b5563);
 }
 
 [data-theme="dark"] .alerta-exito {

@@ -1,0 +1,1 @@
+ALTER TABLE `inventario` MODIFY COLUMN `estado` enum('bueno','dañado','en_reparacion','perdido','nuevo') NOT NULL DEFAULT 'bueno';

@@ -2,6 +2,7 @@
 
 require_once __DIR__ . "/../models/inventario.php";
 require_once __DIR__ . "/../models/movimientos.php";
+require_once __DIR__ . "/../models/historial_articulos.php";
 require_once __DIR__ . '/../config/auth.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -153,23 +154,24 @@ public function agregar() {
             $estado, $comentarios, $codigo
         );
 
-        if ($resultado['exito']) {
+if ($resultado['exito']) {
 
-            $idNuevo     = $resultado['id'];
-            $numHab      = $inventario->obtenerNumeroHabitacion($habitacion_id);
-            $nomArticulo = $inventario->obtenerNombreArticulo($articulo_id);
+             $idNuevo     = $resultado['id'];
+             $numHab      = $inventario->obtenerNumeroHabitacion($habitacion_id);
+             $nomArticulo = $inventario->obtenerNombreArticulo($articulo_id);
 
-            $mov = new Movimientos();
-            $mov->registrar(
-                'inventario', 'crear',
-                "Creó inventario en habitación \"$numHab\" con artículo \"$nomArticulo\" (cantidad: $cantidad)",
-                $idNuevo
-            );
+             $mov = new Movimientos();
+             $mov->registrar(
+                 'inventario', 'crear',
+                 "Creó inventario en habitación \"$numHab\" con artículo \"$nomArticulo\" (cantidad: $cantidad)",
+                 $idNuevo
+             );
 
-            $query = $this->crearQueryInventario('agregado', $filtros);
+             $filtros['buscar'] = $numHab;
+             $query = $this->crearQueryInventario('agregado', $filtros);
 
-            header("Location: index.php?$query#inventario-$idNuevo");
-            exit();
+             header("Location: index.php?$query#inventario-$idNuevo");
+             exit();
 
         } else {
 
@@ -305,15 +307,26 @@ public function editar() {
             $cantidad, $estado, $comentarios, $codigo
         );
 
-        if ($resultado['exito']) {
+if ($resultado['exito']) {
 
-            $mov = new Movimientos();
-            $mov->registrar('inventario', 'editar', "Editó inventario ID $id", $id);
+             $mov = new Movimientos();
 
-            $query = $this->crearQueryInventario('editado', $filtros);
+             $numHab = $modelInventario->obtenerNumeroHabitacion($habitacion_id);
+             $nomArticulo = $modelInventario->obtenerNombreArticulo($articulo_id);
 
-            header("Location: index.php?$query#inventario-$id");
-            exit();
+             $mov->registrar(
+                 'inventario',
+                 'editar',
+                 "Editó inventario de \"$nomArticulo\" en habitación \"$numHab\"",
+                 $id
+             );
+
+             $numHab = $modelInventario->obtenerNumeroHabitacion($habitacion_id);
+             $filtros['buscar'] = $numHab;
+             $query = $this->crearQueryInventario('editado', $filtros);
+
+             header("Location: index.php?$query#inventario-$id");
+             exit();
 
         } else {
 
@@ -540,7 +553,167 @@ foreach($inventarios as $i){
     $writer->save('php://output');
     exit;
 }
+
+public function historial() {
+
+    verificarRol(['admin', 'supervisor', 'operador']);
+
+    $inventario_id = filter_var($_GET['inventario_id'] ?? 0, FILTER_VALIDATE_INT);
+
+    if ($inventario_id === false || $inventario_id < 1) {
+        http_response_code(400);
+        echo json_encode(['error' => 'ID de inventario inválido']);
+        return;
+    }
+
+    $historial = (new HistorialArticulos())->obtenerPorInventarioId($inventario_id);
+
+    header('Content-Type: application/json');
+    echo json_encode($historial);
+    exit;
 }
 
+public function agregarHistorial() {
 
+    verificarRol(['admin', 'supervisor']);
 
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+        exit();
+    }
+
+    $inventario_id = filter_var($_POST['inventario_id'] ?? 0, FILTER_VALIDATE_INT);
+    $fecha         = $_POST['fecha'] ?? '';
+    $nota          = trim($_POST['nota'] ?? '');
+
+    if ($inventario_id === false || $inventario_id < 1 || $fecha === '' || $nota === '') {
+        http_response_code(400);
+        echo json_encode(['error' => 'Todos los campos son obligatorios']);
+        return;
+    }
+
+    $inventario = new Inventario();
+    $item = $inventario->obtenerPorId($inventario_id);
+    $numHab = $item ? $inventario->obtenerNumeroHabitacion($item['habitacion_id']) : '#' . $inventario_id;
+    $nomArticulo = $item ? $inventario->obtenerNombreArticulo($item['articulo_id']) : 'Desconocido';
+
+    $historial = new HistorialArticulos();
+    $id = $historial->agregar($inventario_id, $fecha, $nota);
+
+    $mov = new Movimientos();
+    $mov->registrar(
+        'historial_articulos',
+        'crear',
+        "Agregó un registro al historial de \"$nomArticulo\" en habitación \"$numHab\"",
+        $id
+    );
+
+    header('Content-Type: application/json');
+    echo json_encode(['exito' => true, 'id' => $id]);
+    exit;
+}
+
+public function editarHistorial() {
+
+    verificarRol(['admin', 'supervisor']);
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+        exit();
+    }
+
+    $id      = filter_var($_POST['id'] ?? 0, FILTER_VALIDATE_INT);
+    $fecha   = $_POST['fecha'] ?? '';
+    $nota    = trim($_POST['nota'] ?? '');
+
+    if ($id === false || $id < 1 || $fecha === '' || $nota === '') {
+        http_response_code(400);
+        echo json_encode(['error' => 'Todos los campos son obligatorios']);
+        return;
+    }
+
+    $historial = new HistorialArticulos();
+    $entry = $historial->obtenerPorId($id);
+    $nomArticulo = '';
+    $numHab = '';
+
+    if ($entry) {
+        $inventario = new Inventario();
+        $item = $inventario->obtenerPorId($entry['inventario_id']);
+        if ($item) {
+            $numHab = $inventario->obtenerNumeroHabitacion($item['habitacion_id']);
+            $nomArticulo = $inventario->obtenerNombreArticulo($item['articulo_id']);
+        }
+    }
+
+    $historial->editar($id, $fecha, $nota);
+
+    $mov = new Movimientos();
+    $descripcion = "Editó el registro de historial ID $id";
+    if ($nomArticulo && $numHab) {
+        $descripcion = "Editó el registro de historial de \"$nomArticulo\" en habitación \"$numHab\"";
+    }
+
+    $mov->registrar(
+        'historial_articulos',
+        'editar',
+        $descripcion,
+        $id
+    );
+
+    header('Content-Type: application/json');
+    echo json_encode(['exito' => true]);
+    exit;
+}
+
+public function eliminarHistorial() {
+
+    verificarRol(['admin']);
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+        exit();
+    }
+
+    $id = filter_var($_POST['id'] ?? 0, FILTER_VALIDATE_INT);
+
+    if ($id === false || $id < 1) {
+        http_response_code(400);
+        echo json_encode(['error' => 'ID inválido']);
+        return;
+    }
+
+    $historial = new HistorialArticulos();
+    $entry = $historial->obtenerPorId($id);
+    $numHab = '';
+    $nomArticulo = '';
+
+    if ($entry) {
+        $inventario = new Inventario();
+        $item = $inventario->obtenerPorId($entry['inventario_id']);
+        if ($item) {
+            $numHab = $inventario->obtenerNumeroHabitacion($item['habitacion_id']);
+            $nomArticulo = $inventario->obtenerNombreArticulo($item['articulo_id']);
+        }
+    }
+
+    $descripcion = "Eliminó el registro de historial ID $id";
+    if ($nomArticulo && $numHab) {
+        $descripcion = "Eliminó un registro del historial de \"$nomArticulo\" en habitación \"$numHab\"";
+    }
+
+    $historial->eliminar($id);
+
+    $mov = new Movimientos();
+    $mov->registrar(
+        'historial_articulos',
+        'eliminar',
+        $descripcion,
+        $id
+    );
+
+    header('Content-Type: application/json');
+    echo json_encode(['exito' => true]);
+    exit;
+}
+}

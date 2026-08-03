@@ -82,6 +82,7 @@ $formInventario = $inventarioEditar ?? $_POST ?? [];
     id="inventarioModulo"
     data-piso-actual="<?= (int)$piso ?>"
     data-puede-gestionar="<?= in_array($_SESSION['usuario']['rol'], ['admin', 'supervisor']) ? '1' : '0' ?>"
+    data-rol="<?= htmlspecialchars($_SESSION['usuario']['rol']) ?>"
     data-abrir-modal-inicial="<?= (isset($inventarioEditar) || isset($errorFormulario)) ? '1' : '0' ?>"
     data-editando="<?= isset($inventarioEditar) ? '1' : '0' ?>"
 >
@@ -130,6 +131,7 @@ $formInventario = $inventarioEditar ?? $_POST ?? [];
                 <option value="dañado"    <?= $filtros['estado'] === 'dañado'      ? 'selected' : '' ?>>Dañado</option>
                 <option value="en_reparacion" <?= $filtros['estado'] === 'en_reparacion' ? 'selected' : '' ?>>En reparación</option>
                 <option value="perdido"   <?= $filtros['estado'] === 'perdido'     ? 'selected' : '' ?>>Perdido</option>
+                <option value="nuevo"    <?= $filtros['estado'] === 'nuevo'      ? 'selected' : '' ?>>Nuevo</option>
             </select>
 
 <!-- ------------------------------------------------------- -->
@@ -376,18 +378,26 @@ $formInventario = $inventarioEditar ?? $_POST ?? [];
                 En reparación
             </option>
 
-            <option value="perdido"
+<option value="perdido"
             <?= ($formInventario['estado'] ?? '') === 'perdido'
                 ? 'selected'
                 : ''
             ?>>
                 Perdido
             </option>
+
+            <option value="nuevo"
+            <?= ($formInventario['estado'] ?? '') === 'nuevo'
+                ? 'selected'
+                : ''
+            ?>>
+                Nuevo
+            </option>
         </select>
 
             <label>Comentarios</label>
 
-            <input
+<input
             type="text"
             name="comentarios"
             value="<?= htmlspecialchars($formInventario['comentarios'] ?? '') ?>"
@@ -414,6 +424,88 @@ $formInventario = $inventarioEditar ?? $_POST ?? [];
 </div>
 
     </main>
+
+</div>
+
+<!-- /////////////////////////////////////////////////////// -->
+
+<div class="modal-overlay" id="modalHistorial">
+
+    <div class="modal modal-historial">
+
+        <div class="modal-header">
+
+            <h2>Historial del artículo</h2>
+
+            <button type="button" class="btn-cerrar-modal" onclick="cerrarModalHistorial()">
+                &times;
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <div class="historial-tabla-wrapper">
+
+                <table class="historial-tabla">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Fecha</th>
+
+                            <th>Nota</th>
+
+                            <th>Acciones</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="historialBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="historial-form">
+
+                <div class="historial-form-row">
+
+                    <label>Fecha</label>
+
+                    <input type="date" id="historialFecha" required>
+
+                </div>
+
+                <div class="historial-form-row">
+
+                    <label>Nota</label>
+
+                    <input type="text" id="historialNota" placeholder="Escriba una nota..." required>
+
+                </div>
+
+                <div class="historial-form-buttons">
+
+                    <button type="button" id="btnAgregarHistorial">
+                        Agregar
+                    </button>
+
+                    <button type="button" id="btnCancelarHistorial" onclick="cerrarModalHistorial()">
+                        Cancelar
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
@@ -454,8 +546,6 @@ $formInventario = $inventarioEditar ?? $_POST ?? [];
     </div>
 
 </div>
-
-<!-- /////////////////////////////////////////////////////// -->
 
 <script src="/hotel_inventario/assets/js/inventario/index.js"></script>
 
