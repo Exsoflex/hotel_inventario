@@ -573,6 +573,204 @@ public function historial() {
     exit;
 }
 
+public function exportarHistorial() {
+
+    /* verificarRol(['admin', 'supervisor', 'operador']); */
+
+    $inventario_id = filter_var($_GET['inventario_id'] ?? 0, FILTER_VALIDATE_INT);
+
+    if ($inventario_id === false || $inventario_id < 1) {
+        http_response_code(400);
+        exit('ID de inventario inválido');
+    }
+
+    $inventario = new Inventario();
+    $item = $inventario->obtenerPorId($inventario_id);
+
+    if (!$item) {
+        http_response_code(404);
+        exit('Registro no encontrado');
+    }
+
+    $numHab      = $inventario->obtenerNumeroHabitacion($item['habitacion_id']);
+    $nomArticulo = $inventario->obtenerNombreArticulo($item['articulo_id']);
+
+    $historial = (new HistorialArticulos())->obtenerPorInventarioId($inventario_id);
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    $sheet->setCellValue('A1', 'REPORTE DE HISTORIAL DE ARTÍCULOS');
+    $sheet->mergeCells('A1:E1');
+
+    date_default_timezone_set('America/Matamoros');
+
+    $sheet->setCellValue(
+        'A2',
+        'Fecha de exportación: ' . date('d/m/Y - h:i:s A')
+    );
+    $sheet->mergeCells('A2:E2');
+
+    $fila = 4;
+
+    $sheet->setCellValue('A' . $fila, 'HABITACIÓN ' . $numHab);
+    $sheet->mergeCells('A' . $fila . ':E' . $fila);
+
+    $sheet->getStyle('A' . $fila . ':E' . $fila)->applyFromArray([
+        'font' => ['bold' => true, 'size' => 14],
+        'fill' => [
+            'fillType' => Fill::FILL_SOLID,
+            'startColor' => ['rgb' => 'B6D7A8']
+        ]
+    ]);
+
+    $fila++;
+
+    $sheet->setCellValue('A' . $fila, 'Artículo');
+    $sheet->setCellValue('B' . $fila, 'Cantidad');
+    $sheet->setCellValue('C' . $fila, 'Estado');
+    $sheet->setCellValue('D' . $fila, 'Comentarios');
+    $sheet->setCellValue('E' . $fila, 'Código');
+
+    $sheet->getStyle('A' . $fila . ':E' . $fila)->applyFromArray([
+        'font' => ['bold' => true],
+        'fill' => [
+            'fillType' => Fill::FILL_SOLID,
+            'startColor' => ['rgb' => 'D9EAD3']
+        ],
+        'alignment' => [
+            'horizontal' => Alignment::HORIZONTAL_CENTER
+        ]
+    ]);
+
+    $fila++;
+
+    $filaArticuloFin = $fila;
+
+    $sheet->setCellValue('A' . $fila, $nomArticulo);
+    $sheet->setCellValue('B' . $fila, $item['cantidad']);
+    $sheet->setCellValue('C' . $fila, $item['estado']);
+    $sheet->setCellValue('D' . $fila, $item['comentarios'] ?: 'Sin comentarios');
+    $sheet->setCellValue('E' . $fila, $item['codigo_barras'] ?: 'Sin código');
+
+    $fila++;
+
+    $fila += 2;
+
+    $sheet->setCellValue('A' . $fila, 'HISTORIAL');
+    $sheet->mergeCells('A' . $fila . ':E' . $fila);
+
+    $sheet->getStyle('A' . $fila . ':E' . $fila)->applyFromArray([
+        'font' => ['bold' => true, 'size' => 14],
+        'fill' => [
+            'fillType' => Fill::FILL_SOLID,
+            'startColor' => ['rgb' => 'B6D7A8']
+        ]
+    ]);
+
+    $fila++;
+
+    $sheet->setCellValue('A' . $fila, 'Fecha');
+    $sheet->setCellValue('B' . $fila, 'Nota');
+    $sheet->mergeCells('B' . $fila . ':E' . $fila);
+
+    $sheet->getStyle('A' . $fila . ':E' . $fila)->applyFromArray([
+        'font' => ['bold' => true],
+        'fill' => [
+            'fillType' => Fill::FILL_SOLID,
+            'startColor' => ['rgb' => 'D9EAD3']
+        ],
+        'alignment' => [
+            'horizontal' => Alignment::HORIZONTAL_CENTER
+        ]
+    ]);
+
+    $filaHistDataInicio = $fila + 1;
+
+    $fila++;
+
+    foreach ($historial as $h) {
+        $sheet->setCellValue('A' . $fila, $h['fecha']);
+        $sheet->setCellValue('B' . $fila, $h['nota']);
+        $sheet->mergeCells('B' . $fila . ':E' . $fila);
+        $fila++;
+    }
+
+    if (empty($historial)) {
+        $sheet->setCellValue('A' . $fila, 'Sin registros de historial');
+        $sheet->mergeCells('A' . $fila . ':E' . $fila);
+        $sheet->getStyle('A' . $fila)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $fila++;
+    }
+
+    $filaHistFin = $fila - 1;
+
+    foreach (range('A', 'E') as $columna) {
+        $sheet->getColumnDimension($columna)->setAutoSize(true);
+    }
+
+    $sheet->getColumnDimension('D')->setWidth(40);
+    $sheet->getStyle('D:D')->getAlignment()->setWrapText(true);
+
+    $sheet->getStyle('B:B')->getAlignment()->setWrapText(true);
+
+    $sheet->getStyle('A4:E' . $filaArticuloFin)->applyFromArray([
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+            ]
+        ]
+    ]);
+
+    $sheet->getStyle('A' . ($filaHistDataInicio - 1) . ':E' . $filaHistFin)->applyFromArray([
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+            ]
+        ]
+    ]);
+
+    $sheet->getStyle('A1:E1')->applyFromArray([
+        'font' => ['bold' => true, 'size' => 16],
+        'alignment' => [
+            'horizontal' => Alignment::HORIZONTAL_CENTER
+        ]
+    ]);
+
+    $sheet->getStyle('A2:E2')->applyFromArray([
+        'alignment' => [
+            'horizontal' => Alignment::HORIZONTAL_CENTER
+        ]
+    ]);
+
+    $sheet->getStyle('A:A')->applyFromArray([
+        'alignment' => [
+            'horizontal' => Alignment::HORIZONTAL_CENTER
+        ]
+    ]);
+
+    $sheet->freezePane('A' . $filaHistDataInicio);
+
+    $writer = new Xlsx($spreadsheet);
+
+    $mov = new Movimientos();
+    $mov->registrar(
+        'historial_articulos',
+        'exportar',
+        "Exportó el historial de \"$nomArticulo\" en habitación \"$numHab\" a Excel",
+        $inventario_id
+    );
+
+    header(
+        'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    header('Content-Disposition: attachment;filename="historial_articulo.xlsx"');
+    header('Cache-Control: max-age=0');
+
+    $writer->save('php://output');
+    exit;
+}
+
 public function agregarHistorial() {
 
     verificarRol(['admin', 'supervisor']);

@@ -321,6 +321,14 @@ function exportarExcel() {
     );
 }
 
+function exportarHistorialExcel() {
+    if (!historialInventarioId) {
+        return;
+    }
+
+    window.location.href = `index.php?modulo=inventario&accion=exportarHistorial&inventario_id=${historialInventarioId}`;
+}
+
 function abrirModalHistorial(inventarioId) {
     historialInventarioId = inventarioId;
     historialEditandoId = null;
@@ -595,6 +603,7 @@ window.abrirModal = abrirModal;
 window.cerrarModal = cerrarModal;
 window.cerrarModalEliminar = cerrarModalEliminar;
 window.exportarExcel = exportarExcel;
+window.exportarHistorialExcel = exportarHistorialExcel;
 window.abrirModalHistorial = abrirModalHistorial;
 window.cerrarModalHistorial = cerrarModalHistorial;
 window.agregarHistorial = agregarHistorial;
@@ -782,4 +791,8 @@ if (buscador && filtroEstado && inventarioContenedor) {
     sincronizarFiltros();
     cargarInventario();
     actualizarVisibilidadBotonLimpiar();
+
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 }

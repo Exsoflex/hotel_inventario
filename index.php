@@ -191,6 +191,10 @@ switch($action) {
         $controller->exportar();
         break;
 
+    case 'exportarHistorial':
+        $controller->exportarHistorial();
+        break;
+
     case 'historial':
         $controller->historial();
         break;

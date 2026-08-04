@@ -24,8 +24,8 @@ caracteres especiales propios del idioma espanol.
 La arquitectura de datos se organiza en torno a **tres entidades maestras**
 -`habitaciones`, `articulos` y `usuarios`- y una **entidad transaccional
 central** -`inventario`- que actua como el nucleo operativo del sistema.
-Alrededor de estas se disponen tablas de configuracion, respaldo y auditoria que
-complementan la logica del negocio.
+Alrededor de estas se disponen tablas de configuracion, respaldo, seguimiento
+historico y auditoria que complementan la logica del negocio.
 
 #### Entidades maestras
 
@@ -39,7 +39,9 @@ plantilla de inventario que le corresponde.
 La tabla **`articulos`** constituye el catalogo general de bienes inventariables
 del hotel (television, telefono, silla, aire acondicionado, etc.). Un atributo
 relevante es `usa_codigo_barras`, que indica si el articulo debe ser rastreado
-individualmente mediante escaneo de codigo de barras.
+individualmente mediante escaneo de codigo de barras. Adicionalmente, el campo
+`estado` permite clasificar el articulo en el catalogo con el valor `nuevo` por
+defecto, estableciendo el estado inicial de cualquier bien inventariable.
 
 La tabla **`usuarios`** administra el acceso al sistema y define el control de
 permisos mediante el campo `rol`, que distingue entre los perfiles
@@ -62,7 +64,7 @@ El corazon del modelo radica en la comparacion entre lo **esperado** y lo
 
 - La tabla **`inventario`** registra el estado *real* de cada habitacion: que
   articulos posee efectivamente, en que cantidad, en que estado de conservacion
-  (bueno, danado, en reparacion o perdido) y, cuando aplica, su codigo de
+  (bueno, danado, en reparacion, perdido o nuevo) y, cuando aplica, su codigo de
   barras. Cada registro se relaciona con `habitaciones` mediante `habitacion_id`
   y con `articulos` mediante `articulo_id`.
 
@@ -74,13 +76,17 @@ mediante **vistas SQL** (`vista_faltantes`, `vista_dashboard`,
 directamente el modulo de reportes y el tablero de control (*dashboard*) sin
 duplicar informacion en el almacenamiento.
 
-#### Entidades de trazabilidad y respaldo
+#### Entidades de trazabilidad, respaldo y seguimiento historico
 
-El modelo incorpora dos mecanismos de trazabilidad. La tabla
+El modelo incorpora tres mecanismos complementarios de trazabilidad. La tabla
+**`historial_articulos`** registra el seguimiento historico de cada item de
+inventario, almacenando la fecha y una nota de actividad para cada evento
+(mantenimiento, traslado, observacion, etc.) asociado a un registro especifico
+de `inventario`, asi como el usuario que lo realizo. Por su parte, la tabla
 **`historial_codigos`** deja constancia de cada consulta realizada por escaneo de
 codigo de barras, relacionando el usuario que la ejecuto (`usuario_id`) con el
 registro de inventario consultado (`inventario_id`) y la marca temporal
-correspondiente. Por su parte, la tabla **`movimientos`** funciona como una
+correspondiente. Finalmente, la tabla **`movimientos`** funciona como una
 **bitacora de auditoria general**: registra toda accion de creacion, edicion o
 eliminacion efectuada en cualquier modulo, almacenando el usuario responsable,
 el modulo afectado, el tipo de accion y una descripcion legible. Su campo
@@ -88,9 +94,8 @@ el modulo afectado, el tipo de accion y una descripcion legible. Su campo
 distintas tablas segun el modulo de origen, razon por la cual no se define como
 llave foranea.
 
-Finalmente, la tabla **`inventario_backup`** replica la estructura de
-`inventario` con el proposito de conservar copias de seguridad de los datos
-operativos.
+La tabla **`inventario_backup`** replica la estructura de `inventario` con el
+proposito de conservar copias de seguridad de los datos operativos.
 
 #### Integridad referencial
 
@@ -116,7 +121,7 @@ Para cada tabla se documentan los siguientes atributos:
 
 - **Campo:** nombre tecnico de la columna.
 - **Tipo de dato:** tipo y longitud del valor (INT, VARCHAR, TEXT, ENUM,
-  TIMESTAMP, TINYINT), conforme a la sintaxis de MariaDB/MySQL.
+  TIMESTAMP, TINYINT, DATE), conforme a la sintaxis de MariaDB/MySQL.
 - **Nulo:** indica si el campo admite NULL o si su captura es obligatoria.
 - **Llave:** rol del campo (PK = Llave Primaria, FK = Llave Foranea,
   UK = Llave Unica).
@@ -177,7 +182,9 @@ individual y su `tipo` determina la plantilla de inventario que le corresponde.
 ### 3. Tabla `articulos`
 
 Catalogo general de bienes inventariables del hotel. Cada articulo puede aparecer
-tanto en la plantilla base como en el inventario real de las habitaciones.
+tanto en la plantilla base como en el inventario real de las habitaciones. El
+campo `estado` clasifica el articulo en el catalogo, estableciendo el valor
+`nuevo` como estado inicial por defecto para cualquier bien inventariable.
 
 | Campo | Tipo de dato | Nulo | Llave | Valor por defecto | Descripcion |
 |---|---|---|---|---|---|
@@ -185,6 +192,7 @@ tanto en la plantilla base como en el inventario real de las habitaciones.
 | `nombre` | VARCHAR(100) | SI | UK | NULL | Nombre del articulo (ej. 'television', 'silla'). Unico. |
 | `descripcion` | TEXT | SI | - | NULL | Descripcion detallada o especificaciones del articulo. |
 | `usa_codigo_barras` | TINYINT(1) | NO | - | 0 | Indica si el articulo se rastrea por codigo de barras: 1 = si, 0 = no. |
+| `estado` | ENUM('nuevo') | NO | - | 'nuevo' | Estado de clasificacion del articulo en el catalogo. Por defecto, 'nuevo'. |
 
 <p align="center"><em>Tabla 9.3.12. Diccionario de datos de la tabla articulos.</em></p>
 
@@ -217,8 +225,11 @@ para determinar faltantes y sobrantes.
 ### 5. Tabla `inventario`
 
 Entidad **transaccional central** del sistema. Registra el estado real del
-inventario de cada habitacion: que articulos posee, en que cantidad y en que
-condicion.
+inventario de cada habitacion: que articulos posee, en que cantidad, en que
+condicion de conservacion y, cuando aplica, su codigo de barras. El campo
+`estado` admite los valores `bueno`, `danado`, `en_reparacion`, `perdido` y
+`nuevo`, este ultimo incorporado para clasificar articulos recien incorporados
+al inventario sin uso previo.
 
 | Campo | Tipo de dato | Nulo | Llave | Valor por defecto | Descripcion |
 |---|---|---|---|---|---|
@@ -226,7 +237,7 @@ condicion.
 | `habitacion_id` | INT(11) | SI | FK / UK (compuesta) | NULL | Referencia a la habitacion (habitaciones.id) donde se ubica el articulo. |
 | `articulo_id` | INT(11) | SI | FK / UK (compuesta) | NULL | Referencia al articulo (articulos.id) inventariado. |
 | `cantidad` | INT(11) | SI | - | 0 | Cantidad real del articulo presente en la habitacion. |
-| `estado` | ENUM('bueno','danado','en_reparacion','perdido') | SI | - | 'bueno' | Estado de conservacion del articulo. |
+| `estado` | ENUM('bueno','danado','en_reparacion','perdido','nuevo') | SI | - | 'bueno' | Estado de conservacion del articulo. |
 | `comentarios` | TEXT | SI | - | NULL | Observaciones especificas del registro (ej. 'Silla chica'). |
 | `codigo_barras` | VARCHAR(50) | SI | - | NULL | Codigo de barras individual del articulo, cuando aplica. |
 
@@ -249,7 +260,7 @@ ni posee restricciones de unicidad.
 | `habitacion_id` | INT(11) | SI | - | NULL | Copia de la habitacion asociada al registro original. |
 | `articulo_id` | INT(11) | SI | - | NULL | Copia del articulo asociado al registro original. |
 | `cantidad` | INT(11) | SI | - | 0 | Copia de la cantidad registrada. |
-| `estado` | ENUM('bueno','danado','en_reparacion','perdido') | SI | - | 'bueno' | Copia del estado de conservacion. |
+| `estado` | ENUM('bueno','danado','en_reparacion','perdido','nuevo') | SI | - | 'bueno' | Copia del estado de conservacion. |
 | `comentarios` | TEXT | SI | - | NULL | Copia de las observaciones del registro. |
 | `codigo_barras` | VARCHAR(50) | SI | - | NULL | Copia del codigo de barras del registro. |
 
@@ -259,9 +270,34 @@ ni posee restricciones de unicidad.
 
 ---
 
+### 7. Tabla `historial_articulos`
+
+Entidad de **seguimiento historico** que registra eventos, mantenimientos,
+traslados u observaciones asociadas a un registro especifico de `inventario`.
+Cada entrada documenta la fecha del evento, una nota descriptiva y el usuario
+responsable, proporcionando trazabilidad completa del ciclo de vida de cada
+item inventariado.
+
+| Campo | Tipo de dato | Nulo | Llave | Valor por defecto | Descripcion |
+|---|---|---|---|---|---|
+| `id` | INT(11) | NO | PK | AUTO_INCREMENT | Identificador unico del registro de historial. Clave primaria autoincremental. |
+| `inventario_id` | INT(11) | NO | FK | - | Referencia al registro de inventario (inventario.id) al que se asocia el evento. |
+| `fecha_calendario` | DATE | NO | - | - | Fecha en que ocurrio el evento registrado. |
+| `nota_actividad` | TEXT | SI | - | NULL | Descripcion del evento (ej. 'Mantenimiento preventivo', 'Traslado a almacen'). |
+| `usuario_realiza` | INT(11) | NO | FK | - | Referencia al usuario (usuarios.id) que registro el evento. |
+| `created_at` | TIMESTAMP | NO | - | current_timestamp() | Fecha y hora de creacion del registro en el sistema. |
+| `updated_at` | TIMESTAMP | NO | - | current_timestamp() | Fecha y hora de la ultima modificacion del registro. |
+
+<p align="center"><em>Tabla 9.3.16. Diccionario de datos de la tabla historial_articulos.</em></p>
+
+**Indices:** PK (`id`) - KEY `inventario_id` - KEY `usuario_realiza`.
+**Relaciones:** `inventario_id` -> `inventario.id`; `usuario_realiza` -> `usuarios.id`.
+
+---
+
 ## Tablas de Trazabilidad y Auditoria
 
-### 7. Tabla `historial_codigos`
+### 8. Tabla `historial_codigos`
 
 Deja constancia de cada **consulta por escaneo de codigo de barras**, vinculando
 al usuario que la realizo con el registro de inventario consultado y el instante
@@ -274,14 +310,14 @@ exacto de la operacion.
 | `inventario_id` | INT(11) | NO | FK | - | Referencia al registro de inventario (inventario.id) consultado. |
 | `fecha_hora` | TIMESTAMP | NO | - | current_timestamp() | Fecha y hora en que se realizo la consulta. |
 
-<p align="center"><em>Tabla 9.3.16. Diccionario de datos de la tabla historial_codigos.</em></p>
+<p align="center"><em>Tabla 9.3.17. Diccionario de datos de la tabla historial_codigos.</em></p>
 
 **Indices:** PK (`id`) - KEY `usuario_id` - KEY `inventario_id`.
 **Relaciones:** `usuario_id` -> `usuarios.id`; `inventario_id` -> `inventario.id`.
 
 ---
 
-### 8. Tabla `movimientos`
+### 9. Tabla `movimientos`
 
 Funciona como **bitacora de auditoria general** del sistema. Registra toda accion
 de creacion, edicion o eliminacion efectuada en cualquier modulo, con fines de
@@ -297,7 +333,7 @@ rastreo y responsabilidad.
 | `descripcion` | TEXT | NO | - | - | Descripcion legible de la accion realizada. |
 | `fecha` | TIMESTAMP | NO | - | current_timestamp() | Fecha y hora en que se registro el movimiento. |
 
-<p align="center"><em>Tabla 9.3.17. Diccionario de datos de la tabla movimientos.</em></p>
+<p align="center"><em>Tabla 9.3.18. Diccionario de datos de la tabla movimientos.</em></p>
 
 **Indices:** PK (`id`) - KEY `usuario_id`.
 **Relaciones:** `usuario_id` -> `usuarios.id`.
@@ -310,7 +346,7 @@ Las siguientes vistas no almacenan datos fisicamente; se calculan en tiempo de
 ejecucion a partir de las tablas base y alimentan los modulos de revision,
 reporteria y tablero de control.
 
-### 9. Vista `vista_faltantes`
+### 10. Vista `vista_faltantes`
 
 Vista base de calculo. Confronta la plantilla (`inventario_base`) con las
 existencias reales (`inventario`) por cada combinacion de habitacion y articulo.
@@ -331,11 +367,11 @@ Excluye habitaciones en estado 'bloqueada'.
 | `sobrantes` | DECIMAL | GREATEST(real - base, 0). Unidades sobrantes. |
 | `estado_articulo` | ENUM | Estado de conservacion del articulo real. |
 
-<p align="center"><em>Tabla 9.3.18. Diccionario de datos de la vista vista_faltantes.</em></p>
+<p align="center"><em>Tabla 9.3.19. Diccionario de datos de la vista vista_faltantes.</em></p>
 
 ---
 
-### 10. Vista `vista_dashboard`
+### 11. Vista `vista_dashboard`
 
 Agrega `vista_faltantes` a nivel de habitacion. Es la fuente principal del
 tablero de control y del reporte exportable.
@@ -354,11 +390,11 @@ tablero de control y del reporte exportable.
 | `articulos_faltantes` | TEXT | Lista concatenada de articulos faltantes con su cantidad. |
 | `articulos_sobrantes` | TEXT | Lista concatenada de articulos sobrantes con su cantidad. |
 
-<p align="center"><em>Tabla 9.3.19. Diccionario de datos de la vista vista_dashboard.</em></p>
+<p align="center"><em>Tabla 9.3.20. Diccionario de datos de la vista vista_dashboard.</em></p>
 
 ---
 
-### 11. Vista `vista_estadisticas_articulos`
+### 12. Vista `vista_estadisticas_articulos`
 
 Resume los faltantes agrupados por articulo, para identificar los bienes con
 mayor deficit en el hotel.
@@ -369,11 +405,11 @@ mayor deficit en el hotel.
 | `total_faltantes` | DECIMAL | Suma total de unidades faltantes del articulo. |
 | `habitaciones_afectadas` | BIGINT | Numero de habitaciones distintas con faltante de ese articulo. |
 
-<p align="center"><em>Tabla 9.3.20. Diccionario de datos de la vista vista_estadisticas_articulos.</em></p>
+<p align="center"><em>Tabla 9.3.21. Diccionario de datos de la vista vista_estadisticas_articulos.</em></p>
 
 ---
 
-### 12. Vista `vista_estadisticas_pisos`
+### 13. Vista `vista_estadisticas_pisos`
 
 Resume el estado del inventario a nivel de piso, para el analisis comparativo
 entre plantas del hotel.
@@ -385,4 +421,4 @@ entre plantas del hotel.
 | `habitaciones_con_faltantes` | DECIMAL | Cantidad de habitaciones con al menos un faltante. |
 | `habitaciones_completas` | DECIMAL | Cantidad de habitaciones sin faltantes. |
 
-<p align="center"><em>Tabla 9.3.21. Diccionario de datos de la vista vista_estadisticas_pisos.</em></p>
+<p align="center"><em>Tabla 9.3.22. Diccionario de datos de la vista vista_estadisticas_pisos.</em></p>

@@ -499,6 +499,14 @@ $formInventario = $inventarioEditar ?? $_POST ?? [];
                         Cancelar
                     </button>
 
+                    <button
+                        type="button"
+                        id="btnExportarHistorial"
+                        class="btn-filtros"
+                        onclick="exportarHistorialExcel()">
+                        <i data-lucide="download"></i>
+                    </button>
+
                 </div>
 
             </div>
