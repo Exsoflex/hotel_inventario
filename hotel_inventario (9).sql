@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 15-07-2026 a las 17:53:23
+-- Tiempo de generación: 04-08-2026 a las 16:20:31
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -55,7 +55,8 @@ INSERT INTO `articulos` (`id`, `nombre`, `descripcion`, `usa_codigo_barras`) VAL
 (22, 'colchon', NULL, 0),
 (23, 'aire acondicionado', NULL, 1),
 (29, 'television', '', 1),
-(30, 'escritorio', '', 1);
+(30, 'escritorio', '', 1),
+(39, 'agua', 'articulo de prueba', 0);
 
 -- --------------------------------------------------------
 
@@ -71,7 +72,7 @@ CREATE TABLE `faltantes_por_habitacion` (
 ,`cantidad_base` int(11)
 ,`cantidad_actual` decimal(32,0)
 ,`faltantes` decimal(33,0)
-,`estado` enum('bueno','dañado','en_reparacion','perdido')
+,`estado` enum('bueno','dañado','en_reparacion','perdido','nuevo')
 );
 
 -- --------------------------------------------------------
@@ -200,6 +201,28 @@ INSERT INTO `habitaciones` (`id`, `numero`, `tipo`, `descripcion`, `piso`, `esta
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `historial_articulos`
+--
+
+CREATE TABLE `historial_articulos` (
+  `id` int(11) NOT NULL,
+  `inventario_id` int(11) NOT NULL,
+  `fecha` date NOT NULL,
+  `nota` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `historial_articulos`
+--
+
+INSERT INTO `historial_articulos` (`id`, `inventario_id`, `fecha`, `nota`, `created_at`, `updated_at`) VALUES
+(1, 209, '2026-07-31', 'Se creo el registro de este articulo 2', '2026-07-31 19:41:30', '2026-07-31 19:41:45');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `historial_codigos`
 --
 
@@ -220,9 +243,7 @@ INSERT INTO `historial_codigos` (`id`, `usuario_id`, `inventario_id`, `fecha_hor
 (3, 22, 968, '2026-05-29 19:05:16'),
 (4, 22, 1560, '2026-05-29 19:26:21'),
 (5, 2, 1560, '2026-06-01 13:26:57'),
-(6, 3, 1560, '2026-06-01 13:35:03'),
 (7, 22, 968, '2026-06-02 17:31:15'),
-(8, 23, 316, '2026-06-02 20:35:43'),
 (9, 22, 316, '2026-06-03 17:12:13'),
 (10, 22, 316, '2026-06-11 15:09:18'),
 (11, 2, 27, '2026-06-15 16:16:54'),
@@ -239,7 +260,14 @@ INSERT INTO `historial_codigos` (`id`, `usuario_id`, `inventario_id`, `fecha_hor
 (26, 22, 27, '2026-07-15 15:29:22'),
 (27, 22, 1560, '2026-07-15 15:43:34'),
 (28, 22, 1560, '2026-07-15 15:48:58'),
-(29, 22, 27, '2026-07-15 15:50:46');
+(29, 22, 27, '2026-07-15 15:50:46'),
+(31, 2, 27, '2026-07-23 02:25:01'),
+(33, 2, 27, '2026-07-31 13:04:30'),
+(34, 2, 1327, '2026-07-31 13:38:30'),
+(35, 2, 27, '2026-07-31 13:39:40'),
+(37, 3, 27, '2026-07-31 15:28:10'),
+(38, 3, 1327, '2026-07-31 15:34:19'),
+(39, 3, 866, '2026-07-31 15:52:14');
 
 -- --------------------------------------------------------
 
@@ -252,7 +280,7 @@ CREATE TABLE `inventario` (
   `habitacion_id` int(11) DEFAULT NULL,
   `articulo_id` int(11) DEFAULT NULL,
   `cantidad` int(11) DEFAULT 0,
-  `estado` enum('bueno','dañado','en_reparacion','perdido') DEFAULT 'bueno',
+  `estado` enum('bueno','dañado','en_reparacion','perdido','nuevo') NOT NULL DEFAULT 'bueno',
   `comentarios` text DEFAULT NULL,
   `codigo_barras` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -4003,7 +4031,6 @@ INSERT INTO `inventario_base` (`id`, `tipo_habitacion`, `articulo_id`, `cantidad
 (1, 'doble', 1, 0),
 (2, 'doble', 2, 2),
 (3, 'doble', 4, 1),
-(4, 'doble', 6, 0),
 (5, 'doble', 7, 2),
 (6, 'doble', 8, 1),
 (7, 'doble', 9, 1),
@@ -4050,7 +4077,9 @@ INSERT INTO `inventario_base` (`id`, `tipo_habitacion`, `articulo_id`, `cantidad
 (54, 'doble', 30, 1),
 (55, 'superior', 30, 1),
 (56, 'sencilla', 10, 0),
-(57, 'doble', 21, 0);
+(57, 'doble', 21, 0),
+(61, 'doble', 6, 0),
+(63, 'sencilla', 39, 2);
 
 -- --------------------------------------------------------
 
@@ -4546,7 +4575,348 @@ INSERT INTO `movimientos` (`id`, `usuario_id`, `modulo`, `accion`, `registro_id`
 (471, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-15 15:13:24'),
 (472, 22, 'historial_codigos', 'buscar', NULL, 'Busco el codigo HH-H103-M-001', '2026-07-15 15:43:34'),
 (473, 22, 'historial_codigos', 'buscar', 1560, 'Consultó el artículo: escritorio (Código: HH-H103-M-001)', '2026-07-15 15:48:58'),
-(474, 22, 'historial_codigos', 'buscar', 27, 'Consultó el artículo: caja fuerte (Código: HH-H106-EL-003)', '2026-07-15 15:50:46');
+(474, 22, 'historial_codigos', 'buscar', 27, 'Consultó el artículo: caja fuerte (Código: HH-H106-EL-003)', '2026-07-15 15:50:46'),
+(475, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-15 18:02:18'),
+(476, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-15 18:02:22'),
+(477, 3, 'historial_codigos', 'buscar', 27, 'Consultó el artículo: caja fuerte (Código: HH-H106-EL-003)', '2026-07-15 18:03:08'),
+(478, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-15 18:03:12'),
+(479, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-15 18:03:15'),
+(480, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-17 13:03:24'),
+(481, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-17 13:03:28'),
+(482, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-17 13:19:53'),
+(483, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-17 13:19:57'),
+(484, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-17 13:47:24'),
+(485, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-17 13:47:31'),
+(486, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-20 15:08:02'),
+(487, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-20 15:08:21'),
+(488, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-20 15:08:55'),
+(489, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-20 15:08:59'),
+(490, 3, 'historial_codigos', 'eliminar', 6, 'Eliminó una busqueda', '2026-07-20 15:16:42'),
+(491, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-20 15:16:45'),
+(492, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-20 15:16:50'),
+(493, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-20 22:36:57'),
+(494, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-20 22:40:02'),
+(495, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-20 22:40:41'),
+(496, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-20 22:40:47'),
+(497, 22, 'inventario_base', 'editar', 6, 'Editó \"telefono\" en inventario base de habitación doble: cantidad 2', '2026-07-21 16:31:35'),
+(498, 22, 'inventario_base', 'editar', 6, 'Editó \"telefono\" en inventario base de habitación doble: cantidad 1', '2026-07-21 16:31:56'),
+(499, 22, 'inventario_base', 'editar', 6, 'Editó \"telefono\" en inventario base de habitación doble: cantidad 2', '2026-07-21 16:32:18'),
+(500, 22, 'inventario_base', 'editar', 6, 'Editó \"telefono\" en inventario base de habitación doble: cantidad 1', '2026-07-21 16:32:45'),
+(501, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-22 13:09:47'),
+(502, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-22 13:11:20'),
+(503, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-22 13:11:28'),
+(504, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-22 13:11:51'),
+(505, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-22 13:12:04'),
+(506, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-22 13:16:31'),
+(507, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-22 17:10:35'),
+(508, 1, 'auth', 'login', 1, 'Inició sesión', '2026-07-22 17:11:16'),
+(509, 1, 'perfil', 'editar', 1, 'Actualizó su perfil: nombre \"Administrador General\", correo \"admin@gmail.com\".', '2026-07-22 17:11:25'),
+(510, 1, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-22 17:11:54'),
+(511, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-22 17:11:59'),
+(512, 3, 'perfil', 'editar', 3, 'Actualizó su perfil: nombre \"Sup\", correo \"sup@gmail.com\".', '2026-07-22 17:12:10'),
+(513, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-22 17:12:41'),
+(514, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-22 17:12:45'),
+(515, 2, 'perfil', 'editar', 2, 'Actualizó su perfil: nombre \"Op\", correo \"ope@gmail.com\".', '2026-07-22 17:13:02'),
+(516, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-22 17:13:04'),
+(517, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-22 17:13:18'),
+(518, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-22 17:18:31'),
+(519, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-22 17:21:30'),
+(520, 22, 'perfil', 'editar', 22, 'Actualizó su perfil: nombre \"Rotceh\", correo \"Salchiinventario777@gmail.com\".', '2026-07-22 17:24:16'),
+(521, 22, 'dashboard', 'exportar', NULL, 'Exportó la pagina de Inicio a Excel', '2026-07-22 18:10:30'),
+(522, 22, 'dashboard', 'exportar', NULL, 'Exportó la pagina de Inicio a Excel', '2026-07-22 18:10:35'),
+(523, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-23 02:05:16'),
+(524, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-23 02:05:36'),
+(525, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-23 02:06:14'),
+(526, 2, 'dashboard', 'exportar', NULL, 'Exportó la pagina de Inicio a Excel', '2026-07-23 02:13:40'),
+(527, 2, 'revision', 'exportar', NULL, 'Exportó la tabla de revision a Excel', '2026-07-23 02:18:32'),
+(528, 2, 'inventario', 'exportar', NULL, 'Exportó la lista de inventario a Excel', '2026-07-23 02:22:15'),
+(529, 2, 'historial_codigos', 'buscar', 27, 'Consultó el artículo: caja fuerte (Código: HH-H106-EL-003)', '2026-07-23 02:25:01'),
+(530, 2, 'habitaciones', 'exportar', NULL, 'Exportó la lista de habitaciones a Excel', '2026-07-23 02:28:13'),
+(531, 22, 'usuarios', 'editar', 23, 'Se desactivo el usuario \"Dummy\"', '2026-07-23 15:36:50'),
+(532, 22, 'usuarios', 'editar', 23, 'Se activo el usuario \"Dummy\"', '2026-07-23 15:36:52'),
+(533, 22, 'usuarios', 'editar', 23, 'Se desactivo el usuario \"Dummy\"', '2026-07-23 15:36:52'),
+(534, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-23 16:49:03'),
+(535, 1, 'auth', 'login', 1, 'Inició sesión', '2026-07-23 16:49:08'),
+(536, 1, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-23 16:49:11'),
+(537, 1, 'auth', 'login', 1, 'Inició sesión', '2026-07-23 16:50:26'),
+(538, 1, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-23 16:50:42'),
+(539, 1, 'auth', 'login', 1, 'Inició sesión', '2026-07-23 16:51:12'),
+(540, 1, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-23 16:52:13'),
+(541, 1, 'auth', 'login', 1, 'Inició sesión', '2026-07-23 16:55:48'),
+(542, 1, 'usuarios', 'editar', 22, 'Editó el usuario \"777\" con el rol de \"admin\" y estado \"(1 == 1 ? \'Activo\' : \'Inactivo\')\"', '2026-07-23 16:56:03'),
+(543, 1, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-23 16:56:24'),
+(544, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-23 16:58:11'),
+(545, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-23 16:58:14'),
+(546, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-23 17:11:10'),
+(547, 22, 'perfil', 'editar', 22, 'Actualizó su perfil: nombre \"Rotceh\", correo \"Salchiinventario777@gmail.com\".', '2026-07-23 17:11:51'),
+(548, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-23 17:12:17'),
+(549, 22, 'historial_codigos', 'eliminar', 30, 'Eliminó una busqueda', '2026-07-23 19:38:42'),
+(550, 22, 'usuarios', 'editar', 3, 'Se desactivo el usuario \"Sup\"', '2026-07-23 19:55:25'),
+(551, 22, 'usuarios', 'editar', 3, 'Se activo el usuario \"Sup\"', '2026-07-23 19:55:26'),
+(552, 22, 'usuarios', 'editar', 1, 'Editó el usuario \"Administrador General\" con el rol de \"admin\" y estado \"(1 == 1 ? \'Activo\' : \'Inactivo\')\"', '2026-07-23 19:56:43'),
+(553, 22, 'dashboard', 'exportar', NULL, 'Exportó la pagina de Inicio a Excel', '2026-07-23 19:56:59'),
+(554, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-23 21:58:27'),
+(555, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-23 21:58:44'),
+(556, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-23 21:58:49'),
+(557, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-23 21:59:58'),
+(558, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-23 22:00:23'),
+(559, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-24 13:31:52'),
+(560, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-24 13:33:15'),
+(561, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-24 13:33:33'),
+(562, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-24 13:33:43'),
+(563, 3, 'habitaciones', 'crear', 119, 'Creó la habitación \"1000\"', '2026-07-24 13:34:17'),
+(564, 3, 'articulos', 'crear', 34, 'Creó el artículo \"agua\"', '2026-07-24 13:34:41'),
+(565, 3, 'inventario', 'crear', 1700, 'Creó inventario en habitación \"1000\" con artículo \"agua\" (cantidad: 2)', '2026-07-24 13:35:45'),
+(566, 3, 'inventario', 'editar', 1700, 'Editó inventario ID 1700', '2026-07-24 13:36:01'),
+(567, 3, 'inventario', 'editar', 1700, 'Editó inventario ID 1700', '2026-07-24 13:36:09'),
+(568, 3, 'inventario', 'editar', 1700, 'Editó inventario ID 1700', '2026-07-24 13:36:22'),
+(569, 3, 'habitaciones', 'crear', 120, 'Creó la habitación \"777\"', '2026-07-24 13:38:04'),
+(570, 3, 'inventario', 'eliminar', 1700, 'Eliminó el artículo \"agua\" de la habitación \"1000\"', '2026-07-24 13:38:43'),
+(571, 3, 'articulos', 'editar', 34, 'Editó el artículo \"agua\"', '2026-07-24 13:39:12'),
+(572, 3, 'inventario_base', 'crear', 59, 'Agregó \"agua\" (cantidad: 1) al inventario base de habitación sencilla', '2026-07-24 13:39:28'),
+(573, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-24 13:40:31'),
+(574, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-24 13:40:42');
+INSERT INTO `movimientos` (`id`, `usuario_id`, `modulo`, `accion`, `registro_id`, `descripcion`, `fecha`) VALUES
+(575, 22, 'habitaciones', 'eliminar', 119, 'Eliminó la habitación \"1000\"', '2026-07-24 13:41:00'),
+(576, 22, 'habitaciones', 'eliminar', 120, 'Eliminó la habitación \"777\"', '2026-07-24 13:41:07'),
+(577, 22, 'articulos', 'eliminar', 34, 'Eliminó el artículo \"agua\"', '2026-07-24 13:41:30'),
+(578, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-24 13:42:02'),
+(579, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-24 13:42:06'),
+(580, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-24 13:46:34'),
+(581, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-24 14:28:12'),
+(582, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-24 14:28:24'),
+(583, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-24 14:31:57'),
+(584, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-24 15:13:53'),
+(585, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-26 21:43:59'),
+(586, 3, 'articulos', 'crear', 35, 'Creó el artículo \"agua\"', '2026-07-26 21:49:50'),
+(587, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-27 13:21:35'),
+(588, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-27 13:21:38'),
+(589, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-27 13:22:39'),
+(590, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-27 13:23:25'),
+(591, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-27 13:24:22'),
+(592, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-27 13:25:36'),
+(593, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-27 13:30:28'),
+(594, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-27 13:32:17'),
+(595, 2, 'dashboard', 'exportar', NULL, 'Exportó la pagina de Inicio a Excel', '2026-07-27 13:37:59'),
+(596, 2, 'dashboard', 'exportar', NULL, 'Exportó la pagina de Inicio a Excel', '2026-07-27 13:45:23'),
+(597, 2, 'revision', 'exportar', NULL, 'Exportó la tabla de revision a Excel', '2026-07-27 14:31:38'),
+(598, 2, 'historial_codigos', 'buscar', 27, 'Consultó el artículo: caja fuerte (Código: HH-H106-EL-003)', '2026-07-27 15:29:11'),
+(599, 2, 'habitaciones', 'exportar', NULL, 'Exportó la lista de habitaciones a Excel', '2026-07-27 15:33:36'),
+(600, 2, 'perfil', 'editar', 2, 'Actualizó su perfil: nombre \"Operador\", correo \"ope@gmail.com\".', '2026-07-27 16:19:55'),
+(601, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-27 16:20:03'),
+(602, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-27 16:27:20'),
+(603, 2, 'perfil', 'editar', 2, 'Actualizó su perfil: nombre \"Op\", correo \"ope@gmail.com\".', '2026-07-27 16:27:31'),
+(604, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-27 16:27:35'),
+(605, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-27 16:29:50'),
+(606, 2, 'perfil', 'editar', 2, 'Actualizó su perfil: nombre \"O\", correo \"ope@gmail.com\".', '2026-07-27 16:33:42'),
+(607, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-27 16:33:44'),
+(608, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-27 16:33:52'),
+(609, 2, 'perfil', 'editar', 2, 'Actualizó su perfil: nombre \"Op\", correo \"ope@gmail.com\".', '2026-07-27 16:33:59'),
+(610, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-27 16:34:01'),
+(611, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-27 16:34:06'),
+(612, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-27 16:36:26'),
+(613, 2, 'perfil', 'editar', 2, 'Actualizó su perfil: nombre \"Operador\", correo \"ope@gmail.com\".', '2026-07-27 16:37:17'),
+(614, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-27 16:37:22'),
+(615, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-27 16:37:33'),
+(616, 2, 'habitaciones', 'exportar', NULL, 'Exportó la lista de habitaciones a Excel', '2026-07-27 23:28:07'),
+(617, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-27 23:38:08'),
+(618, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-27 23:38:10'),
+(619, 3, 'habitaciones', 'crear', 121, 'Creó la habitación \"1000\"', '2026-07-27 23:39:27'),
+(620, 3, 'habitaciones', 'editar', 121, 'Editó la habitación \"800\"', '2026-07-27 23:39:59'),
+(621, 3, 'habitaciones', 'editar', 121, 'Editó la habitación \"800\"', '2026-07-27 23:40:23'),
+(622, 3, 'habitaciones', 'exportar', NULL, 'Exportó la lista de habitaciones a Excel', '2026-07-27 23:40:35'),
+(623, 22, 'articulos', 'eliminar', 35, 'Eliminó el artículo \"agua\"', '2026-07-27 23:58:33'),
+(624, 3, 'articulos', 'crear', 36, 'Creó el artículo \"agua\"', '2026-07-27 23:59:25'),
+(625, 3, 'articulos', 'editar', 36, 'Editó el artículo \"agua\"', '2026-07-27 23:59:45'),
+(626, 3, 'articulos', 'exportar', NULL, 'Exportó la lista de artículos a Excel', '2026-07-28 00:00:01'),
+(627, 3, 'habitaciones', 'editar', 121, 'Editó la habitación \"800\"', '2026-07-28 02:31:52'),
+(628, 3, 'inventario', 'crear', 1701, 'Creó inventario en habitación \"800\" con artículo \"agua\" (cantidad: 1)', '2026-07-28 02:34:01'),
+(629, 3, 'inventario', 'editar', 1701, 'Editó inventario ID 1701', '2026-07-28 02:35:05'),
+(630, 3, 'inventario', 'eliminar', 1701, 'Eliminó el artículo \"agua\" de la habitación \"800\"', '2026-07-28 02:35:41'),
+(631, 3, 'inventario_base', 'crear', 60, 'Agregó \"agua\" (cantidad: 2) al inventario base de habitación sencilla', '2026-07-28 02:39:00'),
+(632, 3, 'inventario_base', 'editar', 60, 'Editó \"agua\" en inventario base de habitación sencilla: cantidad 1', '2026-07-28 02:39:22'),
+(633, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-28 03:19:29'),
+(634, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-28 03:19:31'),
+(635, 22, 'habitaciones', 'eliminar', 121, 'Eliminó la habitación \"800\"', '2026-07-28 13:36:56'),
+(636, 22, 'articulos', 'eliminar', 36, 'Eliminó el artículo \"agua\"', '2026-07-28 13:37:20'),
+(637, 22, 'inventario_base', 'eliminar', 4, 'Eliminó \"ganchos\" del inventario base de habitación doble', '2026-07-28 13:38:50'),
+(638, 22, 'habitaciones', 'crear', 122, 'Creó la habitación \"800\"', '2026-07-28 13:39:27'),
+(639, 22, 'articulos', 'crear', 37, 'Creó el artículo \"agua\"', '2026-07-28 13:39:35'),
+(640, 22, 'inventario_base', 'crear', 61, 'Agregó \"ganchos\" (cantidad: 0) al inventario base de habitación doble', '2026-07-28 13:39:57'),
+(641, 22, 'inventario_base', 'crear', 62, 'Agregó \"agua\" (cantidad: 1) al inventario base de habitación sencilla', '2026-07-28 13:40:40'),
+(642, 22, 'inventario_base', 'eliminar', 62, 'Eliminó \"agua\" del inventario base de habitación sencilla', '2026-07-28 13:40:56'),
+(643, 22, 'articulos', 'eliminar', 37, 'Eliminó el artículo \"agua\"', '2026-07-28 13:41:09'),
+(644, 22, 'habitaciones', 'eliminar', 122, 'Eliminó la habitación \"800\"', '2026-07-28 13:41:21'),
+(645, 22, 'historial_codigos', 'eliminar', 32, 'Eliminó una busqueda', '2026-07-28 13:42:16'),
+(646, 22, 'usuarios', 'editar', 3, 'Se desactivo el usuario \"Sup\"', '2026-07-28 13:44:44'),
+(647, 22, 'usuarios', 'editar', 3, 'Se activo el usuario \"Sup\"', '2026-07-28 13:44:47'),
+(648, 22, 'usuarios', 'editar', 23, 'Editó el usuario \"Dummy\" con el rol de \"operador\" y estado \"(0 == 1 ? \'Activo\' : \'Inactivo\')\"', '2026-07-28 13:45:07'),
+(649, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-30 16:42:31'),
+(650, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-30 16:43:56'),
+(651, 22, 'usuarios', 'editar', 2, 'Editó el usuario \"Op\" con el rol de \"operador\" y estado \"(1 == 1 ? \'Activo\' : \'Inactivo\')\"', '2026-07-30 16:44:08'),
+(652, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-30 16:44:27'),
+(653, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-30 16:44:32'),
+(654, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 13:00:49'),
+(655, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-31 13:01:05'),
+(656, 2, 'historial_codigos', 'buscar', 27, 'Consultó el artículo: caja fuerte (Código: HH-H106-EL-003)', '2026-07-31 13:04:30'),
+(657, 2, 'perfil', 'editar', 2, 'Actualizó su perfil: nombre \"Op\", correo \"ope@gmail.com\".', '2026-07-31 13:05:44'),
+(658, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 13:05:48'),
+(659, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-31 13:05:50'),
+(660, 2, 'perfil', 'editar', 2, 'Actualizó su perfil: nombre \"Op\", correo \"op@gmail.com\".', '2026-07-31 13:06:10'),
+(661, 2, 'dashboard', 'exportar', NULL, 'Exportó la pagina de Inicio a Excel', '2026-07-31 13:18:40'),
+(662, 2, 'historial_codigos', 'buscar', 1327, 'Consultó el artículo: aire acondicionado (Código: HH-H103-CL-001)', '2026-07-31 13:38:30'),
+(663, 2, 'historial_codigos', 'buscar', 27, 'Consultó el artículo: caja fuerte (Código: HH-H106-EL-003)', '2026-07-31 13:39:40'),
+(664, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 13:47:52'),
+(665, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-31 13:47:59'),
+(666, 3, 'inventario', 'exportar', NULL, 'Exportó la lista de inventario a Excel', '2026-07-31 14:43:05'),
+(667, 3, 'inventario', 'exportar', NULL, 'Exportó la lista de inventario a Excel', '2026-07-31 14:43:25'),
+(668, 3, 'inventario', 'exportar', NULL, 'Exportó la lista de inventario a Excel', '2026-07-31 14:47:50'),
+(669, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-31 15:09:39'),
+(670, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 15:18:23'),
+(671, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-31 15:18:28'),
+(672, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 15:18:54'),
+(673, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-31 15:19:03'),
+(674, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 15:19:58'),
+(675, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-31 15:20:01'),
+(676, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 15:20:57'),
+(677, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-31 15:20:59'),
+(678, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 15:21:02'),
+(679, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-31 15:21:04'),
+(680, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 15:26:44'),
+(681, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-31 15:27:00'),
+(682, 3, 'historial_codigos', 'buscar', 27, 'Consultó el artículo: caja fuerte (Código: HH-H106-EL-003)', '2026-07-31 15:28:10'),
+(683, 2, 'dashboard', 'exportar', NULL, 'Exportó la pagina de Inicio a Excel', '2026-07-31 15:32:33'),
+(684, 2, 'inventario', 'exportar', NULL, 'Exportó la lista de inventario a Excel', '2026-07-31 15:33:15'),
+(685, 2, 'habitaciones', 'exportar', NULL, 'Exportó la lista de habitaciones a Excel', '2026-07-31 15:33:51'),
+(686, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 15:34:04'),
+(687, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-31 15:34:07'),
+(688, 3, 'historial_codigos', 'buscar', 1327, 'Consultó el artículo: aire acondicionado (Código: HH-H103-CL-001)', '2026-07-31 15:34:19'),
+(689, 3, 'habitaciones', 'crear', 123, 'Creó la habitación \"900\"', '2026-07-31 15:34:49'),
+(690, 3, 'articulos', 'crear', 38, 'Creó el artículo \"agua\"', '2026-07-31 15:35:06'),
+(691, 3, 'inventario', 'crear', 1702, 'Creó inventario en habitación \"900\" con artículo \"agua\" (cantidad: 1)', '2026-07-31 15:35:29'),
+(692, 3, 'inventario', 'eliminar', 1702, 'Eliminó el artículo \"agua\" de la habitación \"900\"', '2026-07-31 15:35:39'),
+(693, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 15:38:02'),
+(694, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-31 15:38:11'),
+(695, 22, 'habitaciones', 'eliminar', 123, 'Eliminó la habitación \"900\"', '2026-07-31 15:40:12'),
+(696, 22, 'articulos', 'eliminar', 38, 'Eliminó el artículo \"agua\"', '2026-07-31 15:40:18'),
+(697, 3, 'revision', 'exportar', NULL, 'Exportó la tabla de revision a Excel', '2026-07-31 15:40:37'),
+(698, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 15:45:55'),
+(699, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-31 15:46:00'),
+(700, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 15:46:03'),
+(701, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-31 15:46:18'),
+(702, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 15:46:21'),
+(703, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-31 15:46:27'),
+(704, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 15:46:32'),
+(705, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-31 15:46:37'),
+(706, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 15:46:39'),
+(707, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-31 15:46:41'),
+(708, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-31 15:47:07'),
+(709, 3, 'historial_codigos', 'buscar', 866, 'Consultó el artículo: caja fuerte (Código: HH-H114-EL-003)', '2026-07-31 15:52:14'),
+(710, 3, 'inventario', 'exportar', NULL, 'Exportó la lista de inventario a Excel', '2026-07-31 15:53:16'),
+(711, 3, 'habitaciones', 'crear', 124, 'Creó la habitación \"800\"', '2026-07-31 15:57:13'),
+(712, 3, 'articulos', 'crear', 39, 'Creó el artículo \"agua\"', '2026-07-31 15:57:26'),
+(713, 3, 'inventario', 'crear', 1703, 'Creó inventario en habitación \"800\" con artículo \"agua\" (cantidad: 2)', '2026-07-31 15:57:59'),
+(714, 3, 'inventario', 'editar', 1703, 'Editó inventario ID 1703', '2026-07-31 15:58:16'),
+(715, 3, 'inventario', 'eliminar', 1703, 'Eliminó el artículo \"agua\" de la habitación \"800\"', '2026-07-31 15:58:22'),
+(716, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 15:58:34'),
+(717, 2, 'auth', 'login', 2, 'Inició sesión', '2026-07-31 16:17:21'),
+(718, 2, 'dashboard', 'exportar', NULL, 'Exportó la pagina de Inicio a Excel', '2026-07-31 16:20:52'),
+(719, 2, 'historial_codigos', 'buscar', 1327, 'Consultó el artículo: aire acondicionado (Código: HH-H103-CL-001)', '2026-07-31 16:26:05'),
+(720, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-07-31 16:28:53'),
+(721, 3, 'auth', 'login', 3, 'Inició sesión', '2026-07-31 16:28:57'),
+(722, 3, 'inventario', 'crear', 1704, 'Creó inventario en habitación \"800\" con artículo \"agua\" (cantidad: 2)', '2026-07-31 16:32:43'),
+(723, 3, 'inventario', 'editar', 1704, 'Editó inventario ID 1704', '2026-07-31 16:33:42'),
+(724, 3, 'inventario', 'eliminar', 1704, 'Eliminó el artículo \"agua\" de la habitación \"800\"', '2026-07-31 16:34:20'),
+(725, 3, 'habitaciones', 'crear', 125, 'Creó la habitación \"500\"', '2026-07-31 16:36:21'),
+(726, 3, 'habitaciones', 'editar', 125, 'Editó la habitación \"500\"', '2026-07-31 16:36:48'),
+(727, 3, 'habitaciones', 'editar', 125, 'Editó la habitación \"500\"', '2026-07-31 16:36:57'),
+(728, 3, 'articulos', 'crear', 40, 'Creó el artículo \"refresco\"', '2026-07-31 16:37:42'),
+(729, 3, 'articulos', 'editar', 40, 'Editó el artículo \"refresco\"', '2026-07-31 16:38:02'),
+(730, 3, 'inventario_base', 'crear', 63, 'Agregó \"agua\" (cantidad: 1) al inventario base de habitación sencilla', '2026-07-31 16:38:52'),
+(731, 3, 'inventario_base', 'editar', 63, 'Editó \"agua\" en inventario base de habitación sencilla: cantidad 2', '2026-07-31 16:39:39'),
+(732, 3, 'inventario', 'crear', 1705, 'Creó inventario en habitación \"500\" con artículo \"agua\" (cantidad: 1)', '2026-07-31 16:45:07'),
+(733, 3, 'inventario', 'editar', 1705, 'Editó inventario ID 1705', '2026-07-31 16:45:36'),
+(734, 3, 'inventario', 'eliminar', 1705, 'Eliminó el artículo \"agua\" de la habitación \"500\"', '2026-07-31 16:45:46'),
+(735, 22, 'habitaciones', 'eliminar', 124, 'Eliminó la habitación \"800\"', '2026-07-31 17:40:49'),
+(736, 22, 'habitaciones', 'eliminar', 125, 'Eliminó la habitación \"500\"', '2026-07-31 17:40:56'),
+(737, 22, 'articulos', 'eliminar', 40, 'Eliminó el artículo \"refresco\"', '2026-07-31 18:50:11'),
+(738, 22, 'inventario', 'crear', 1706, 'Creó inventario en habitación \"103\" con artículo \"agua\" (cantidad: 1)', '2026-07-31 18:50:26'),
+(739, 22, 'inventario', 'editar', 1706, 'Editó inventario ID 1706', '2026-07-31 18:50:53'),
+(740, 22, 'inventario', 'editar', 1706, 'Editó inventario ID 1706', '2026-07-31 18:51:37'),
+(741, 22, 'inventario', 'editar', 1706, 'Editó inventario ID 1706', '2026-07-31 18:58:11'),
+(742, 22, 'inventario', 'editar', 1706, 'Editó inventario ID 1706', '2026-07-31 18:58:19'),
+(743, 22, 'inventario', 'eliminar', 1706, 'Eliminó el artículo \"agua\" de la habitación \"103\"', '2026-07-31 18:58:41'),
+(744, 22, 'auth', 'login', 22, 'Inició sesión', '2026-07-31 19:40:47'),
+(745, 22, 'historial_articulos', 'crear', 1, 'Agregó un registro al historial del inventario ID 209', '2026-07-31 19:41:30'),
+(746, 22, 'historial_articulos', 'editar', 1, 'Editó el registro de historial ID 1', '2026-07-31 19:41:45'),
+(747, 22, 'historial_articulos', 'crear', 2, 'Agregó un registro al historial del inventario ID 5', '2026-07-31 19:45:27'),
+(748, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-03 14:45:10'),
+(749, 3, 'auth', 'login', 3, 'Inició sesión', '2026-08-03 14:45:16'),
+(750, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-03 14:45:28'),
+(751, 2, 'auth', 'login', 2, 'Inició sesión', '2026-08-03 14:45:33'),
+(752, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-03 14:46:44'),
+(753, 22, 'auth', 'login', 22, 'Inició sesión', '2026-08-03 14:46:53'),
+(754, 22, 'historial_codigos', 'eliminar', 40, 'Eliminó una busqueda', '2026-08-03 14:47:20'),
+(755, 22, 'historial_articulos', 'eliminar', 2, 'Eliminó un registro del historial de \"caja fuerte\" en habitación \"103\"', '2026-08-03 15:15:08'),
+(756, 22, 'historial_articulos', 'crear', 3, 'Agregó un registro al historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:15:43'),
+(757, 22, 'historial_articulos', 'editar', 3, 'Editó el registro de historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:16:00'),
+(758, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-03 15:17:40'),
+(759, 3, 'auth', 'login', 3, 'Inició sesión', '2026-08-03 15:17:46'),
+(760, 3, 'historial_articulos', 'editar', 3, 'Editó el registro de historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:17:56'),
+(761, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-03 15:18:10'),
+(762, 2, 'auth', 'login', 2, 'Inició sesión', '2026-08-03 15:18:15'),
+(763, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-03 15:18:26'),
+(764, 22, 'auth', 'login', 22, 'Inició sesión', '2026-08-03 15:18:36'),
+(765, 22, 'historial_articulos', 'editar', 3, 'Editó el registro de historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:24:51'),
+(766, 22, 'historial_articulos', 'editar', 3, 'Editó el registro de historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:24:54'),
+(767, 22, 'historial_articulos', 'editar', 3, 'Editó el registro de historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:25:11'),
+(768, 22, 'historial_articulos', 'crear', 4, 'Agregó un registro al historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:25:43'),
+(769, 22, 'historial_articulos', 'crear', 5, 'Agregó un registro al historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:25:52'),
+(770, 22, 'historial_articulos', 'crear', 6, 'Agregó un registro al historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:25:54'),
+(771, 22, 'historial_articulos', 'crear', 7, 'Agregó un registro al historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:25:57'),
+(772, 22, 'historial_articulos', 'crear', 8, 'Agregó un registro al historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:26:00'),
+(773, 22, 'historial_articulos', 'crear', 9, 'Agregó un registro al historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:26:02'),
+(774, 22, 'historial_articulos', 'crear', 10, 'Agregó un registro al historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:26:05'),
+(775, 22, 'historial_articulos', 'crear', 11, 'Agregó un registro al historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:26:07'),
+(776, 22, 'historial_articulos', 'crear', 12, 'Agregó un registro al historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:26:08'),
+(777, 22, 'historial_articulos', 'crear', 13, 'Agregó un registro al historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:26:10'),
+(778, 22, 'historial_articulos', 'crear', 14, 'Agregó un registro al historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:26:12'),
+(779, 22, 'historial_articulos', 'eliminar', 14, 'Eliminó un registro del historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:26:23'),
+(780, 22, 'historial_articulos', 'eliminar', 10, 'Eliminó un registro del historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:39:15'),
+(781, 22, 'historial_articulos', 'eliminar', 8, 'Eliminó un registro del historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:39:17'),
+(782, 22, 'historial_articulos', 'eliminar', 7, 'Eliminó un registro del historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:39:18'),
+(783, 22, 'historial_articulos', 'eliminar', 6, 'Eliminó un registro del historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:39:19'),
+(784, 22, 'historial_articulos', 'eliminar', 5, 'Eliminó un registro del historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:39:20'),
+(785, 22, 'historial_articulos', 'eliminar', 4, 'Eliminó un registro del historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:39:22'),
+(786, 22, 'historial_articulos', 'eliminar', 13, 'Eliminó un registro del historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:39:24'),
+(787, 22, 'historial_articulos', 'eliminar', 12, 'Eliminó un registro del historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:39:26'),
+(788, 22, 'historial_articulos', 'eliminar', 3, 'Eliminó un registro del historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:39:27'),
+(789, 22, 'historial_articulos', 'eliminar', 9, 'Eliminó un registro del historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:39:28'),
+(790, 22, 'historial_articulos', 'eliminar', 11, 'Eliminó un registro del historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 15:39:30'),
+(791, 22, 'inventario', 'editar', 1327, 'Editó inventario ID 1327', '2026-08-03 15:40:04'),
+(792, 22, 'inventario', 'editar', 1327, 'Editó inventario ID 1327', '2026-08-03 15:40:11'),
+(793, 22, 'inventario', 'editar', 1327, 'Editó inventario de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 16:13:41'),
+(794, 22, 'usuarios', 'editar', 23, 'Editó el usuario \"Prueba\" con el rol de \"operador\" y estado \"(0 == 1 ? \'Activo\' : \'Inactivo\')\"', '2026-08-03 16:15:04'),
+(795, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-03 16:15:09'),
+(796, 22, 'auth', 'login', 22, 'Inició sesión', '2026-08-03 16:16:36'),
+(797, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-03 16:19:05'),
+(798, 22, 'auth', 'login', 22, 'Inició sesión', '2026-08-03 16:21:20'),
+(799, 22, 'historial_codigos', 'eliminar', 8, 'Eliminó una busqueda', '2026-08-03 16:21:44'),
+(800, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-03 16:23:50'),
+(801, 22, 'auth', 'login', 22, 'Inició sesión', '2026-08-03 16:24:24'),
+(802, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-03 16:27:49'),
+(803, 22, 'auth', 'login', 22, 'Inició sesión', '2026-08-03 16:32:03'),
+(804, 22, 'inventario', 'editar', 1327, 'Editó inventario de \"aire acondicionado\" en habitación \"103\"', '2026-08-03 16:32:50'),
+(805, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-03 16:39:22'),
+(806, 22, 'auth', 'login', 22, 'Inició sesión', '2026-08-03 16:41:48'),
+(807, 22, 'usuarios', 'editar', 23, 'Se activó el usuario \"p\"', '2026-08-03 16:41:55'),
+(808, 23, 'auth', 'login', 23, 'Inició sesión', '2026-08-03 16:42:03'),
+(809, 23, 'perfil', 'editar', 23, 'Actualizó su perfil: nombre \"Prueba\", correo \"prueba@gmail.com\".', '2026-08-03 16:42:20'),
+(810, 23, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-03 16:42:31'),
+(811, 23, 'auth', 'login', 23, 'Inició sesión', '2026-08-03 16:42:49'),
+(812, 23, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-03 16:43:03'),
+(813, 22, 'auth', 'login', 22, 'Inició sesión', '2026-08-03 16:43:13'),
+(814, 22, 'usuarios', 'editar', 23, 'Se desactivó el usuario \"Prueba\"', '2026-08-03 16:43:25');
 
 -- --------------------------------------------------------
 
@@ -4570,11 +4940,11 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nombre`, `correo`, `password`, `rol`, `creado_en`, `activo`, `ultimo_login`) VALUES
-(1, 'Administrador General', 'admin@gmail.com', '$2y$10$WgMqHMwvm94DMtDO/1o.OOUCXcSBCNS5WlqiBe3VamuFtr9zzIXO2', 'admin', '2026-05-14 13:30:57', 1, '2026-06-05 16:14:13'),
-(2, 'Op', 'ope@gmail.com', '$2y$10$mwaRIicE3Hvbx/bDq6AxmexJATqR7cv.inWTxL4iZhdhmIGu3xJGS', 'operador', '2026-05-14 13:30:57', 1, '2026-07-15 15:12:42'),
-(3, 'Sup', 'sup@gmail.com', '$2y$10$sTtD6bNKpPi7.ge9.YXqT.Umz8iIJ8yEsGkAI.iOmbKiakqNq6lei', 'supervisor', '2026-05-25 14:42:29', 1, '2026-07-15 15:05:55'),
-(22, 'Rotceh', 'rotceh@gmail.com', '$2y$10$pOva1/rvS7lyGAyp4KKDEerkwPX1WfoneEqt8blQiZ6hsPCwUWyNu', 'admin', '2026-05-26 19:50:30', 1, '2026-07-15 15:13:24'),
-(23, 'Dummy', 'dummy@gmail.com', '$2y$10$AwMtdUTBl497Mtx8MTP4fuP3zJi1zW34F2/uKUtaP8B5Qbpf/Ky8a', 'supervisor', '2026-05-27 14:18:36', 1, '2026-06-02 20:35:28');
+(1, 'Administrador General', 'admin@gmail.com', '$2y$10$v2Fz/rxp6hCyA5.6TL1.vuJjCPoEtW/8yzyAJzU/E4OOdqtbEAu66', 'admin', '2026-05-14 13:30:57', 1, '2026-07-23 16:55:48'),
+(2, 'Op', 'op@gmail.com', '$2y$10$4ErPaCZ32ZsugseygYKyR.gHHerlYsSdrhb42qpbusGNY/Y8BQb2W', 'operador', '2026-05-14 13:30:57', 1, '2026-08-03 15:18:15'),
+(3, 'Sup', 'sup@gmail.com', '$2y$10$5V2F3iKve6Usoqs3rn7vHeTrV08d80oAichz7tjhRf6hwQSlEUR.O', 'supervisor', '2026-05-25 14:42:29', 1, '2026-08-03 15:17:46'),
+(22, 'Rotceh', 'Salchiinventario777@gmail.com', '$2y$10$ssz9WvMhc27g54LdxNOcMef/FA8q2HmbP5YrJXGN1EBpA.cWUxZGC', 'admin', '2026-05-26 19:50:30', 1, '2026-08-03 16:43:13'),
+(23, 'Prueba', 'prueba@gmail.com', '$2y$10$NCdQGaqYkzkCnKyPf7e6L.IqJ5Nbr4iJ.W1xCf/kbhOgo8VlfxqhK', 'operador', '2026-05-27 14:18:36', 0, '2026-08-03 16:42:49');
 
 -- --------------------------------------------------------
 
@@ -4639,7 +5009,7 @@ CREATE TABLE `vista_faltantes` (
 ,`cantidad_actual` int(11)
 ,`faltantes` bigint(12)
 ,`sobrantes` bigint(12)
-,`estado_articulo` enum('bueno','dañado','en_reparacion','perdido')
+,`estado_articulo` enum('bueno','dañado','en_reparacion','perdido','nuevo')
 );
 
 -- --------------------------------------------------------
@@ -4707,6 +5077,13 @@ ALTER TABLE `habitaciones`
   ADD KEY `idx_estado` (`estado`);
 
 --
+-- Indices de la tabla `historial_articulos`
+--
+ALTER TABLE `historial_articulos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `inventario_id` (`inventario_id`);
+
+--
 -- Indices de la tabla `historial_codigos`
 --
 ALTER TABLE `historial_codigos`
@@ -4756,37 +5133,43 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `articulos`
 --
 ALTER TABLE `articulos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT de la tabla `habitaciones`
 --
 ALTER TABLE `habitaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
+
+--
+-- AUTO_INCREMENT de la tabla `historial_articulos`
+--
+ALTER TABLE `historial_articulos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `historial_codigos`
 --
 ALTER TABLE `historial_codigos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT de la tabla `inventario`
 --
 ALTER TABLE `inventario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1699;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1707;
 
 --
 -- AUTO_INCREMENT de la tabla `inventario_base`
 --
 ALTER TABLE `inventario_base`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT de la tabla `movimientos`
 --
 ALTER TABLE `movimientos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=475;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=815;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
@@ -4797,6 +5180,12 @@ ALTER TABLE `usuarios`
 --
 -- Restricciones para tablas volcadas
 --
+
+--
+-- Filtros para la tabla `historial_articulos`
+--
+ALTER TABLE `historial_articulos`
+  ADD CONSTRAINT `historial_articulos_ibfk_1` FOREIGN KEY (`inventario_id`) REFERENCES `inventario` (`id`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `historial_codigos`

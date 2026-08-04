@@ -1,5 +1,17 @@
 ﻿# Tabla de Requerimientos del Sistema de Inventario Hotelero
 
+## 9.1 Comunicación
+
+La reunión de capacitación con la gerencia operativa se considera una técnica
+de recolección de datos secundaria, ya que a partir de la experiencia acumulada
+en el uso del sistema se detectaron nuevas necesidades de información y control
+que no estaban contempladas en la versión inicial. Esta técnica permitió
+identificar requerimientos asociados al seguimiento histórico de los artículos,
+la formalización de perfiles de acceso diferenciados y la ampliación de la
+clasificación de estados en el inventario.
+
+---
+
 Este documento describe los requerimientos funcionales y no funcionales del
 sistema, identificados a partir del analisis del codigo fuente (controladores,
 modelos y vistas). Cada requerimiento incluye su identificador, descripcion,
@@ -13,7 +25,7 @@ entrada (datos de entrada) y salida (resultado esperado).
 |----|-------------|---------|--------|
 | RF-01 | Iniciar sesion de usuario | POST: `login`, `password` | Sesion creada (`$_SESSION['usuario']`) + redireccion a dashboard; o error (`campos`/`usuario`/`password`) |
 | RF-02 | Cerrar sesion | GET (accion logout) | Sesion destruida + redireccion a login |
-| RF-03 | Control de acceso por rol | Roles: `admin`, `supervisor`, `operador` | Permite/denega acceso a funciones segun rol (`verificarRol`) |
+| RF-03 | Gestion de permisos de usuario | Roles: `admin`, `supervisor`, `operador` | Admin: acceso total; Supervisor: operaciones de edicion/creacion/eliminacion; Operador: solo consulta (solo lectura) |
 
 ## Modulo: Dashboard
 
@@ -28,10 +40,10 @@ entrada (datos de entrada) y salida (resultado esperado).
 |----|-------------|---------|--------|
 | RF-06 | Listar inventario agrupado por habitacion | GET: `piso`, `buscar`, `estado`, `articulos` | Vista HTML del inventario por habitacion |
 | RF-07 | Consultar inventario via AJAX | GET: `piso`, `buscar`, `estado`, `articulos` | JSON agrupado por habitacion |
-| RF-08 | Agregar articulo al inventario | POST: `habitacion_id`, `articulo_id`, `cantidad`, `estado`, `comentarios`, `codigo_barras` | Nuevo registro + movimiento log + redireccion con mensaje `agregado`/error |
-| RF-09 | Editar registro de inventario | GET/POST: `id`, `habitacion_id`, `articulo_id`, `cantidad`, `estado`, `comentarios`, `codigo_barras` | Registro actualizado + movimiento log + redireccion `editado`/error |
-| RF-10 | Eliminar registro de inventario | GET: `id` | Registro eliminado + movimiento log + redireccion `eliminado` |
-| RF-11 | Exportar inventario a Excel | GET: filtros (piso/buscar/estado/articulos) | Archivo `inventario.xlsx` agrupado por habitacion |
+| RF-08 | Agregar articulo al inventario | POST: `habitacion_id`, `articulo_id`, `cantidad`, `estado` (`bueno`/`dañado`/`en_reparacion`/`perdido`/`nuevo`), `comentarios`, `codigo_barras` | Nuevo registro + movimiento log + redireccion con mensaje `agregado`/error |
+| RF-09 | Editar registro de inventario | GET/POST: `id`, `habitacion_id`, `articulo_id`, `cantidad`, `estado` (`bueno`/`dañado`/`en_reparacion`/`perdido`/`nuevo`), `comentarios`, `codigo_barras` | Registro actualizado + movimiento log + redireccion `editado`/error |
+| RF-10 | Eliminar registro de inventario | GET: `id` | Registro eliminado (incluyendo estado `nuevo`) + movimiento log + redireccion `eliminado` |
+| RF-11 | Exportar inventario a Excel | GET: filtros (piso/buscar/estado/articulos) | Archivo `inventario.xlsx` agrupado por habitacion (incluye estado `nuevo`) |
 
 ## Modulo: Inventario Base (catalogo por tipo de habitacion)
 
@@ -75,7 +87,7 @@ entrada (datos de entrada) y salida (resultado esperado).
 
 | ID | Descripcion | Entrada | Salida |
 |----|-------------|---------|--------|
-| RF-30 | Listar usuarios (solo admin) | — | Vista de usuarios |
+| RF-30 | Listar usuarios (solo admin) | Sesion activa con rol `admin` | Vista de usuarios |
 | RF-31 | Crear usuario (solo admin) | POST: `nombre`, `correo`, `password`, `rol` | Usuario creado + log; error si duplicado |
 | RF-32 | Editar usuario (solo admin) | GET/POST: `id`, `nombre`, `correo`, `rol`, `activo` | Usuario actualizado + log; error si duplicado |
 | RF-33 | Eliminar usuario (solo admin) | GET: `id` | Usuario eliminado + log |
@@ -103,6 +115,16 @@ entrada (datos de entrada) y salida (resultado esperado).
 | RF-40 | Buscar por codigo de barras | POST: `codigo` | Registra busqueda en historial + redireccion a inventario filtrado por el codigo; error si vacio/no encontrado |
 | RF-41 | Eliminar registro de historial | GET: `id` | Registro eliminado + log |
 
+## Modulo: Historial de Articulos
+
+| ID | Descripcion | Entrada | Salida |
+|----|-------------|---------|--------|
+| RF-42 | Ver historial de articulo | GET: vista con `inventario_id` | Modal/vista con entradas de historial del articulo (fecha, nota, acciones) |
+| RF-43 | Consultar historial via AJAX | GET: `inventario_id` | JSON con registros de historial ordenados por fecha descendente |
+| RF-44 | Agregar entrada al historial | POST: `inventario_id`, `fecha`, `nota` | Registro creado + movimiento log + JSON con exito |
+| RF-45 | Editar entrada del historial | POST: `id`, `fecha`, `nota` | Registro actualizado + movimiento log + JSON con exito |
+| RF-46 | Eliminar entrada del historial | POST: `id` (solo admin) | Registro eliminado + movimiento log + JSON con exito |
+
 ## Requisitos No Funcionales / Transversales
 
 | ID | Descripcion | Entrada | Salida |
@@ -117,9 +139,9 @@ entrada (datos de entrada) y salida (resultado esperado).
 
 ## Resumen
 
-- **Total de requerimientos funcionales:** 41 (RF-01 a RF-41)
+- **Total de requerimientos funcionales:** 46 (RF-01 a RF-46)
 - **Total de requerimientos no funcionales:** 5 (RNF-01 a RNF-05)
-- **Modulos cubiertos:** 11 (Autenticacion, Dashboard, Inventario, Inventario
+- **Modulos cubiertos:** 12 (Autenticacion, Dashboard, Inventario, Inventario
   Base, Revision, Articulos, Habitaciones, Usuarios, Perfil, Movimientos,
-  Historial de Codigos de Barras)
-- **Roles del sistema:** `admin`, `supervisor`, `operador`
+  Historial de Codigos de Barras, Historial de Articulos)
+- **Roles del sistema:** `admin` (acceso total), `supervisor` (edicion/creacion/eliminacion), `operador` (solo lectura)

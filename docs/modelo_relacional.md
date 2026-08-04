@@ -5,7 +5,7 @@
 > 1. Diagrama Entidad-Relacion (ERD) completo
 > 2. Capa de vistas analiticas (Dashboard)
 > 3. Arquitectura MVC y flujo de peticiones
-> 4. Flujo de datos por operacion (escaneo, revision, auditoria)
+> 4. Flujo de datos por operacion (escaneo, revision, auditoria, historial)
 > 5. Mapa de JOINs reales por modulo
 >
 > Los diagramas usan sintaxis Mermaid (se renderizan en GitHub / VSCode con la
@@ -49,6 +49,7 @@ erDiagram
         varchar nombre
         text descripcion
         tinyint usa_codigo_barras
+        enum estado "nuevo"
     }
 
     inventario_base {
@@ -63,7 +64,7 @@ erDiagram
         int habitacion_id FK
         int articulo_id FK
         int cantidad "cantidad real"
-        enum estado "bueno|danado|en_reparacion|perdido"
+        enum estado "bueno|danado|en_reparacion|perdido|nuevo"
         text comentarios
         varchar codigo_barras
     }
@@ -76,6 +77,16 @@ erDiagram
         enum estado
         text comentarios
         varchar codigo_barras
+    }
+
+    historial_articulos {
+        int id PK
+        int inventario_id FK
+        date fecha_calendario
+        text nota_actividad
+        int usuario_realiza FK
+        timestamp created_at
+        timestamp updated_at
     }
 
     historial_codigos {
@@ -99,6 +110,8 @@ erDiagram
     articulos      ||--o{ inventario        : "cataloga (articulo_id)"
     habitaciones   ||--o{ inventario        : "contiene (habitacion_id)"
     habitaciones   ||..o{ inventario_base   : "por tipo (texto)"
+    inventario     ||--o{ historial_articulos : "registra (inventario_id)"
+    usuarios       ||--o{ historial_articulos : "realiza (usuario_realiza)"
     usuarios       ||--o{ historial_codigos : "registra (usuario_id)"
     inventario     ||--o{ historial_codigos : "escanea (inventario_id)"
     usuarios       ||--o{ movimientos       : "audita (usuario_id)"
@@ -115,6 +128,11 @@ erDiagram
   de distintas tablas segun `modulo`, por eso no tiene FK real.
 - **`inventario_backup`** replica exactamente la estructura de `inventario` como
   copia de respaldo (sin relaciones formales).
+- **`historial_articulos`** es una entidad derivada que registra el seguimiento
+  historico de cada item de inventario. Se relaciona con `inventario` mediante
+  `inventario_id`, y a traves de esta con `articulos` y `habitaciones`,
+  permitiendo trazabilidad completa de cambios, mantenimientos y observaciones
+  por item.
 - La regla de negocio central: `faltante = base - real`, `sobrante = real - base`.
 
 ---
@@ -242,6 +260,26 @@ flowchart LR
 
 <p align="center"><em>Figura 9.3.7. Flujo de registro de auditoria ante cualquier operacion de escritura.</em></p>
 
+### 4.4 Historial de articulos (seguimiento por item)
+
+```mermaid
+flowchart TD
+    I[inventario] -->|1:N| HA[historial_articulos]
+    HA -->|usuario_realiza| U[usuarios]
+    I -->|via inventario_id| A[articulos]
+    I -->|via inventario_id| H[habitaciones]
+
+    HA --> CRUD{Operacion}
+    CRUD -->|crear| INS[INSERT historial]
+    CRUD -->|editar| UPD[UPDATE historial]
+    CRUD -->|eliminar| DEL[DELETE historial]
+    INS --> LOG1[Registra en movimientos]
+    UPD --> LOG2[Registra en movimientos]
+    DEL --> LOG3[Registra en movimientos]
+```
+
+<p align="center"><em>Figura 9.3.8. Flujo de datos del modulo Historial de Articulos: relacion uno a muchos con inventario y trazabilidad por usuario.</em></p>
+
 ---
 
 ## 5. Mapa de JOINs reales por modulo
@@ -253,6 +291,13 @@ flowchart TB
     subgraph Inventario
         I1[inventario] --- H1[habitaciones]
         I1 --- A1[articulos]
+    end
+
+    subgraph HistorialArticulos
+        HA[historial_articulos] --- I3[inventario]
+        I3 --- A3[articulos]
+        I3 --- H3[habitaciones]
+        HA --- U4[usuarios]
     end
 
     subgraph HistorialCodigos
@@ -267,11 +312,11 @@ flowchart TB
     end
 
     subgraph InventarioBase
-        IB[inventario_base] --- A3[articulos]
+        IB[inventario_base] --- A5[articulos]
     end
 ```
 
-<p align="center"><em>Figura 9.3.8. Mapa de los JOINs realmente ejecutados por cada modulo.</em></p>
+<p align="center"><em>Figura 9.3.9. Mapa de los JOINs realmente ejecutados por cada modulo.</em></p>
 
 | Modulo | Tablas / Vistas | JOINs principales |
 |---|---|---|
@@ -281,9 +326,10 @@ flowchart TB
 | Articulos | articulos, movimientos | - |
 | Inventario Base | inventario_base, articulos, movimientos | inventario_base.articulo_id = articulos.id |
 | Inventario | inventario, habitaciones, articulos, movimientos | inventario -> habitaciones, inventario -> articulos |
+| Historial Articulos | historial_articulos, inventario, usuarios | ha.inventario_id = inventario.id, ha.usuario_realiza = usuarios.id |
 | Revision | vista_faltantes, habitaciones | (via vista) |
 | Historial Codigos | historial_codigos, usuarios, inventario, articulos, habitaciones | hc -> usuarios, hc -> inventario -> articulos + habitaciones |
 | Movimientos | movimientos, usuarios | movimientos.usuario_id = usuarios.id |
 | Dashboard | vista_dashboard, vista_estadisticas_articulos, vista_estadisticas_pisos | (via vistas sobre vista_faltantes) |
 
-<p align="center"><em>Tabla 9.3.9. Mapa de tablas, vistas y JOINs principales utilizados por cada modulo.</em></p>
+<p align="center"><em>Tabla 9.3.10. Mapa de tablas, vistas y JOINs principales utilizados por cada modulo.</em></p>
