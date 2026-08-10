@@ -3,6 +3,16 @@
     "autoload": {
         "psr-4": {
             "Hecto\\HotelInventario\\": "src/"
+        },
+        "classmap": [
+            "models/",
+            "controllers/",
+            "config/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         }
     },
     "authors": [
@@ -13,5 +23,15 @@
     ],
     "require": {
         "phpoffice/phpspreadsheet": "^5.7"
+    },
+    "config": {
+        "policy": {
+            "advisories": {
+                "block": false
+            }
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "10.0"
     }
 }

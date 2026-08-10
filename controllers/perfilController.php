@@ -16,7 +16,7 @@ class PerfilController {
         $usuario_id     = $_SESSION['usuario']['id'];
         $movimientos    = $mov->obtenerTodo(50, 0, $usuario_id);
 
-        require_once __DIR__ . "/../views/perfil/index.php";
+        require __DIR__ . "/../views/perfil/index.php";
     }
 
     public function editar() {
@@ -34,7 +34,7 @@ class PerfilController {
                 $perfil          = $usuario->obtenerPorId($id);
                 $mov             = new Movimientos();
                 $movimientos     = $mov->obtenerTodo(50, 0, $id);
-                require_once __DIR__ . "/../views/perfil/index.php";
+                require __DIR__ . "/../views/perfil/index.php";
                 return;
             }
 
@@ -68,7 +68,7 @@ class PerfilController {
                 $mov         = new Movimientos();
                 $movimientos = $mov->obtenerTodo(50, 0, $id);
 
-                require_once __DIR__ . "/../views/perfil/index.php";
+                require __DIR__ . "/../views/perfil/index.php";
             }
         }
     }

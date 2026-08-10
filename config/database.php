@@ -21,12 +21,17 @@ class Database {
 
         $this->conn = null;
 
+        $host = getenv('DB_HOST') ?: $this->host;
+        $dbName = getenv('DB_NAME') ?: $this->db_name;
+        $username = getenv('DB_USER') ?: $this->username;
+        $password = getenv('DB_PASS') ?: $this->password;
+
         try {
 
             $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->db_name . ";charset=utf8",
-                $this->username,
-                $this->password
+                "mysql:host=" . $host . ";dbname=" . $dbName . ";charset=utf8",
+                $username,
+                $password
             );
 
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
