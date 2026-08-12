@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 04-08-2026 a las 16:20:31
+-- Tiempo de generación: 11-08-2026 a las 18:20:26
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -218,7 +218,8 @@ CREATE TABLE `historial_articulos` (
 --
 
 INSERT INTO `historial_articulos` (`id`, `inventario_id`, `fecha`, `nota`, `created_at`, `updated_at`) VALUES
-(1, 209, '2026-07-31', 'Se creo el registro de este articulo 2', '2026-07-31 19:41:30', '2026-07-31 19:41:45');
+(15, 5, '2026-07-28', 'Inicio de registro', '2026-08-04 17:52:17', '2026-08-07 13:04:22'),
+(19, 1327, '2026-08-10', 'registro de prueba', '2026-08-10 13:20:24', '2026-08-10 13:20:24');
 
 -- --------------------------------------------------------
 
@@ -4916,7 +4917,49 @@ INSERT INTO `movimientos` (`id`, `usuario_id`, `modulo`, `accion`, `registro_id`
 (811, 23, 'auth', 'login', 23, 'Inició sesión', '2026-08-03 16:42:49'),
 (812, 23, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-03 16:43:03'),
 (813, 22, 'auth', 'login', 22, 'Inició sesión', '2026-08-03 16:43:13'),
-(814, 22, 'usuarios', 'editar', 23, 'Se desactivó el usuario \"Prueba\"', '2026-08-03 16:43:25');
+(814, 22, 'usuarios', 'editar', 23, 'Se desactivó el usuario \"Prueba\"', '2026-08-03 16:43:25'),
+(815, 22, 'historial_articulos', 'crear', 15, 'Agregó un registro al historial de \"caja fuerte\" en habitación \"103\"', '2026-08-04 17:52:17'),
+(816, 22, 'inventario', 'exportar', NULL, 'Exportó la lista de inventario a Excel', '2026-08-04 18:44:31'),
+(817, 22, 'historial_articulos', 'crear', 16, 'Agregó un registro al historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-04 18:45:53'),
+(818, 22, 'historial_articulos', 'crear', 17, 'Agregó un registro al historial de \"colchon\" en habitación \"103\"', '2026-08-04 18:46:08'),
+(819, 22, 'historial_articulos', 'exportar', 1327, 'Exportó el historial de \"aire acondicionado\" en habitación \"103\" a Excel', '2026-08-04 19:10:09'),
+(820, 22, 'historial_articulos', 'crear', 18, 'Agregó un registro al historial de \"caja fuerte\" en habitación \"103\"', '2026-08-04 19:10:40'),
+(821, 22, 'historial_articulos', 'exportar', 5, 'Exportó el historial de \"caja fuerte\" en habitación \"103\" a Excel', '2026-08-04 19:10:42'),
+(822, 22, 'historial_articulos', 'exportar', 5, 'Exportó el historial de \"caja fuerte\" en habitación \"103\" a Excel', '2026-08-06 13:03:07'),
+(823, 22, 'historial_articulos', 'eliminar', 16, 'Eliminó un registro del historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-06 13:03:41'),
+(824, 22, 'historial_articulos', 'eliminar', 17, 'Eliminó un registro del historial de \"colchon\" en habitación \"103\"', '2026-08-06 13:03:51'),
+(825, 22, 'historial_articulos', 'editar', 1, 'Editó el registro de historial de \"espejo\" en habitación \"103\"', '2026-08-06 13:04:20'),
+(826, 22, 'historial_articulos', 'eliminar', 1, 'Eliminó un registro del historial de \"espejo\" en habitación \"103\"', '2026-08-06 13:04:28'),
+(827, 22, 'historial_articulos', 'eliminar', 18, 'Eliminó un registro del historial de \"caja fuerte\" en habitación \"103\"', '2026-08-07 13:03:39'),
+(828, 22, 'historial_articulos', 'exportar', 5, 'Exportó el historial de \"caja fuerte\" en habitación \"103\" a Excel', '2026-08-07 13:04:00'),
+(829, 22, 'historial_articulos', 'editar', 15, 'Editó el registro de historial de \"caja fuerte\" en habitación \"103\"', '2026-08-07 13:04:22'),
+(830, 22, 'historial_articulos', 'exportar', 5, 'Exportó el historial de \"caja fuerte\" en habitación \"103\" a Excel', '2026-08-07 13:04:26'),
+(831, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-10 13:04:20'),
+(832, 2, 'auth', 'login', 2, 'Inició sesión', '2026-08-10 13:04:25'),
+(833, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-10 13:05:55'),
+(834, 3, 'auth', 'login', 3, 'Inició sesión', '2026-08-10 13:06:02'),
+(835, 3, 'historial_articulos', 'crear', 19, 'Agregó un registro al historial de \"aire acondicionado\" en habitación \"103\"', '2026-08-10 13:20:24'),
+(836, 3, 'historial_articulos', 'exportar', 5, 'Exportó el historial de \"caja fuerte\" en habitación \"103\" a Excel', '2026-08-10 13:20:35'),
+(837, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-10 13:20:52'),
+(838, 22, 'auth', 'login', 22, 'Inició sesión', '2026-08-10 13:21:02'),
+(839, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-10 15:22:33'),
+(840, 2, 'auth', 'login', 2, 'Inició sesión', '2026-08-10 15:22:39'),
+(841, 2, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-10 15:22:52'),
+(842, 3, 'auth', 'login', 3, 'Inició sesión', '2026-08-10 15:22:58'),
+(843, 3, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-10 15:23:11'),
+(844, 22, 'auth', 'login', 22, 'Inició sesión', '2026-08-10 15:23:29'),
+(845, 22, 'usuarios', 'editar', 23, 'Se activó el usuario \"Prueba\"', '2026-08-10 15:23:36'),
+(846, 22, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-10 15:23:46'),
+(847, 23, 'auth', 'login', 23, 'Inició sesión', '2026-08-10 15:23:53'),
+(848, 23, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-10 15:27:08'),
+(849, 1, 'auth', 'login', 1, 'Inició sesión', '2026-08-10 15:27:16'),
+(850, 1, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-10 17:52:46'),
+(851, 23, 'auth', 'login', 23, 'Inició sesión', '2026-08-10 17:52:53'),
+(852, 23, 'perfil', 'editar', 23, 'Actualizó su perfil: nombre \"Prueba\", correo \"a@gmail.com\".', '2026-08-10 17:53:07'),
+(853, 23, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-10 17:53:10'),
+(854, 23, 'auth', 'login', 23, 'Inició sesión', '2026-08-10 17:53:17'),
+(855, 23, 'auth', 'logout', NULL, 'Cerró sesión', '2026-08-10 18:17:38'),
+(856, 22, 'auth', 'login', 22, 'Inició sesión', '2026-08-10 19:02:21');
 
 -- --------------------------------------------------------
 
@@ -4940,11 +4983,11 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nombre`, `correo`, `password`, `rol`, `creado_en`, `activo`, `ultimo_login`) VALUES
-(1, 'Administrador General', 'admin@gmail.com', '$2y$10$v2Fz/rxp6hCyA5.6TL1.vuJjCPoEtW/8yzyAJzU/E4OOdqtbEAu66', 'admin', '2026-05-14 13:30:57', 1, '2026-07-23 16:55:48'),
-(2, 'Op', 'op@gmail.com', '$2y$10$4ErPaCZ32ZsugseygYKyR.gHHerlYsSdrhb42qpbusGNY/Y8BQb2W', 'operador', '2026-05-14 13:30:57', 1, '2026-08-03 15:18:15'),
-(3, 'Sup', 'sup@gmail.com', '$2y$10$5V2F3iKve6Usoqs3rn7vHeTrV08d80oAichz7tjhRf6hwQSlEUR.O', 'supervisor', '2026-05-25 14:42:29', 1, '2026-08-03 15:17:46'),
-(22, 'Rotceh', 'Salchiinventario777@gmail.com', '$2y$10$ssz9WvMhc27g54LdxNOcMef/FA8q2HmbP5YrJXGN1EBpA.cWUxZGC', 'admin', '2026-05-26 19:50:30', 1, '2026-08-03 16:43:13'),
-(23, 'Prueba', 'prueba@gmail.com', '$2y$10$NCdQGaqYkzkCnKyPf7e6L.IqJ5Nbr4iJ.W1xCf/kbhOgo8VlfxqhK', 'operador', '2026-05-27 14:18:36', 0, '2026-08-03 16:42:49');
+(1, 'Administrador General', 'admin@gmail.com', '$2y$10$v2Fz/rxp6hCyA5.6TL1.vuJjCPoEtW/8yzyAJzU/E4OOdqtbEAu66', 'admin', '2026-05-14 13:30:57', 1, '2026-08-10 15:27:16'),
+(2, 'Op', 'op@gmail.com', '$2y$10$4ErPaCZ32ZsugseygYKyR.gHHerlYsSdrhb42qpbusGNY/Y8BQb2W', 'operador', '2026-05-14 13:30:57', 1, '2026-08-10 15:22:39'),
+(3, 'Sup', 'sup@gmail.com', '$2y$10$5V2F3iKve6Usoqs3rn7vHeTrV08d80oAichz7tjhRf6hwQSlEUR.O', 'supervisor', '2026-05-25 14:42:29', 1, '2026-08-10 15:22:58'),
+(22, 'Rotceh', 'Salchiinventario777@gmail.com', '$2y$10$ssz9WvMhc27g54LdxNOcMef/FA8q2HmbP5YrJXGN1EBpA.cWUxZGC', 'admin', '2026-05-26 19:50:30', 1, '2026-08-10 19:02:21'),
+(23, 'Prueba', 'a@gmail.com', '$2y$10$NCdQGaqYkzkCnKyPf7e6L.IqJ5Nbr4iJ.W1xCf/kbhOgo8VlfxqhK', 'operador', '2026-05-27 14:18:36', 1, '2026-08-10 17:53:17');
 
 -- --------------------------------------------------------
 
@@ -5145,7 +5188,7 @@ ALTER TABLE `habitaciones`
 -- AUTO_INCREMENT de la tabla `historial_articulos`
 --
 ALTER TABLE `historial_articulos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `historial_codigos`
@@ -5169,7 +5212,7 @@ ALTER TABLE `inventario_base`
 -- AUTO_INCREMENT de la tabla `movimientos`
 --
 ALTER TABLE `movimientos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=815;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=857;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
