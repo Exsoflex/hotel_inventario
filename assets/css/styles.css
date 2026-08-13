@@ -839,6 +839,22 @@ form label {
     margin-bottom: -8px;
 }
 
+.checkbox-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.checkbox-inline input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
 /* ===== LINKS ===== */
 
 a {

@@ -83,6 +83,7 @@ $formArticulo = $articuloEditar ?? $_POST ?? [];
             <th hidden>ID</th>
             <th>Nombre</th>
             <th>Descripción</th>
+            <th>Código de barras</th>
             <?php if(
             in_array(
                 $_SESSION['usuario']['rol'],
@@ -112,6 +113,7 @@ $formArticulo = $articuloEditar ?? $_POST ?? [];
                 <td hidden><?= $a['id'] ?></td>
                 <td><?= $a['nombre'] ?></td>
                 <td><?= $a['descripcion'] ?></td>
+                <td><?= $a['usa_codigo_barras'] ? 'Sí' : 'No' ?></td>
                 <?php if(
                 in_array(
                     $_SESSION['usuario']['rol'],
@@ -221,6 +223,16 @@ $formArticulo = $articuloEditar ?? $_POST ?? [];
                 name="descripcion" 
                 value="<?= htmlspecialchars($formArticulo['descripcion'] ?? '') ?>"
             >
+
+            <label class="checkbox-inline">
+                <input 
+                    type="checkbox" 
+                    name="usa_codigo_barras" 
+                    value="1"
+                    <?= !empty($formArticulo['usa_codigo_barras']) ? 'checked' : '' ?>
+                >
+                Usa código de barras
+            </label>
 
             <div class="modal-buttons">
 

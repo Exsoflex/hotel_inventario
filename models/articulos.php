@@ -21,13 +21,14 @@ class Articulos {
 
     }
 
-    public function agregarArticulo($nombre, $descripcion) {
+    public function agregarArticulo($nombre, $descripcion, $usa_codigo_barras) {
 
-        $sql = "INSERT INTO articulos (nombre, descripcion) VALUES (:nombre, :descripcion)";
+        $sql = "INSERT INTO articulos (nombre, descripcion, usa_codigo_barras) VALUES (:nombre, :descripcion, :usa_codigo_barras)";
         $stmt = $this->conn->prepare($sql);
 
         $stmt->bindParam(":nombre", $nombre);
         $stmt->bindParam(":descripcion", $descripcion);
+        $stmt->bindParam(":usa_codigo_barras", $usa_codigo_barras, PDO::PARAM_INT);
 
         try {
             $stmt->execute();
@@ -60,14 +61,15 @@ class Articulos {
         return $stmt->fetch (PDO::FETCH_ASSOC);
     }
 
-    public function editarArticulo($id, $nombre, $descripcion) {
+    public function editarArticulo($id, $nombre, $descripcion, $usa_codigo_barras) {
 
-        $sql = "UPDATE articulos SET nombre = :nombre, descripcion = :descripcion WHERE id = :id";
+        $sql = "UPDATE articulos SET nombre = :nombre, descripcion = :descripcion, usa_codigo_barras = :usa_codigo_barras WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
 
         $stmt->bindParam(":id", $id);
         $stmt->bindParam(":nombre", $nombre);
         $stmt->bindParam(":descripcion", $descripcion);
+        $stmt->bindParam(":usa_codigo_barras", $usa_codigo_barras, PDO::PARAM_INT);
 
         try {
             $stmt->execute();

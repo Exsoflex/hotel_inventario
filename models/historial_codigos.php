@@ -25,11 +25,11 @@ class HistorialCodigos {
                 FROM inventario i
                 JOIN articulos a ON i.articulo_id = a.id
                 JOIN habitaciones h ON i.habitacion_id = h.id
-                WHERE i.codigo_barras = :codigo
+                WHERE i.codigo_barras LIKE :codigo
                 LIMIT 1";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':codigo', $codigo);
+        $stmt->bindValue(':codigo', '%' . $codigo . '%');
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);

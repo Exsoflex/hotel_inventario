@@ -48,6 +48,7 @@ class ArticulosController {
             $buscar = $this->obtenerBusquedaDesdeRequest();
             $nombre     = trim($_POST['nombre']);
             $descripcion = trim($_POST['descripcion']);
+            $usa_codigo_barras = isset($_POST['usa_codigo_barras']) ? 1 : 0;
 
             if (empty($nombre)) {
                 $errorFormulario = 'Llena todos los campos por favor';
@@ -58,7 +59,7 @@ class ArticulosController {
             }
 
             $modelarticulo = new Articulos();
-            $resultado = $modelarticulo->agregarArticulo($nombre, $descripcion);
+            $resultado = $modelarticulo->agregarArticulo($nombre, $descripcion, $usa_codigo_barras);
 
             if ($resultado['exito']) {
 
@@ -93,7 +94,7 @@ class ArticulosController {
 
     public function eliminar() {
 
-        verificarRol(['admin', 'supervisor']);
+        verificarRol(['admin']);
 
         $id = $_GET['id'];
         $buscar = $this->obtenerBusquedaDesdeRequest();
@@ -140,6 +141,7 @@ class ArticulosController {
             $id          = $_POST['id'];
             $nombre      = trim($_POST['nombre']);
             $descripcion = trim($_POST['descripcion']);
+            $usa_codigo_barras = isset($_POST['usa_codigo_barras']) ? 1 : 0;
 
             if (empty($id) || empty($nombre)) {
                 $errorFormulario = 'Llena todos los campos por favor';
@@ -149,7 +151,7 @@ class ArticulosController {
                 return;
             }
 
-            $resultado = $modelarticulo->editarArticulo($id, $nombre, $descripcion);
+            $resultado = $modelarticulo->editarArticulo($id, $nombre, $descripcion, $usa_codigo_barras);
 
             if ($resultado['exito']) {
 
