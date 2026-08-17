@@ -141,7 +141,13 @@ class ArticulosController {
             $id          = $_POST['id'];
             $nombre      = trim($_POST['nombre']);
             $descripcion = trim($_POST['descripcion']);
-            $usa_codigo_barras = isset($_POST['usa_codigo_barras']) ? 1 : 0;
+
+            if ($_SESSION['usuario']['rol'] === 'supervisor') {
+                $articuloOriginal = $modelarticulo->obtenerPorId($id);
+                $usa_codigo_barras = $articuloOriginal['usa_codigo_barras'] ?? 0;
+            } else {
+                $usa_codigo_barras = isset($_POST['usa_codigo_barras']) ? 1 : 0;
+            }
 
             if (empty($id) || empty($nombre)) {
                 $errorFormulario = 'Llena todos los campos por favor';

@@ -230,6 +230,7 @@ $formArticulo = $articuloEditar ?? $_POST ?? [];
                     name="usa_codigo_barras" 
                     value="1"
                     <?= !empty($formArticulo['usa_codigo_barras']) ? 'checked' : '' ?>
+                    <?= ($_SESSION['usuario']['rol'] === 'supervisor' && isset($articuloEditar)) ? 'disabled' : '' ?>
                 >
                 Usa código de barras
             </label>
