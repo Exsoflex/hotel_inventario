@@ -810,7 +810,7 @@ button:hover {
     box-shadow: 0 12px 25px rgba(0,0,0,0.12);
 }
 
-[data-theme="dark"] button:not(.btn-login):not(.btn-agregar):not(.btn-ver-inventario):not(.btn-confirmar):not(.dropdown-theme-btn):not(.menu-btn):not(.user-menu-btn):not(.btn-filtros) {
+[data-theme="dark"] button:not(.btn-login):not(.btn-agregar):not(.btn-ver-inventario):not(.btn-confirmar):not(.dropdown-theme-btn):not(.menu-btn):not(.user-menu-btn):not(.btn-filtros):not(.btn-historial):not(.btn-editar-historial):not(.btn-eliminar-historial):not(.btn-editar):not(.btn-eliminar) {
     color: #111827;
 }
 
@@ -3347,12 +3347,12 @@ body.sidebar-mobile-open {
 
 [data-theme="dark"] .historial-tabla .btn-editar-historial {
     background: rgba(99, 102, 241, 0.2);
-    color: #a5b4fc;
+    color: #fff;
 }
 
 [data-theme="dark"] .historial-tabla .btn-eliminar-historial {
     background: rgba(209, 31, 31, 0.2);
-    color: #fca5a5;
+    color: #fff;
 }
 
 [data-theme="dark"] .historial-form {
@@ -3385,12 +3385,12 @@ body.sidebar-mobile-open {
 
 [data-theme="dark"] .btn-historial {
     border-color: #60a5fa;
-    color: #60a5fa;
+    color: #fff;
 }
 
 [data-theme="dark"] .btn-historial:hover {
     background: #60a5fa;
-    color: #1f2937;
+    color: #fff;
 }
 
 [data-theme="dark"] #btnAgregarHistorial {
